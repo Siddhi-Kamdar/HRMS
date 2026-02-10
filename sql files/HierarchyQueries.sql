@@ -1,4 +1,4 @@
-CREATE OR ALTER PROCEDURE GetHierarchy
+CREATE OR ALTER PROCEDURE pr_orgmod_get_hierarchy
 	@emp_id INT
 AS
 BEGIN 
@@ -12,7 +12,7 @@ BEGIN
 	CREATE TABLE #temp(employee_name VARCHAR(100), supervision_name VARCHAR(100), employee_position VARCHAR(100), supervisior_position VARCHAR(100), employee_pp VARCHAR(100), supervisior_pp VARCHAR(100));
 	WHILE @supervisior_id <> @employee_id
 	BEGIN
-	INSERT INTO #temp 
+		INSERT INTO #temp 
 		SELECT employees.full_name AS employee_name,
 			   e.full_name AS supervision_name, 
 			   positions.position_name,
@@ -29,8 +29,8 @@ BEGIN
 		WHERE employees.employee_id = @employee_id
 		PRINT @employee_id;
 		PRINT @supervisior_id;
-		set @employee_id = (SELECT supervisior_id FROM employees WHERE employee_id = @employee_id)
-		set @supervisior_id = (SELECT supervisior_id FROM employees WHERE employee_id = @employee_id)
+		SET @employee_id = (SELECT supervisior_id FROM employees WHERE employee_id = @employee_id)
+		SET @supervisior_id = (SELECT supervisior_id FROM employees WHERE employee_id = @employee_id)
 	
 	END
 	SELECT * FROM #temp
@@ -76,4 +76,8 @@ begin
 SELECT * FROM employees
 end
 
-exec GetHierarchy @emp_id = 1009
+exec pr_orgmod_get_hierarchy @emp_id = 1009
+
+EXEC sp_rename 'dbo.GetHierarchy', 'pr_orgmod_get_hierarchy';
+EXEC sp_rename 'dbo.ApplyForSlot', 'pr_gamemod_slot_apply';
+EXEC sp_rename 'dbo.CancleSlot', 'pr_gamemod_slot_cancle';
