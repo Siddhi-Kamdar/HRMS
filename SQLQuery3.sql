@@ -6,7 +6,7 @@ insert into @team2 values(8);
 
 exec ApplyForSlot @slot_id = 1, @leader_emp_id = 3, @members = @team2;
 
-CREATE PROCEDURE ApplyForSlot
+CREATE OR ALTER PROCEDURE ApplyForSlot
     @slot_id INT,
     @leader_emp_id INT,
     @members TeamMemberTableType READONLY
@@ -19,7 +19,7 @@ BEGIN
         BEGIN TRANSACTION;
 
         -----------------------------------------------------
-        -- slot validate
+        -- slot validate 
         -----------------------------------------------------
 
         DECLARE @slot_date DATE;
@@ -191,3 +191,60 @@ select * from booking_members
 select * from  game_slots
 select * from game_cycles
 select * from cycle_participation
+select * from game_slot_generation_config
+
+ALTER TABLE game_slots
+ADD CONSTRAINT CK_Game_Slot_Status
+CHECK (status IN ('OPEN', 'BOOKED', 'COMPLETED', 'CANCLED'))
+
+ALTER TABLE booking_master
+ADD CONSTRAINT CK_Booking_Status
+CHECK (status IN ('CONFIRMED', 'PREEMPTED', 'CANCLED'))
+
+CREATE PROCEDURE CancleSlot
+	@slot_id INT
+AS
+BEGIN
+	SET NOCOUNT ON;
+    SET XACT_ABORT ON;
+		DECLARE @slot_date DATE;
+        DECLARE @start_time TIME;
+		DECLARE @emp_id INT;
+
+		SELECT 
+            @slot_date = gs.slot_date,
+            @start_time = gst.start_time
+        FROM game_slots gs
+        JOIN game_slot_templates gst ON gs.template_id = gst.template_id
+        WHERE gs.slot_id = @slot_id;
+
+		IF @start_time < CONVERT(TIME, GETDATE())
+		BEGIN
+	    --------------------------------------------------
+        -- cancel slot 
+        -----------------------------------------------------
+			UPDATE game_slots
+			SET status = 'OPEN'
+			WHERE slot_id = @slot_id
+		END
+		ELSE
+		BEGIN
+		--------------------------------------------------
+        -- add penalty  
+        -----------------------------------------------------
+			UPDATE employee_penalties 
+			SET late_cancel_count = late_cancel_count + 1
+			WHERE emp_id = @emp_id
+		END
+
+	BEGIN TRY
+	BEGIN TRANSACTION;
+		
+	COMMIT TRANSACTION;
+	END TRY
+	BEGIN CATCH
+		
+	END CATCH;
+END
+
+DROP PROCEDURE CancleSlot
