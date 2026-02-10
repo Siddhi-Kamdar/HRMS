@@ -1,10 +1,10 @@
 declare @team2 TeamMemberTableType
-insert into @team2 values(3);
+insert into @team2 values(1);
 insert into @team2 values(5);
 insert into @team2 values(7);
 insert into @team2 values(8);
 
-exec ApplyForSlot @slot_id = 1, @leader_emp_id = 3, @members = @team2;
+exec ApplyForSlot @slot_id = 2, @leader_emp_id = 1, @members = @team2;
 
 CREATE OR ALTER PROCEDURE ApplyForSlot
     @slot_id INT,
@@ -188,7 +188,7 @@ END
 
 select * from booking_master
 select * from booking_members
-select * from  game_slots
+select * from game_slots
 select * from game_cycles
 select * from cycle_participation
 select * from game_slot_generation_config
@@ -222,7 +222,7 @@ BEGIN
 		BEGIN
 	    --------------------------------------------------
         -- cancel slot 
-        -----------------------------------------------------
+        --------------------------------------------------
 			UPDATE game_slots
 			SET status = 'OPEN'
 			WHERE slot_id = @slot_id
@@ -231,7 +231,7 @@ BEGIN
 		BEGIN
 		--------------------------------------------------
         -- add penalty  
-        -----------------------------------------------------
+        --------------------------------------------------
 			UPDATE employee_penalties 
 			SET late_cancel_count = late_cancel_count + 1
 			WHERE emp_id = @emp_id
