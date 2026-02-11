@@ -7,7 +7,7 @@ BEGIN
 	PRINT 'HELLO';
 	SELECT @supervisior_id = supervisior_id, @employee_id = employee_id
 	FROM employees
-	WHERE employee_id = @emp_id
+	WHERE employee_id = @emp_id	
 
 	CREATE TABLE #temp(employee_name VARCHAR(100), supervision_name VARCHAR(100), employee_position VARCHAR(100), supervisior_position VARCHAR(100), employee_pp VARCHAR(100), supervisior_pp VARCHAR(100));
 	WHILE @supervisior_id <> @employee_id

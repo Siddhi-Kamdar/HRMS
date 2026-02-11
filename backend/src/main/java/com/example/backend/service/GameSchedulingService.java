@@ -1,0 +1,43 @@
+package com.example.backend.service;
+
+import com.example.backend.dto.request.ApplySlotRequest;
+import com.example.backend.dto.request.CancelBookingRequest;
+import com.example.backend.dto.response.GameResponse;
+import com.example.backend.dto.response.SlotResponse;
+import com.example.backend.repository.GameSchedulingRepository;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+public class GameSchedulingService {
+
+    private final GameSchedulingRepository repository;
+
+    public GameSchedulingService(GameSchedulingRepository repository) {
+        this.repository = repository;
+    }
+
+    public List<GameResponse> getGames() {
+        return repository.getGames();
+    }
+
+    public List<SlotResponse> getAvailableSlots(int gameId) {
+        return repository.getAvailableSlots(gameId);
+    }
+
+    public void applyForSlot(ApplySlotRequest request) {
+        repository.applyForSlot(request);
+    }
+
+    public void cancelBooking(CancelBookingRequest request) {
+        repository.cancelBooking(
+                request.getSlotId(),
+                request.getCancelledByEmpId()
+        );
+    }
+
+    public void completeSlot(int slotId) {
+        repository.completeSlot(slotId);
+    }
+}
