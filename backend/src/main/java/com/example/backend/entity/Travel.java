@@ -1,54 +1,44 @@
 package com.example.backend.entity;
 
 import jakarta.persistence.*;
-
 import java.util.Date;
 
 @Entity
 @Table(name = "travel_details")
 public class Travel {
+
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "travel_id")
-    private int travel_id;
+    private Long travelId;
 
-    @Column(name = "full_name")
-    private String full_name;
-
-//    @OneToOne
-//    @JoinColumn(name = "employee_id" )
-//    private Employee employee;
+    @ManyToOne
+    @JoinColumn(name = "employee_id")
+    private Employee employee;
 
     @Column(name = "destination")
     private String destination;
 
     @Column(name = "depart_date")
-    private Date depart_date;
+    private Date departDate;
 
     @Column(name = "return_date")
-    private Date return_date;
+    private Date returnDate;
 
-//    public Employee getEmployee() {
-//        return employee;
-//    }
-//
-//    public void setEmployee(Employee employee) {
-//        this.employee = employee;
-//    }
-
-    public void setId(int id) {
-        this.travel_id = id;
+    public Long getTravelId() {
+        return travelId;
     }
 
-    public int getId() {
-        return travel_id;
+    public void setTravelId(Long travelId) {
+        this.travelId = travelId;
     }
 
-    public int getTravel_id() {
-        return travel_id;
+    public Employee getEmployee() {
+        return employee;
     }
 
-    public void setTravel_id(int travel_id) {
-        this.travel_id = travel_id;
+    public void setEmployee(Employee employee) {
+        this.employee = employee;
     }
 
     public String getDestination() {
@@ -59,19 +49,19 @@ public class Travel {
         this.destination = destination;
     }
 
-    public Date getDepart_date() {
-        return depart_date;
+    public Date getDepartDate() {
+        return departDate;
     }
 
-    public void setDepart_date(Date depart_date) {
-        this.depart_date = depart_date;
+    public void setDepartDate(Date departDate) {
+        this.departDate = departDate;
     }
 
-    public Date getReturn_date() {
-        return return_date;
+    public Date getReturnDate() {
+        return returnDate;
     }
 
-    public void setReturn_date(Date return_date) {
-        this.return_date = return_date;
+    public void setReturnDate(Date returnDate) {
+        this.returnDate = returnDate;
     }
 }
