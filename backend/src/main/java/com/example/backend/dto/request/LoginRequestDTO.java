@@ -2,18 +2,18 @@ package com.example.backend.dto.request;
 
 public class LoginRequestDTO {
 
-    private String userEmail;
+    private String email;
     private String password;
 
     public LoginRequestDTO() {
     }
 
     public String getEmail() {
-        return userEmail;
+        return email;
     }
 
     public void setEmail(String email) {
-        this.userEmail = email;
+        this.email = email;
     }
 
     public String getPassword() {
