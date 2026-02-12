@@ -1,3 +1,11 @@
+declare @team2 TeamMemberTableType
+insert into @team2 values(17);
+insert into @team2 values(18);
+insert into @team2 values(19);
+insert into @team2 values(20);
+
+exec pr_gamemod_apply_for_slot @slot_id = 4, @leader_emp_id = 17, @members = @team2;
+
 CREATE OR ALTER PROCEDURE pr_gamemod_apply_for_slot
     @slot_id INT,
     @leader_emp_id INT,
@@ -216,6 +224,7 @@ BEGIN
             END
             ELSE
             BEGIN
+
                 -- insert into queue
                 INSERT INTO booking_queue
                     (slot_id, leader_emp_id, cycle_id, team_size, priority_score, status, created_at)
@@ -227,6 +236,8 @@ BEGIN
                 INSERT INTO booking_queue_members (queue_id, emp_id)
                 SELECT @queue_id, emp_id
                 FROM @members;
+
+                PRINT 'Team added to Queue as Slot is Booked';
             END
         END
 
@@ -240,6 +251,9 @@ BEGIN
     END CATCH
 END
 
+exec pr_gamemod_cancel_booking
+    @slot_id = 1 ,
+    @cancelled_by_emp_id =9
 CREATE OR ALTER PROCEDURE pr_gamemod_cancel_booking
     @slot_id INT,
     @cancelled_by_emp_id INT
@@ -278,11 +292,16 @@ BEGIN
         SET @minutes_remaining =
             DATEDIFF(MINUTE, GETDATE(), @slot_datetime);
 
-        IF @minutes_remaining <= 0
-            THROW 60002, 'Game already started. Cannot cancel.', 1;
+        --IF @minutes_remaining <= 0
+        --    THROW 60002, 'Game already started. Cannot cancel.', 1;
 
         IF @minutes_remaining <= 10
-            THROW 60003, 'Cannot cancel within last 10 minutes.', 1;
+            --THROW 60003, 'Cannot cancel within last 10 minutes.', 1;
+            UPDATE employee_penalties 
+			SET late_cancel_count = late_cancel_count + 1
+			WHERE emp_id = @cancelled_by_emp_id
+
+            PRINT 'Penalty added for cancling the slot prio';
 
         -----------------------------------------------------
         -- get confirmed booking
@@ -348,7 +367,7 @@ BEGIN
             WHERE queue_id = @queue_id;
 
             UPDATE booking_queue
-            SET status = 'PROMOTED'
+            SET status = 'CONFIRMED'
             WHERE queue_id = @queue_id;
 
             UPDATE game_slots
@@ -365,6 +384,8 @@ BEGIN
         THROW;
     END CATCH;
 END
+
+EXEC pr_gamemod_complete_slot @slot_id = 1
 
 CREATE OR ALTER PROCEDURE pr_gamemod_complete_slot
     @slot_id INT
@@ -395,7 +416,8 @@ BEGIN
         FROM booking_master
         WHERE slot_id = @slot_id
           AND status = 'CONFIRMED';
-
+        
+        --this here-- --wont let complete slot if booking aint complete 
         IF @booking_id IS NULL
             THROW 70002, 'No confirmed booking found.', 1;
 
@@ -530,7 +552,7 @@ BEGIN
     ORDER BY priority_score DESC, created_at ASC;
 END
 
-CREATE OR ALTER PROCEDURE GetMyBookings
+CREATE OR ALTER PROCEDURE pr_gamemod_get_booking_by_emp_id
     @emp_id INT
 AS
 BEGIN
@@ -570,7 +592,9 @@ BEGIN
     ORDER BY gs.slot_date;
 END
 
-CREATE OR ALTER PROCEDURE GetQueuePosition
+exec pr_gamemod_get_booking_by_emp_id  @emp_id
+
+CREATE OR ALTER PROCEDURE pr_gamemod_get_queue_position
     @queue_id INT
 AS
 BEGIN

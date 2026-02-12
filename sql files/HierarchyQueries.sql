@@ -76,7 +76,7 @@ begin
 SELECT * FROM employees
 end
 
-exec pr_orgmod_get_hierarchy @emp_id = 1009
+exec pr_orgmod_get_hierarchy @emp_id = 10
 
 EXEC sp_rename 'dbo.GetHierarchy', 'pr_orgmod_get_hierarchy';
 EXEC sp_rename 'dbo.ApplyForSlot', 'pr_gamemod_slot_apply';

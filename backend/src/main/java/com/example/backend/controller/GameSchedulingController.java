@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/schedule")
+@RequestMapping("/games")
 public class GameSchedulingController {
 
     private final GameSchedulingService service;
@@ -20,12 +20,12 @@ public class GameSchedulingController {
         this.service = service;
     }
 
-    @GetMapping("/games")
+    @GetMapping
     public List<GameResponse> getGames() {
         return service.getGames();
     }
 
-    @GetMapping("/slots/{gameId}")
+    @GetMapping("/{gameId}/slots")
     public List<SlotResponse> getSlots(@PathVariable int gameId) {
         return service.getAvailableSlots(gameId);
     }
@@ -42,7 +42,7 @@ public class GameSchedulingController {
         return ResponseEntity.ok("Cancelled successfully");
     }
 
-    @PostMapping("/complete/{slotId}")
+    @PostMapping("/{slotId}/complete")
     public ResponseEntity<String> complete(@PathVariable int slotId) {
         service.completeSlot(slotId);
         return ResponseEntity.ok("Slot completed successfully");

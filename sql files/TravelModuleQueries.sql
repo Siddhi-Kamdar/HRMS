@@ -256,3 +256,5 @@ AS
 BEGIN
 	SELECT expense_type_id, expence_type_name FROM expenses_type
 END;
+
+select * from travel_details

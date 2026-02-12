@@ -96,4 +96,7 @@ public class GameSchedulingRepository {
                 slotId
         );
     }
+
+    // ---------------- get booking by emp id ----------------
+
 }
