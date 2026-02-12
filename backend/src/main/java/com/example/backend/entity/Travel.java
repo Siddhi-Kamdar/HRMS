@@ -10,7 +10,7 @@ public class Travel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "travel_id")
-    private Long travelId;
+    private int travelId;
 
     @ManyToOne
     @JoinColumn(name = "employee_id")
@@ -25,11 +25,11 @@ public class Travel {
     @Column(name = "return_date")
     private Date returnDate;
 
-    public Long getTravelId() {
+    public int getTravelId() {
         return travelId;
     }
 
-    public void setTravelId(Long travelId) {
+    public void setTravelId(int travelId) {
         this.travelId = travelId;
     }
 

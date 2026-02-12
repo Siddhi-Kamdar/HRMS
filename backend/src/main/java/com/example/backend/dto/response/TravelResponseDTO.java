@@ -5,13 +5,13 @@ import java.util.Date;
 
 public class TravelResponseDTO {
 
-    private Long travelId;
+    private int travelId;
     private String fullName;
     private String destination;
     private Date departDate;
     private Date returnDate;
 
-    public TravelResponseDTO(Long travelId, String fullName,
+    public TravelResponseDTO(int travelId, String fullName,
                              String destination, Date departDate,
                              Date returnDate) {
         this.travelId = travelId;
@@ -21,7 +21,7 @@ public class TravelResponseDTO {
         this.returnDate = returnDate;
     }
 
-    public Long getTravelId() {
+    public int getTravelId() {
         return travelId;
     }
 
