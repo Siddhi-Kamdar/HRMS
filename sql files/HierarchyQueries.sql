@@ -1,10 +1,10 @@
+use hrms_db
 CREATE OR ALTER PROCEDURE pr_orgmod_get_hierarchy
 	@emp_id INT
 AS
 BEGIN 
 	DECLARE @supervisior_id INT;
 	DECLARE @employee_id INT;
-	PRINT 'HELLO';
 	SELECT @supervisior_id = supervisior_id, @employee_id = employee_id
 	FROM employees
 	WHERE employee_id = @emp_id	
@@ -76,7 +76,7 @@ begin
 SELECT * FROM employees
 end
 
-exec pr_orgmod_get_hierarchy @emp_id = 10
+exec pr_orgmod_get_hierarchy @emp_id = 8
 
 EXEC sp_rename 'dbo.GetHierarchy', 'pr_orgmod_get_hierarchy';
 EXEC sp_rename 'dbo.ApplyForSlot', 'pr_gamemod_slot_apply';

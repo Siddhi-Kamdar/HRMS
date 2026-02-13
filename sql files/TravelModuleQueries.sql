@@ -1,3 +1,4 @@
+use hrms_db
 -- Source - https://stackoverflow.com/a/219510
 -- Posted by Dave_H, modified by community. See post 'Timeline' for change history
 -- Retrieved 2026-02-11, License - CC BY-SA 4.0
@@ -258,3 +259,4 @@ BEGIN
 END;
 
 select * from travel_details
+

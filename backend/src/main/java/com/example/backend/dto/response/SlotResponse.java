@@ -1,7 +1,6 @@
 package com.example.backend.dto.response;
 
 public class SlotResponse {
-
     private int slotId;
     private String slotDate;
     private String startTime;

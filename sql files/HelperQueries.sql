@@ -1,3 +1,4 @@
+use hrms_db
 select * from booking_queue
 select * from employees
 select * from booking_master

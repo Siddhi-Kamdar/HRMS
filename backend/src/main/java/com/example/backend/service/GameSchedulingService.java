@@ -40,4 +40,5 @@ public class GameSchedulingService {
     public void completeSlot(int slotId) {
         repository.completeSlot(slotId);
     }
+
 }

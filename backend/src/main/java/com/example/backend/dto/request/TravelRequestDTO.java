@@ -9,6 +9,17 @@ public class TravelRequestDTO {
     private Date departDate;
     private Date returnDate;
 
+    public int getSupervisiorId() {
+        return supervisiorId;
+    }
+
+    public void setSupervisiorId(int supervisiorId) {
+        this.supervisiorId = supervisiorId;
+    }
+
+    private int supervisiorId;
+
+
     public Long getEmployeeId() {
         return employeeId;
     }

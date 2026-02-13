@@ -9,7 +9,7 @@ public class Employee {
 
     @Id
     @Column(name = "employee_id")
-    private Long employeeId;   // DB is int → Long is fine
+    private int employeeId;
 
     @Column(name = "full_name")
     private String fullName;
@@ -54,11 +54,11 @@ public class Employee {
     @JoinColumn(name = "role_id")
     private Role role;
 
-    public Long getEmployeeId() {
+    public int getEmployeeId() {
         return employeeId;
     }
 
-    public void setEmployeeId(Long employeeId) {
+    public void setEmployeeId(int employeeId) {
         this.employeeId = employeeId;
     }
 

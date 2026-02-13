@@ -1,3 +1,4 @@
+use hrms_db
 declare @team2 TeamMemberTableType
 insert into @team2 values(17);
 insert into @team2 values(18);
@@ -611,3 +612,4 @@ BEGIN
     )
       AND status = 'WAITING';
 END
+

@@ -25,6 +25,18 @@ public class Travel {
     @Column(name = "return_date")
     private Date returnDate;
 
+    public Employee getScheduler() {
+        return scheduler;
+    }
+
+    public void setScheduler(Employee scheduler) {
+        this.scheduler = scheduler;
+    }
+
+    @ManyToOne
+    @JoinColumn(name = "scheduler_id")
+    private Employee scheduler;
+
     public int getTravelId() {
         return travelId;
     }
