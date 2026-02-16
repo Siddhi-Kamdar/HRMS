@@ -90,12 +90,10 @@ public class JobService {
     private JobResponseDTO mapToDTO(Job job) {
 
         return new JobResponseDTO(
-                job.getJob_id(),
                 job.getJob_title(),
                 job.getJob_summary(),
                 job.getJob_description_url(),
                 job.getJob_status(),
-                job.getPosted_by_employee().getFullName(),
                 job.getPosted_date()
         );
     }

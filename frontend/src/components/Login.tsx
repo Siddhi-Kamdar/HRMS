@@ -45,8 +45,7 @@ const Login: React.FC = () => {
   };
 
   return (
-    <div className="d-flex justify-content-center align-items-center min-vh-100 bg-light w-100">
-      <div className="card shadow-sm p-4" style={{ width: "380px" }}>
+      <div className="d-flex aligns-items-center justify-content-center card text-center w-30 position-absolute top-50 start-50 translate-middle card shadow-sm p-4" style={{ width: "380px" }}>
         <h4 className="text-center mb-4">HRMS Login</h4>
 
         {error && (
@@ -95,7 +94,6 @@ const Login: React.FC = () => {
           </button>
         </form>
       </div>
-    </div>
   );
 };
 
