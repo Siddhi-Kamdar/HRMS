@@ -6,6 +6,9 @@ select * from booking_queue
 select * from game_slots
 select * from cycle_participation
 
+select * from employees
+where password like '%\%'
+
 -- Source - https://stackoverflow.com/a/18623233
 -- Posted by orgtigger, modified by community. See post 'Timeline' for change history
 -- Retrieved 2026-02-12, License - CC BY-SA 3.0

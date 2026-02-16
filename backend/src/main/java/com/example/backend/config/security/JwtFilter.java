@@ -24,7 +24,10 @@ public class JwtFilter implements Filter {
         if (header != null && header.startsWith("Bearer ")) {
 
             String token = header.substring(7);
-            jwtUtil.extractEmail(token);
+            try{
+                jwtUtil.extractEmail(token);
+            }
+            catch (Exception ignored){}
         }
 
         chain.doFilter(request, response);
