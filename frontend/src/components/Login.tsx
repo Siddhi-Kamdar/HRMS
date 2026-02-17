@@ -30,11 +30,7 @@ const Login: React.FC = () => {
     try {
       const response = await loginUser(formData);
       console.log(response);
-      localStorage.setItem("token", response.token);
-      localStorage.setItem("employeeId", response.employeeId.toString());
-      localStorage.setItem("fullName", response.fullName);
-      localStorage.setItem("email", response.email);
-      localStorage.setItem("role", response.role);
+      localStorage.setItem("user", JSON.stringify(response));
 
 
       navigate("/app");
