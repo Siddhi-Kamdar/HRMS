@@ -12,7 +12,15 @@ export interface Slot {
   endTime: string;
   status: string;
 }
+export interface Employee {
+  employeeId: number;
+  fullName: string;
+}
 
+export const getEmployees = async (): Promise<Employee[]> => {
+  const response = await axiosInstance.get("/employees");
+  return response.data;
+};
 export const getGames = async (): Promise<Game[]> => {
   const response = await axiosInstance.get("/api/games");
   return response.data;

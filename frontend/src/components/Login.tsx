@@ -37,7 +37,7 @@ const Login: React.FC = () => {
       localStorage.setItem("role", response.role);
 
 
-      navigate("/dashboard");
+      navigate("/app");
     } catch (err: any) {
       if (err.response?.status === 401) {
         setError("Invalid email or password.");

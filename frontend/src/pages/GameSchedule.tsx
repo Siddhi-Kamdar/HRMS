@@ -12,12 +12,14 @@ import {
   type Game,
   type Slot
 } from "../services/gameService";
+import { useNavigate } from "react-router-dom";
 
 const GameSchedule: React.FC = () => {
 
   const [games, setGames] = useState<Game[]>([]);
   const [selectedGame, setSelectedGame] = useState<number | null>(null);
   const [slots, setSlots] = useState<Slot[]>([]);
+  const navigate = useNavigate();
 
   const employeeId = Number(localStorage.getItem("employeeId"));
   const role = localStorage.getItem("role");
@@ -77,39 +79,10 @@ const GameSchedule: React.FC = () => {
     };
   });
 
-  const handleEventClick = async (info: any) => {
-    const slotId = Number(info.event.id);
-    const status = info.event.extendedProps.status;
-
-    if (status === "OPEN") {
-      await applyForSlot({
-        slotId,
-        leaderEmpId: employeeId,
-        members: [employeeId]
-      });
-      alert("Applied successfully");
-      refreshSlots();
-    }
-
-    else if (status === "BOOKED") {
-      await cancelBooking({
-        slotId,
-        cancelledByEmpId: employeeId
-      });
-      alert("Cancelled successfully");
-      refreshSlots();
-    }
-
-    else if (status === "COMPLETED") {
-      alert("Slot already completed");
-    }
-
-    if (role === "HR" && status === "BOOKED") {
-      await completeSlot(slotId);
-      alert("Slot marked completed");
-      refreshSlots();
-    }
-  };
+  const handleEventClick = (info: any) => {
+  const slotId = Number(info.event.id);
+  navigate(`/games/slot/${slotId}/book`);
+};
 
   return (
     <div className="container mt-4">
@@ -141,8 +114,8 @@ const GameSchedule: React.FC = () => {
             right: ""
           }}
           allDaySlot={false}
-          slotMinTime="06:00:00"
-          slotMaxTime="23:00:00"
+          slotMinTime="00:00:00"
+          slotMaxTime="24:00:00"
           events={calendarEvents}
           eventClick={handleEventClick}
           height="auto"

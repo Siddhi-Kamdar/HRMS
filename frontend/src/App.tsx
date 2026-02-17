@@ -1,23 +1,27 @@
-
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Login from "./components/Login";
-import Dashboard from "./pages/Dashboard";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import GameSchedule from "./pages/GameSchedule";
+import Login from "./components/Login";
+import AppLayout from "./pages/AppLayout";
 
 function App() {
   return (
-    <div style={{width: "100%"}}>
-    <Router>
+    <BrowserRouter>
       <Routes>
+
         <Route path="/" element={<Login />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/games" element={<GameSchedule/>}/>
-      
+
+        <Route path="/app" element={<AppLayout />}>
+
+          <Route path="travel" element={<div>Travel Page</div>} />
+          <Route path="achievements" element={<div>Achievements Page</div>} />
+          <Route path="games" element={<GameSchedule />} />
+          <Route path="jobs" element={<div>Jobs Page</div>} />
+
+        </Route>
+
       </Routes>
-    </Router>
-    </div>
+    </BrowserRouter>
   );
 }
-
 
 export default App;
