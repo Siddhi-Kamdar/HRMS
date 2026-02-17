@@ -5,7 +5,9 @@ import com.example.backend.dto.request.CancelBookingRequest;
 import com.example.backend.dto.response.GameResponse;
 import com.example.backend.dto.response.SlotResponse;
 import com.example.backend.repository.GameSchedulingRepository;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -27,7 +29,14 @@ public class GameSchedulingService {
     }
 
     public void applyForSlot(ApplySlotRequest request) {
-        repository.applyForSlot(request);
+
+        try{repository.applyForSlot(request);}
+        catch (Exception e){
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    e.getMessage()
+            );
+        }
     }
 
     public void cancelBooking(CancelBookingRequest request) {

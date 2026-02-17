@@ -7,6 +7,10 @@ export interface LoginRequest {
 
 export interface LoginResponse {
   token: string;
+  employeeId: number;
+  fullName: string;
+  email: string;
+  role: string;
 }
 
 export const loginUser = async (

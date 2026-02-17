@@ -40,7 +40,7 @@ const Dashboard: React.FC = () => {
 
         <div className="d-flex align-items-center">
           <div
-            className="rounded-circle bg-primary text-white d-flex justify-content-center align-items-center me-3"
+            className="rounded-circle bg-success text-white d-flex justify-content-center align-items-center me-3"
             style={{ width: "35px", height: "35px" }}
           >
             U
@@ -65,10 +65,10 @@ const Dashboard: React.FC = () => {
                   <h5 className="card-title">{module.title}</h5>
                   <p className="card-text">{module.description}</p>
                   <button
-                    className="btn btn-primary mt-auto"
+                    className="btn btn-success mt-auto"
                     onClick={() => navigate(module.route)}
                   >
-                    Open
+                    Go
                   </button>
                 </div>
               </div>

@@ -8,6 +8,7 @@ import com.microsoft.sqlserver.jdbc.SQLServerDataTable;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.Types;
 import java.util.List;
@@ -62,10 +63,12 @@ public class GameSchedulingRepository {
             for (Integer memberId : request.getMembers()) {
                 tvp.addRow(memberId);
             }
-
-            SQLServerCallableStatement cs =
-                    (SQLServerCallableStatement)
-                            connection.prepareCall("{call pr_gamemod_apply_for_slot(?, ?, ?)}");
+            CallableStatement callableStatements = connection.prepareCall("{call pr_gamemod_apply_for_slot(?, ?, ?)}");
+//            SQLServerCallableStatement cs =
+//                    (SQLServerCallableStatement)
+//                            connection.prepareCall("{call pr_gamemod_apply_for_slot(?, ?, ?)}");
+//
+            SQLServerCallableStatement cs = callableStatements.unwrap(SQLServerCallableStatement.class);
 
             cs.setInt(1, request.getSlotId());
             cs.setInt(2, request.getLeaderEmpId());

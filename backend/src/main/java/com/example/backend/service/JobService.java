@@ -6,8 +6,13 @@ import com.example.backend.entity.Job;
 import com.example.backend.repository.EmployeeRepository;
 import com.example.backend.repository.JobModuleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.actuate.endpoint.SecurityContext;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.net.Authenticator;
 import java.util.Date;
 import java.util.List;
 
@@ -19,6 +24,7 @@ public class JobService {
 
     @Autowired
     private EmployeeRepository employeeRepository;
+
 
     // ---------------- GET ALL ----------------
     public List<JobResponseDTO> getAllJobs() {
@@ -36,6 +42,7 @@ public class JobService {
         return mapToDTO(job);
     }
 
+    @PreAuthorize("hasRole('HR')")
     // ---------------- CREATE ----------------
     public JobResponseDTO createJob(Job job, Long postedById) {
 
@@ -66,8 +73,12 @@ public class JobService {
         return mapToDTO(saved);
     }
 
+    @PreAuthorize("hasRole('HR')")
     // ---------------- DELETE ----------------
     public void deleteJob(Long jobId) {
+        Authentication aut = SecurityContextHolder.getContext().getAuthentication();
+        System.out.println("AUTH OBJECT" + aut);
+        System.out.println("Authorities: "+ aut.getAuthorities() );
 
         Job job = jobRepository.findById(jobId)
                 .orElseThrow(() -> new RuntimeException("Job not found"));

@@ -2,6 +2,8 @@ package com.example.backend.entity;
 
 import jakarta.persistence.*;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Entity
@@ -60,11 +62,11 @@ public class ReferredJobStatus {
         this.reviewedBy = reviewedBy;
     }
 
-    public Date getTimeStamp() {
+    public java.util.Date getTimeStamp() {
         return timeStamp;
     }
 
-    public void setTimeStamp(Date timeStamp) {
+    public void setTimeStamp(java.util.Date timeStamp) {
         this.timeStamp = timeStamp;
     }
 }

@@ -7,7 +7,7 @@ public class Referral {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "referral_id")
+    @Column(name = "refrral_id")
     private Long referralId;
 
     @ManyToOne

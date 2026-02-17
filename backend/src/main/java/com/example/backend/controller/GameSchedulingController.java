@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/games")
+@RequestMapping("/api/games")
 public class GameSchedulingController {
 
     private final GameSchedulingService service;
@@ -47,4 +47,5 @@ public class GameSchedulingController {
         service.completeSlot(slotId);
         return ResponseEntity.ok("Slot completed successfully");
     }
+
 }

@@ -1,6 +1,7 @@
 package com.example.backend.service;
 
 import com.example.backend.dto.request.LoginRequestDTO;
+import com.example.backend.dto.response.LoginResponseDTO;
 import com.example.backend.entity.Employee;
 import com.example.backend.repository.EmployeeRepository;
 import com.example.backend.config.security.JwtUtil;
@@ -16,15 +17,27 @@ public class AuthService {
     @Autowired
     private JwtUtil jwtUtil;
 
-    public String login(LoginRequestDTO request) {
+
+    public LoginResponseDTO login(LoginRequestDTO request) {
 
         Employee employee = employeeRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new RuntimeException("Invalid email"));
+                .orElseThrow(() -> new RuntimeException("Invalid credentials"));
 
         if (!employee.getPassword().equals(request.getPassword())) {
-            throw new RuntimeException("Invalid password");
+            throw new RuntimeException("Invalid credentials");
         }
 
-        return jwtUtil.generateToken(employee.getEmail());
+        String roleName = employee.getRole().getRoleName();
+
+        String token = jwtUtil.generateToken(employee.getEmail(), roleName);
+
+        return new LoginResponseDTO(
+                token,
+                employee.getEmployeeId(),
+                employee.getFullName(),
+                employee.getEmail(),
+                roleName
+        );
     }
+
 }

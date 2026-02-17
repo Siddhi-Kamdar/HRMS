@@ -29,8 +29,13 @@ const Login: React.FC = () => {
 
     try {
       const response = await loginUser(formData);
-
+      console.log(response);
       localStorage.setItem("token", response.token);
+      localStorage.setItem("employeeId", response.employeeId.toString());
+      localStorage.setItem("fullName", response.fullName);
+      localStorage.setItem("email", response.email);
+      localStorage.setItem("role", response.role);
+
 
       navigate("/dashboard");
     } catch (err: any) {
@@ -45,55 +50,55 @@ const Login: React.FC = () => {
   };
 
   return (
-      <div className="d-flex aligns-items-center justify-content-center card text-center w-30 position-absolute top-50 start-50 translate-middle card shadow-sm p-4" style={{ width: "380px" }}>
-        <h4 className="text-center mb-4">HRMS Login</h4>
+    <div className="d-flex aligns-items-center justify-content-center card text-center w-30 position-absolute top-50 start-50 translate-middle card shadow-sm p-4" style={{ width: "380px" }}>
+      <h4 className="text-center mb-4">HRMS Login</h4>
 
-        {error && (
-          <div className="alert alert-danger py-2" role="alert">
-            {error}
-          </div>
-        )}
+      {error && (
+        <div className="alert alert-danger py-2" role="alert">
+          {error}
+        </div>
+      )}
 
-        <form onSubmit={handleSubmit}>
-          <div className="mb-3">
-            <label htmlFor="email" className="form-label">
-              Email Address
-            </label>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              className="form-control"
-              value={formData.email}
-              onChange={handleChange}
-              required
-            />
-          </div>
+      <form onSubmit={handleSubmit}>
+        <div className="mb-3">
+          <label htmlFor="email" className="form-label">
+            Email Address
+          </label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            className="form-control"
+            value={formData.email}
+            onChange={handleChange}
+            required
+          />
+        </div>
 
-          <div className="mb-3">
-            <label htmlFor="password" className="form-label">
-              Password
-            </label>
-            <input
-              type="password"
-              id="password"
-              name="password"
-              className="form-control"
-              value={formData.password}
-              onChange={handleChange}
-              required
-            />
-          </div>
+        <div className="mb-3">
+          <label htmlFor="password" className="form-label">
+            Password
+          </label>
+          <input
+            type="password"
+            id="password"
+            name="password"
+            className="form-control"
+            value={formData.password}
+            onChange={handleChange}
+            required
+          />
+        </div>
 
-          <button
-            type="submit"
-            className="btn btn-primary w-100"
-            disabled={loading}
-          >
-            {loading ? "Signing in..." : "Sign In"}
-          </button>
-        </form>
-      </div>
+        <button
+          type="submit"
+          className="btn btn-success w-100"
+          disabled={loading}
+        >
+          {loading ? "Signing in..." : "Sign In"}
+        </button>
+      </form>
+    </div>
   );
 };
 
