@@ -7,14 +7,15 @@ import {
 } from "../services/gameService";
 
 const BookingForm: React.FC = () => {
-
   const { slotId } = useParams();
   const navigate = useNavigate();
 
-  const employeeId = Number(localStorage.getItem("employeeId"));
+  const user = JSON.parse(localStorage.getItem("user") || "{}");
+  const employeeId = user?.employeeId;
 
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [selectedMembers, setSelectedMembers] = useState<number[]>([]);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     loadEmployees();
@@ -34,52 +35,99 @@ const BookingForm: React.FC = () => {
   };
 
   const handleSubmit = async () => {
-
     const members = [...new Set([employeeId, ...selectedMembers])];
 
     try {
+      setLoading(true);
+
       await applyForSlot({
         slotId: Number(slotId),
         leaderEmpId: employeeId,
         members
       });
 
-      alert("Applied successfully");
-      navigate("/games");
+      navigate("/app/games");
 
     } catch (err: any) {
       alert(err.response?.data?.message || "Failed to apply");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div style={{ padding: "40px" }}>
-      <h2>Book Slot</h2>
+    <div className="row justify-content-center">
+      <div className="col-lg-6 col-md-8">
 
-      <p>Leader: You</p>
+        <div className="card shadow-sm">
 
-      <h5>Select Team Members</h5>
-
-      <div style={{ maxHeight: "300px", overflowY: "auto" }}>
-        {employees.map(emp => (
-          <div key={emp.employeeId}>
-            <input
-              type="checkbox"
-              checked={selectedMembers.includes(emp.employeeId)}
-              onChange={() => handleMemberToggle(emp.employeeId)}
-            />
-            {" "}
-            {emp.fullName}
+          <div className="card-header bg-white">
+            <h5 className="mb-0">Book Slot #{slotId}</h5>
           </div>
-        ))}
-      </div>
 
-      <button
-        className="btn btn-primary mt-3"
-        onClick={handleSubmit}
-      >
-        Submit
-      </button>
+          <div className="card-body">
+
+            <div className="mb-3">
+              <label className="form-label fw-semibold">Leader</label>
+              <input
+                type="text"
+                className="form-control"
+                value={user?.fullName || "You"}
+                disabled
+              />
+            </div>
+
+            <div className="mb-3">
+              <label className="form-label fw-semibold">
+                Select Team Members
+              </label>
+
+              <div
+                className="border rounded p-3"
+                style={{ maxHeight: "250px", overflowY: "auto" }}
+              >
+                {employees.map(emp => (
+                  <div className="form-check" key={emp.employeeId}>
+                    <input
+                      className="form-check-input"
+                      type="checkbox"
+                      id={`emp-${emp.employeeId}`}
+                      checked={selectedMembers.includes(emp.employeeId)}
+                      onChange={() => handleMemberToggle(emp.employeeId)}
+                      disabled={emp.employeeId === employeeId}
+                    />
+                    <label
+                      className="form-check-label"
+                      htmlFor={`emp-${emp.employeeId}`}
+                    >
+                      {emp.fullName}
+                    </label>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="d-flex justify-content-end gap-2">
+              <button
+                className="btn btn-outline-secondary"
+                onClick={() => navigate("/app/games")}
+              >
+                Cancel
+              </button>
+
+              <button
+                className="btn btn-success"
+                onClick={handleSubmit}
+                disabled={loading}
+              >
+                {loading ? "Applying..." : "Apply"}
+              </button>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
     </div>
   );
 };

@@ -81,7 +81,7 @@ const GameSchedule: React.FC = () => {
 
   const handleEventClick = (info: any) => {
   const slotId = Number(info.event.id);
-  navigate(`/games/slot/${slotId}/book`);
+  navigate(`/app/games/slot/${slotId}/book`);
 };
 
   return (
