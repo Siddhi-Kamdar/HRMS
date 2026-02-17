@@ -32,8 +32,21 @@ public class GameSchedulingController {
 
     @PostMapping("/apply")
     public ResponseEntity<String> apply(@RequestBody ApplySlotRequest request) {
-        service.applyForSlot(request);
-        return ResponseEntity.ok("Applied successfully");
+
+        try{
+            service.applyForSlot(request);
+            return ResponseEntity.ok("Applied successfully");
+        }
+        catch(Exception e){
+            Throwable root = e.getCause();
+            while (root != null && root.getCause() != null){
+                root = root.getCause();
+            }
+            String message = root != null ? root.getMessage() : e.getMessage();
+
+            return ResponseEntity.badRequest().body(message);
+        }
+
     }
 
     @PostMapping("/cancel")

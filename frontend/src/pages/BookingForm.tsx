@@ -49,7 +49,8 @@ const BookingForm: React.FC = () => {
       navigate("/app/games");
 
     } catch (err: any) {
-      alert(err.response?.data?.message || "Failed to apply");
+      const message = err.response?.data?.message|| err.response?.data || "Failed to apply"
+      alert(message);
     } finally {
       setLoading(false);
     }
