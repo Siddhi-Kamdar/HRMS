@@ -59,7 +59,7 @@ const GameSchedule: React.FC = () => {
           return "#dc3545";
         case "COMPLETED":
           return "#6c757d";
-        case "CANCELLED":
+        case "CANCLED":
           return "#fd7e14";
         default:
           return "#0d6efd";

@@ -50,6 +50,7 @@ const BookingForm: React.FC = () => {
 
     } catch (err: any) {
       const message = err.response?.data?.message|| err.response?.data || "Failed to apply"
+      
       alert(message);
     } finally {
       setLoading(false);
