@@ -30,14 +30,20 @@ public class JwtFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
 
         System.out.println("JWT Filter Executed");
+        System.out.println("i am jwt i am the problem !!");
+
 
         String header = request.getHeader("Authorization");
+        System.out.println("after authorization !!");
 
         if (header != null && header.startsWith("Bearer ")) {
+            System.out.println("it goes in iff !!");
 
             String token = header.substring(7);
 
             try {
+                System.out.println("its in try block!!");
+
                 String email = jwtUtil.extractEmail(token);
                 String role = jwtUtil.extractRole(token);
 
@@ -58,6 +64,8 @@ public class JwtFilter extends OncePerRequestFilter {
                 System.out.println("Authorities: " + authorities);
 
             } catch (Exception e) {
+                System.out.println("and catch !!");
+
                 System.out.println("JWT Validation Failed");
                 e.printStackTrace();
             }

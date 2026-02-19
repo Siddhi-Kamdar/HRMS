@@ -39,15 +39,16 @@ const TravelDetail: React.FC = () => {
 
   const handleUpload = async () => {
     console.log("upload clicked");
-    if (!selectedFile){
-        console.log("no file selected");
-        return;
-    } 
+    if (!selectedFile) {
+      console.log("no file selected");
+      return;
+    }
 
     await uploadDocument(
       travelId!,
       selectedFile,
-      user.employeeId
+      user.employeeId,
+      user.role == "EMPLOYEE" ? user.employeeId : undefined
     );
     console.log("upload finished");
 
@@ -84,7 +85,13 @@ const TravelDetail: React.FC = () => {
       <ul>
         {documents.map((doc) => (
           <li key={doc.id}>
-            {doc.documentUrl.split("\\").pop()}
+            <a
+              href={`http://localhost:8080/${doc.documentUrl}`}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {doc.documentUrl.split(/[/\\]/).pop()}
+            </a>
           </li>
         ))}
       </ul>
@@ -101,7 +108,7 @@ const TravelDetail: React.FC = () => {
       />
 
       <button
-        className="btn btn-primary mt-2"
+        className="btn btn-success mt-2"
         onClick={handleUpload}
       >
         Upload

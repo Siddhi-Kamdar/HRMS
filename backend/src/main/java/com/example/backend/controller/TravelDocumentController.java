@@ -38,7 +38,7 @@ public class TravelDocumentController {
         travelDocumentService.uploadDocument(file,travelId,uploadedById,employeeId,documentTypeId);
         return ResponseEntity.ok("Document uploaded successfully");
     }
-    
+
 
     @PreAuthorize("hasAnyAuthority('ROLE_HR','ROLE_MANAGER','ROLE_EMPLOYEE')")
     @GetMapping("/{travelId}")

@@ -24,7 +24,7 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-
+        System.out.println("their is locha here!!");
         http
                 .csrf(csrf -> csrf.disable())
                 .cors(cors -> {})
@@ -35,7 +35,8 @@ public class SecurityConfig {
                                 "/v3/api-docs/**",
                                 "/swagger-ui/**",
                                 "/swagger-ui.html"
-                        ).permitAll()
+//                                , "/uploads/travel-documents/**"
+                        ).permitAll().requestMatchers("/uploads/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .httpBasic(httpBasic -> httpBasic.disable())

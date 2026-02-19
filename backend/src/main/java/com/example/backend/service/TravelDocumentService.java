@@ -64,11 +64,12 @@ public class TravelDocumentService {
 
             DocumentType documentType = documentTypeRepository.findById(documentTypeId)
                     .orElseThrow(() -> new RuntimeException("Document type not found"));
-
+            filePath = "uploads/travel-documents/" + fileName;
             TravelDocument document = new TravelDocument();
             document.setTravel(travel);
             document.setUploadedBy(uploadedBy);
             document.setDocumentType(documentType);
+            System.out.println(filePath);
             document.setDocumentUrl(filePath);
             document.setUploadedDate(new Date());
             document.setDeleted(false);

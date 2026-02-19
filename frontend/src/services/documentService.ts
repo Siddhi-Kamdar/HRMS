@@ -19,7 +19,8 @@ export const getDocumentsByTravel = async (
 export const uploadDocument = async (
   travelId: string,
   file: File,
-  uploadedById: number
+  uploadedById: number,
+  employeeId?: number
 ): Promise<void> => {
 
   const formData = new FormData();
@@ -27,6 +28,10 @@ export const uploadDocument = async (
   formData.append("travelId", travelId);
   formData.append("uploadedById", uploadedById.toString());
   formData.append("documentTypeId", "1");
+
+  if(employeeId){
+    formData.append("employeeId", employeeId.toString());
+  }
   await axiosInstance.post(
     "/api/travel-documents/upload",
     formData,
