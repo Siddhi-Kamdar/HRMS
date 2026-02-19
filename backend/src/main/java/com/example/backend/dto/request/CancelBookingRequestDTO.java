@@ -1,6 +1,6 @@
 package com.example.backend.dto.request;
 
-public class CancelBookingRequest {
+public class CancelBookingRequestDTO {
 
     private int slotId;
     private int cancelledByEmpId;

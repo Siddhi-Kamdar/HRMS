@@ -1,11 +1,11 @@
 package com.example.backend.dto.response;
 
-public class GameResponse {
+public class GameResponseDTO {
 
     private int gameId;
     private String gameName;
 
-    public GameResponse(int gameId, String gameName) {
+    public GameResponseDTO(int gameId, String gameName) {
         this.gameId = gameId;
         this.gameName = gameName;
     }

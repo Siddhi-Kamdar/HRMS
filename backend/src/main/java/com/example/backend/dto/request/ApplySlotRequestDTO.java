@@ -2,7 +2,7 @@ package com.example.backend.dto.request;
 
 import java.util.List;
 
-public class ApplySlotRequest {
+public class ApplySlotRequestDTO {
 
     private int slotId;
     private int leaderEmpId;

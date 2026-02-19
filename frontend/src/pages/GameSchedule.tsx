@@ -6,9 +6,6 @@ import interactionPlugin from "@fullcalendar/interaction";
 import {
   getGames,
   getSlots,
-  applyForSlot,
-  cancelBooking,
-  completeSlot,
   type Game,
   type Slot
 } from "../services/gameService";
@@ -21,8 +18,6 @@ const GameSchedule: React.FC = () => {
   const [slots, setSlots] = useState<Slot[]>([]);
   const navigate = useNavigate();
 
-  const employeeId = Number(localStorage.getItem("employeeId"));
-  const role = localStorage.getItem("role");
 
   useEffect(() => {
     loadGames();
@@ -39,12 +34,12 @@ const GameSchedule: React.FC = () => {
     setSlots(data);
   };
 
-  const refreshSlots = async () => {
-    if (selectedGame) {
-      const data = await getSlots(selectedGame);
-      setSlots(data);
-    }
-  };
+  // const refreshSlots = async () => {
+  //   if (selectedGame) {
+  //     const data = await getSlots(selectedGame);
+  //     setSlots(data);
+  //   }
+  // };
 
   const calendarEvents = slots.map((slot) => {
 
@@ -54,13 +49,13 @@ const GameSchedule: React.FC = () => {
     const getColor = () => {
       switch (slot.status) {
         case "OPEN":
-          return "#28a745";
+          return "#63ec83";
         case "BOOKED":
-          return "#dc3545";
+          return "#c05c66";
         case "COMPLETED":
           return "#6c757d";
         case "CANCLED":
-          return "#fd7e14";
+          return "#ec9e5f";
         default:
           return "#0d6efd";
       }
@@ -87,7 +82,7 @@ const GameSchedule: React.FC = () => {
   return (
     <div className="container mt-4">
 
-      <h3 className="mb-4">Game Scheduling</h3>
+      {/* <h3 className="mb-4">Game Scheduling</h3> */}
 
       <div className="mb-4">
         <label className="form-label">Select Game</label>

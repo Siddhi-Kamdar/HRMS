@@ -5,6 +5,7 @@ select * from booking_master
 select * from booking_queue
 select * from game_slots
 select * from cycle_participation
+select * from jobs
 
 select * from employees
 where password like '%\%'
@@ -27,7 +28,7 @@ and col.column_id = chk.parent_column_id
 -- Posted by Mitio
 -- Retrieved 2026-02-12, License - CC BY-SA 4.0
 
-sp_helpconstraint 'booking_master', 'nomsg'
+sp_helpconstraint 'game_slots', 'nomsg'
 
 delete from booking_queue
 dbcc checkident('hrms_db.dbo.booking_queue', RESEED, 0)
@@ -35,6 +36,7 @@ dbcc checkident('hrms_db.dbo.booking_queue', RESEED, 0)
 ([status]='INQUEUE' OR [status]='CANCLED' OR [status]='PREEMPTED' OR [status]='CONFIRMED')
 ([status]='WAITING' OR [status]='CANCLED' OR [status]='PREEMPTED' OR [status]='CONFIRMED')
 ([status]='WAITING' OR [status]='CANCELED' OR [status]='PREEMPTED' OR [status]='CONFIRMED')
+([status]='CANCLED' OR [status]='COMPLETED' OR [status]='BOOKED' OR [status]='OPEN')
 
 ---------------------------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------------------------

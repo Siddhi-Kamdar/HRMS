@@ -1,15 +1,15 @@
 package com.example.backend.dto.response;
 
-public class SlotResponse {
+public class SlotResponseDTO {
     private int slotId;
     private String slotDate;
     private String startTime;
     private String endTime;
     private String status;
 
-    public SlotResponse(int slotId, String slotDate,
-                        String startTime, String endTime,
-                        String status) {
+    public SlotResponseDTO(int slotId, String slotDate,
+                           String startTime, String endTime,
+                           String status) {
         this.slotId = slotId;
         this.slotDate = slotDate;
         this.startTime = startTime;

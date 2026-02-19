@@ -1,8 +1,8 @@
 package com.example.backend.repository;
 
-import com.example.backend.dto.request.ApplySlotRequest;
-import com.example.backend.dto.response.GameResponse;
-import com.example.backend.dto.response.SlotResponse;
+import com.example.backend.dto.request.ApplySlotRequestDTO;
+import com.example.backend.dto.response.GameResponseDTO;
+import com.example.backend.dto.response.SlotResponseDTO;
 import com.microsoft.sqlserver.jdbc.SQLServerCallableStatement;
 import com.microsoft.sqlserver.jdbc.SQLServerDataTable;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -24,11 +24,11 @@ public class GameSchedulingRepository {
 
     // ---------------- read ----------------
 
-    public List<GameResponse> getGames() {
+    public List<GameResponseDTO> getGames() {
         return jdbcTemplate.query(
                 "EXEC pr_gamemod_get_games",
                 (rs, rowNum) ->
-                        new GameResponse(
+                        new GameResponseDTO(
                                 rs.getInt("game_id"),
                                 rs.getString("game_name")
                         )
@@ -36,12 +36,12 @@ public class GameSchedulingRepository {
     }
 
     //--------------- get available slots -----------
-    public List<SlotResponse> getAvailableSlots(int gameId) {
+    public List<SlotResponseDTO> getAvailableSlots(int gameId) {
         return jdbcTemplate.query(
                 "EXEC pr_gamemod_get_available_slots @game_id = ?",
                 new Object[]{gameId},
                 (rs, rowNum) ->
-                        new SlotResponse(
+                        new SlotResponseDTO(
                                 rs.getInt("slot_id"),
                                 rs.getString("slot_date"),
                                 rs.getString("start_time"),
@@ -53,7 +53,7 @@ public class GameSchedulingRepository {
 
     // ---------------- apply ----------------
 
-    public void applyForSlot(ApplySlotRequest request) {
+    public void applyForSlot(ApplySlotRequestDTO request) {
 
         jdbcTemplate.execute((Connection connection) -> {
 

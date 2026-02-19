@@ -1,9 +1,9 @@
 package com.example.backend.controller;
 
-import com.example.backend.dto.request.ApplySlotRequest;
-import com.example.backend.dto.request.CancelBookingRequest;
-import com.example.backend.dto.response.GameResponse;
-import com.example.backend.dto.response.SlotResponse;
+import com.example.backend.dto.request.ApplySlotRequestDTO;
+import com.example.backend.dto.request.CancelBookingRequestDTO;
+import com.example.backend.dto.response.GameResponseDTO;
+import com.example.backend.dto.response.SlotResponseDTO;
 import com.example.backend.service.GameSchedulingService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,17 +21,17 @@ public class GameSchedulingController {
     }
 
     @GetMapping
-    public List<GameResponse> getGames() {
+    public List<GameResponseDTO> getGames() {
         return service.getGames();
     }
 
     @GetMapping("/{gameId}/slots")
-    public List<SlotResponse> getSlots(@PathVariable int gameId) {
+    public List<SlotResponseDTO> getSlots(@PathVariable int gameId) {
         return service.getAvailableSlots(gameId);
     }
 
     @PostMapping("/apply")
-    public ResponseEntity<String> apply(@RequestBody ApplySlotRequest request) {
+    public ResponseEntity<String> apply(@RequestBody ApplySlotRequestDTO request) {
 
         try{
             service.applyForSlot(request);
@@ -50,7 +50,7 @@ public class GameSchedulingController {
     }
 
     @PostMapping("/cancel")
-    public ResponseEntity<String> cancel(@RequestBody CancelBookingRequest request) {
+    public ResponseEntity<String> cancel(@RequestBody CancelBookingRequestDTO request) {
         service.cancelBooking(request);
         return ResponseEntity.ok("Cancelled successfully");
     }

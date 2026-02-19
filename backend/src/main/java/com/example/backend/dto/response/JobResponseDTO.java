@@ -11,7 +11,8 @@ public class JobResponseDTO {
     private String postedByName;
     private Date postedDate;
 
-    public JobResponseDTO(String jobTitle, String jobSummary, String jobDescriptionUrl, String jobStatus, Date postedDate) {
+    public JobResponseDTO(int jobId, String jobTitle, String jobSummary, String jobDescriptionUrl, String jobStatus, Date postedDate) {
+        this.jobId = jobId;
         this.jobTitle = jobTitle;
         this.jobSummary = jobSummary;
         this.jobDescriptionUrl = jobDescriptionUrl;
