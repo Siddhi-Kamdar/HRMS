@@ -26,6 +26,7 @@ public class TravelModuleController {
     }
 
     // GET BY ID
+    @PreAuthorize("hasAnyAuthority('ROLE_HR','ROLE_MANAGER','ROLE_EMPLOYEE')")
     @GetMapping("/{id}")
     public ResponseEntity<TravelResponseDTO> getTravelById(@PathVariable Long id) {
         return ResponseEntity.ok(travelModuleService.getTravelById(id));

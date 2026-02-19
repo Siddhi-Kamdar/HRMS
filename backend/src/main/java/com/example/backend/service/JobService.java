@@ -25,7 +25,6 @@ public class JobService {
     @Autowired
     private EmployeeRepository employeeRepository;
 
-
     // ---------------- GET ALL ----------------
     public List<JobResponseDTO> getAllJobs() {
         return jobRepository.findAll()
@@ -43,6 +42,7 @@ public class JobService {
     }
 
     @PreAuthorize("hasRole('HR')")
+
     // ---------------- CREATE ----------------
     public JobResponseDTO createJob(Job job, Long postedById) {
 

@@ -1,4 +1,3 @@
-
 package com.example.backend.service;
 
 import com.example.backend.dto.response.TravelDocumentResponseDTO;
@@ -64,7 +63,9 @@ public class TravelDocumentService {
 
             DocumentType documentType = documentTypeRepository.findById(documentTypeId)
                     .orElseThrow(() -> new RuntimeException("Document type not found"));
+
             filePath = "uploads/travel-documents/" + fileName;
+
             TravelDocument document = new TravelDocument();
             document.setTravel(travel);
             document.setUploadedBy(uploadedBy);

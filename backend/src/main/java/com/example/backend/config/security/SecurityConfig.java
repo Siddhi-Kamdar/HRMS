@@ -35,8 +35,8 @@ public class SecurityConfig {
                                 "/v3/api-docs/**",
                                 "/swagger-ui/**",
                                 "/swagger-ui.html"
-//                                , "/uploads/travel-documents/**"
-                        ).permitAll().requestMatchers("/uploads/**").permitAll()
+                                , "/uploads/**"
+                        ).permitAll()
                         .anyRequest().authenticated()
                 )
                 .httpBasic(httpBasic -> httpBasic.disable())

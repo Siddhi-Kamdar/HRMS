@@ -6,6 +6,7 @@ import com.example.backend.dto.response.GameResponseDTO;
 import com.example.backend.dto.response.SlotResponseDTO;
 import com.example.backend.repository.GameSchedulingRepository;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -20,17 +21,17 @@ public class GameSchedulingService {
         this.repository = repository;
     }
 
-//    @PreAuthorize("hasAnyRole('HR','Employee','Manager')")
+    @PreAuthorize("hasAnyAuthority('ROLE_HR','ROLE_MANAGER','ROLE_EMPLOYEE')")
     public List<GameResponseDTO> getGames() {
         return repository.getGames();
     }
 
-//    @PreAuthorize("hasAnyRole('HR','Employee','Manager')")
+    @PreAuthorize("hasAnyAuthority('ROLE_HR','ROLE_MANAGER','ROLE_EMPLOYEE')")
     public List<SlotResponseDTO> getAvailableSlots(int gameId) {
         return repository.getAvailableSlots(gameId);
     }
 
-//    @PreAuthorize("hasAnyRole('HR','Employee','Manager')")
+    @PreAuthorize("hasAnyAuthority('ROLE_HR','ROLE_MANAGER','ROLE_EMPLOYEE')")
     public void applyForSlot(ApplySlotRequestDTO request) {
 
         try{repository.applyForSlot(request);}

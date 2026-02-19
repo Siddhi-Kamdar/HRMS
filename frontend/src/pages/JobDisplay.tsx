@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Container, Row, Col, Card } from 'react-bootstrap';
+import { NavLink, useNavigate } from "react-router-dom";
 
 import {
     getJobs,
@@ -7,8 +8,9 @@ import {
 } from "../services/jobService";
 
 const JobDisplay: React.FC = () => {
-
+    const navigate = useNavigate();
     const [jobs, setJobs] = useState<Job[]>([]);
+    const user = JSON.parse(localStorage.getItem("user") || "{}");
     useEffect(() => {
         loadJobs();
     }, []);
@@ -20,6 +22,16 @@ const JobDisplay: React.FC = () => {
 
     return (
         <Container fluid style={{ marginTop: "20px" }}>
+            {user.role === "HR" && (
+                <div className="d-flex justify-content-end mb-3">
+                    <button
+                        className="btn btn-success"
+                        onClick={() => navigate("")}
+                    >
+                        + Create New Job
+                    </button>
+                </div>
+            )}
             <Row className="gy-3">
                 {
                     jobs.map(job => (
@@ -31,7 +43,7 @@ const JobDisplay: React.FC = () => {
                                     <Card.Text>Job Summary: {job.jobSummary}</Card.Text>
                                     <Card.Text>Job Status: {job.jobStatus}</Card.Text>
                                     <Card.Footer className="bg-white text-center">
-                                            Share                                 
+                                        Share 
                                     </Card.Footer>
                                 </Card.Body>
                             </Card>
