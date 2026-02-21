@@ -1,11 +1,13 @@
 import axiosInstance from "./axiosInstance";
 
+
 export interface Travel {
   travelId: number;
   employeeNames: string[];
   destination: string;
   departDate: string;
   returnDate: string;
+  employeeIds: number[];
 }
 
 export interface CreateTravelRequest {

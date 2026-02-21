@@ -7,6 +7,8 @@ import TravelDisplay from "./pages/TravelDisplay";
 import JobDisplay from "./pages/JobDisplay";
 import TravelCreate from "./pages/TravelCreate";
 import TravelDetail from "./pages/TravelDetail";
+import ExpenseCreate from "./pages/ExpenseCreate";
+import ExpenseDashboard from "./pages/ExpenseDashboard";
 
 
 function App() {
@@ -17,13 +19,21 @@ function App() {
         <Route path="/" element={<Login />} />
 
         <Route path="/app" element={<AppLayout />}>
-          <Route path="travel" element={<TravelDisplay/>} />
+          <Route path="travel" element={<TravelDisplay />} />
           <Route path="achievements" element={<div>Achievements Page</div>} />
           <Route path="games" element={<GameSchedule />} />
-          <Route path="jobs" element={<JobDisplay/>} />
-          <Route path="games/slot/:slotId/book" element={<BookingForm/>}/>
-          <Route path="travel/create" element={<TravelCreate/>}/>
-          <Route path="travel/:travelId" element={<TravelDetail/>}/>
+          <Route path="jobs" element={<JobDisplay />} />
+          <Route path="games/slot/:slotId/book" element={<BookingForm />} />
+          <Route path="travel/create" element={<TravelCreate />} />
+          <Route path="travel/:travelId" element={<TravelDetail />} />
+          <Route
+            path="expense/create/:travelId"
+            element={<ExpenseCreate />}
+          />
+          <Route
+            path="expenses"
+            element={<ExpenseDashboard />}
+          />
         </Route>
 
       </Routes>

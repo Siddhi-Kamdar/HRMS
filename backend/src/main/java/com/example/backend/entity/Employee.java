@@ -2,6 +2,7 @@ package com.example.backend.entity;
 
 import jakarta.persistence.*;
 import java.util.Date;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "employees")
@@ -38,6 +39,7 @@ public class Employee {
     @Column(name = "profile_picture_url")
     private String profilePictureUrl;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "supervisior_id")
     private Employee supervisor;

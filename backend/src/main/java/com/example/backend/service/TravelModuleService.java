@@ -139,9 +139,15 @@ public class TravelModuleService {
                         .map(te -> te.getEmployee().getFullName())
                         .toList();
 
+        List<Integer> employeeIds = travelEmployeeRepository.findByTravel_TravelId(travel.getTravelId())
+                .stream()
+                .map(te -> te.getEmployee().getEmployeeId())
+                .toList();
+
         return new TravelResponseDTO(
                 travel.getTravelId(),
                 employeeNames,
+                employeeIds,
                 travel.getDestination(),
                 travel.getDepartDate(),
                 travel.getReturnDate()

@@ -15,7 +15,8 @@ const AppLayout: React.FC = () => {
     { label: "Travel", route: "travel" },
     { label: "Achievements", route: "achievements" },
     { label: "Games", route: "games" },
-    { label: "Jobs", route: "jobs" }
+    { label: "Jobs", route: "jobs" },
+    ...(user.role === "HR" ? [{label: "Expenses", route: "expenses"}] : [])
   ];
 
   return (

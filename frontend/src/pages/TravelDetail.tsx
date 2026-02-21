@@ -1,24 +1,45 @@
-
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+
 import {
   getTravelById,
   type Travel
 } from "../services/travelService";
+
 import {
   getDocumentsByTravel,
   uploadDocument,
   type TravelDocument
 } from "../services/documentService";
 
+import ExpenseSection from "../pages/ExpenseSection";
+
 const TravelDetail: React.FC = () => {
 
   const { travelId } = useParams();
-  const user = JSON.parse(localStorage.getItem("user") || "{}");
+  const navigate = useNavigate();
 
-  const [travel, setTravel] = useState<Travel | null>(null);
-  const [documents, setDocuments] = useState<TravelDocument[]>([]);
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const user =
+    JSON.parse(localStorage.getItem("user") || "{}");
+
+  const [travel, setTravel] =
+    useState<Travel | null>(null);
+
+  const [documents, setDocuments] =
+    useState<TravelDocument[]>([]);
+
+  const [file, setFile] =
+    useState<File | null>(null);
+
+  const [activeTab, setActiveTab] =
+    useState<"documents" | "expenses">
+      ("documents");
+
+  const [canSubmitExpense,
+    setCanSubmitExpense] =
+    useState(false);
+
+
 
   useEffect(() => {
     if (travelId) {
@@ -27,92 +48,176 @@ const TravelDetail: React.FC = () => {
     }
   }, []);
 
+
+
   const loadTravel = async () => {
-    const data = await getTravelById(travelId!);
+
+    const data =
+      await getTravelById(travelId!);
+
     setTravel(data);
+
+    const loggedUserId = Number(user.employeeId);
+    const assigned = data.employeeIds?.some(
+      (id: number) => Number(id) === loggedUserId
+    )
+    if (assigned || user.role === "HR") {
+      setCanSubmitExpense(true);
+    } else {
+      setCanSubmitExpense(false);
+    }
+    console.log("Travel Employees:", data.employeeIds);
+    console.log("Logged User:", user.employeeId);
+    console.log("Role:", user.role);
   };
 
+
+
   const loadDocuments = async () => {
-    const data = await getDocumentsByTravel(travelId!);
+
+    const data =
+      await getDocumentsByTravel(travelId!);
+
     setDocuments(data);
   };
 
+
+
   const handleUpload = async () => {
-    console.log("upload clicked");
-    if (!selectedFile) {
-      console.log("no file selected");
-      return;
-    }
+
+    if (!file) return;
 
     await uploadDocument(
       travelId!,
-      selectedFile,
+      file,
       user.employeeId,
-      user.role == "EMPLOYEE" ? user.employeeId : undefined
+      user.role === "EMPLOYEE"
+        ? user.employeeId
+        : undefined
     );
-    console.log("upload finished");
 
-    setSelectedFile(null);
+    setFile(null);
+
     loadDocuments();
   };
 
-  if (!travel) return <div>Loading...</div>;
+
+
+  if (!travel)
+    return <div>Loading...</div>;
+
+
 
   return (
+
     <div className="card p-4 shadow-sm">
 
       <h4>Travel Detail</h4>
 
-      <p><strong>Destination:</strong> {travel.destination}</p>
       <p>
-        <strong>Employees:</strong> {travel.employeeNames?.join(", ")}
+        <strong>Destination:</strong>
+        {travel.destination}
       </p>
+
       <p>
-        <strong>Departure:</strong>{" "}
-        {new Date(travel.departDate).toLocaleDateString()}
+        <strong>Employees:</strong>
+        {travel.employeeNames?.join(", ")}
       </p>
+
       <p>
-        <strong>Return:</strong>{" "}
-        {new Date(travel.returnDate).toLocaleDateString()}
+        <strong>Departure:</strong>
+        {new Date(
+          travel.departDate
+        ).toLocaleDateString()}
+      </p>
+
+      <p>
+        <strong>Return:</strong>
+        {new Date(
+          travel.returnDate
+        ).toLocaleDateString()}
       </p>
 
       <hr />
 
-      <h5>Documents</h5>
+      <div className="mb-3">
 
-      {documents.length === 0 && <p>No documents uploaded yet.</p>}
+        <button
+          className={`btn me-2 ${activeTab === "documents"
+            ? "btn-success"
+            : "btn-outline-success"
+            }`}
+          onClick={() =>
+            setActiveTab("documents")}
+        >
+          Documents
+        </button>
 
-      <ul>
-        {documents.map((doc) => (
-          <li key={doc.id}>
-            <a
-              href={`http://localhost:8080/${doc.documentUrl}`}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              {doc.documentUrl.split(/[/\\]/).pop()}
-            </a>
-          </li>
-        ))}
-      </ul>
+        {canSubmitExpense && (
+          <button
+            className="btn btn-primary mt-3"
+            onClick={() =>
+              navigate(`/app/expense/create/${travel.travelId}`)
+            }
+          >
+            + Add Expense
+          </button>
+        )}
 
-      <hr />
 
-      <h5>Upload Document</h5>
+      </div>
 
-      <input
-        type="file"
-        onChange={(e) =>
-          setSelectedFile(e.target.files?.[0] || null)
-        }
-      />
 
-      <button
-        className="btn btn-success mt-2"
-        onClick={handleUpload}
-      >
-        Upload
-      </button>
+
+      {activeTab === "documents" && (
+
+        <div>
+
+          <ul>
+            {documents.map(doc => (
+              <li key={doc.id}>
+                <a
+                  href={`http://localhost:8080/${doc.documentUrl}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {doc.documentUrl
+                    .split(/[/\\]/)
+                    .pop()}
+                </a>
+              </li>
+            ))}
+          </ul>
+
+          <input
+            type="file"
+            onChange={e =>
+              setFile(
+                e.target.files?.[0] || null
+              )}
+          />
+
+          <button
+            className="btn btn-success mt-2"
+            onClick={handleUpload}
+          >
+            Upload
+          </button>
+
+        </div>
+
+      )}
+
+
+
+      {activeTab === "expenses"
+        && canSubmitExpense && (
+
+          <ExpenseSection
+            travelId={travelId!}
+          />
+
+        )}
 
     </div>
   );

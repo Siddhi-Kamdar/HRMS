@@ -39,6 +39,8 @@ public class ExpenseService {
     @Autowired
     private LoggedInUserService loggedInUserService;
 
+    @Autowired
+    private TravelEmployeeRepository travelEmployeeRepository;
 
 
     public ExpensesDetail createExpense(
@@ -54,6 +56,8 @@ public class ExpenseService {
         Travel travel =
                 travelRepo.findById(travelId.longValue())
                         .orElseThrow();
+
+
 
         Date today = new Date();
 
@@ -73,6 +77,14 @@ public class ExpenseService {
 
         Employee employee = getLoggedInEmployee();
 
+        boolean assigned = travelEmployeeRepository.findByTravel_TravelId(travelId)
+                .stream().anyMatch(te -> te.getEmployee().
+                        getEmployeeId() == employee.getEmployeeId());
+
+        if(!assigned){
+            throw new RuntimeException("you are not assinged to this travel");
+        }
+
         ExpensesDetail expense = new ExpensesDetail();
         expense.setTravel(travel);
         expense.setEmployee(employee);
@@ -85,30 +97,34 @@ public class ExpenseService {
         ExpensesDetail savedExpense =
                 expenseRepo.save(expense);
 
-        employeeRepository.findAll()
-                .stream()
-                .filter(e ->
-                        e.getRole()
-                                .getRoleName()
-                                .equalsIgnoreCase("HR"))
-                .forEach(hrEmployee -> {
-
-                    notificationService.create(
-                            hrEmployee,
-                            "New Expense Submitted",
-                            employee.getFullName()
-                                    + " submitted expense for "
-                                    + travel.getDestination()
-                    );
-
-                    emailService.sendMail(
-                            hrEmployee.getEmail(),
-                            "New Expense Submitted",
-                            employee.getFullName()
-                                    + " submitted expense for "
-                                    + travel.getDestination()
-                    );
-                });
+//        employeeRepository.findAll()
+//                .stream()
+//                .filter(e ->
+//                        e.getRole()
+//                                .getRoleName()
+//                                .equalsIgnoreCase("HR"))
+//                .forEach(hrEmployee -> {
+//
+//                    notificationService.create(
+//                            hrEmployee,
+//                            "New Expense Submitted",
+//                            employee.getFullName()
+//                                    + " submitted expense for "
+//                                    + travel.getDestination()
+//                    );
+//    try{
+//        emailService.sendMail(
+//                hrEmployee.getEmail(),
+//                "New Expense Submitted",
+//                employee.getFullName()
+//                        + " submitted expense for "
+//                        + travel.getDestination()
+//        );
+//    }catch (Exception e){
+//        System.out.println("mail sending failed!! ");
+//    }
+//
+//                });
 
         return savedExpense;
     }
@@ -120,7 +136,7 @@ public class ExpenseService {
             Integer hrId){
 
 
-        saveReview(expenseId,hrId,2,null);
+        saveReview(expenseId,hrId,3,null);
     }
 
 
@@ -133,7 +149,7 @@ public class ExpenseService {
         if(remark==null || remark.isEmpty())
             throw new RuntimeException("Remark required");
 
-        saveReview(expenseId,hrId,3,remark);
+        saveReview(expenseId,hrId,4,remark);
     }
 
 
@@ -170,22 +186,25 @@ public class ExpenseService {
         Employee expenseOwner =
                 expense.getEmployee();
 
-        notificationService.create(
-                expenseOwner,
-                "Expense Status Updated",
-                "Your expense is "
-                        + status.getApprovalStatusName()
-        );
-
-        emailService.sendMail(
-                expenseOwner.getEmail(),
-                "Expense Status Updated",
-                "Your expense is "
-                        + status.getApprovalStatusName()
-                        + (comment != null
-                        ? "\nRemark: " + comment
-                        : "")
-        );
+//        notificationService.create(
+//                expenseOwner,
+//                "Expense Status Updated",
+//                "Your expense is "
+//                        + status.getApprovalStatusName()
+//        );
+//    try{
+//        emailService.sendMail(
+//                expenseOwner.getEmail(),
+//                "Expense Status Updated",
+//                "Your expense is "
+//                        + status.getApprovalStatusName()
+//                        + (comment != null
+//                        ? "\nRemark: " + comment
+//                        : "")
+//        );
+//    }catch (Exception e){
+//        System.out.println("mail sending failed!! ");
+//    }
     }
 
 
