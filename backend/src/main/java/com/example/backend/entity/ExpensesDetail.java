@@ -1,56 +1,55 @@
 package com.example.backend.entity;
 
-import com.example.backend.entity.ExpensesType;
-import com.example.backend.entity.Travel;
 import jakarta.persistence.*;
+import java.math.BigDecimal;
+import java.util.Date;
 
 @Entity
 @Table(name = "expenses_detail")
 public class ExpensesDetail {
+
     @Id
-    @JoinColumn(name = "expense_id", nullable = false)
-    private int expenseId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "expense_id")
+    private Integer expenseId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "expense_type_id", nullable = false)
-    private ExpensesType expenseType;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "travel_id", nullable = false)
+    @ManyToOne
+    @JoinColumn(name = "travel_id")
     private Travel travel;
 
-    @Column(nullable = false, length = 18)
-    private String amount;
+    @ManyToOne
+    @JoinColumn(name = "expense_type_id")
+    private ExpensesType expenseType;
 
-    @Column(length = 400)
+    @ManyToOne
+    @JoinColumn(name = "employee_id")
+    private Employee employee;
+
+    @Column(name = "amount")
+    private BigDecimal amount;
+
     private String comment;
 
-    @Column(name = "proof_url", nullable = false, length = 300)
+    @Column(name = "proof_url")
     private String proofUrl;
 
-    @Column(name = "upload_date", nullable = false)
-    private String uploadDate;
+    @Temporal(TemporalType.DATE)
+    @Column(name = "expense_date")
+    private Date expenseDate;
 
-    @Column(name = "expense_date", nullable = false)
-    private String expenseDate;
+    @Temporal(TemporalType.DATE)
+    @Column(name = "upload_date")
+    private Date uploadDate;
 
-    @Column(name = "is_deleted", nullable = false)
-    private String isDeleted;
+    @Column(name = "is_deleted")
+    private Boolean isDeleted = false;
 
-    public int getExpenseId() {
+    public Integer getExpenseId() {
         return expenseId;
     }
 
-    public void setExpenseId(int expenseId) {
+    public void setExpenseId(Integer expenseId) {
         this.expenseId = expenseId;
-    }
-
-    public ExpensesType getExpenseType() {
-        return expenseType;
-    }
-
-    public void setExpenseType(ExpensesType expenseType) {
-        this.expenseType = expenseType;
     }
 
     public Travel getTravel() {
@@ -61,11 +60,27 @@ public class ExpensesDetail {
         this.travel = travel;
     }
 
-    public String getAmount() {
+    public ExpensesType getExpenseType() {
+        return expenseType;
+    }
+
+    public void setExpenseType(ExpensesType expenseType) {
+        this.expenseType = expenseType;
+    }
+
+    public Employee getEmployee() {
+        return employee;
+    }
+
+    public void setEmployee(Employee employee) {
+        this.employee = employee;
+    }
+
+    public BigDecimal getAmount() {
         return amount;
     }
 
-    public void setAmount(String amount) {
+    public void setAmount(BigDecimal amount) {
         this.amount = amount;
     }
 
@@ -85,27 +100,27 @@ public class ExpensesDetail {
         this.proofUrl = proofUrl;
     }
 
-    public String getUploadDate() {
-        return uploadDate;
-    }
-
-    public void setUploadDate(String uploadDate) {
-        this.uploadDate = uploadDate;
-    }
-
-    public String getExpenseDate() {
+    public Date getExpenseDate() {
         return expenseDate;
     }
 
-    public void setExpenseDate(String expenseDate) {
+    public void setExpenseDate(Date expenseDate) {
         this.expenseDate = expenseDate;
     }
 
-    public String getIsDeleted() {
+    public Date getUploadDate() {
+        return uploadDate;
+    }
+
+    public void setUploadDate(Date uploadDate) {
+        this.uploadDate = uploadDate;
+    }
+
+    public Boolean getDeleted() {
         return isDeleted;
     }
 
-    public void setIsDeleted(String isDeleted) {
-        this.isDeleted = isDeleted;
+    public void setDeleted(Boolean deleted) {
+        isDeleted = deleted;
     }
 }

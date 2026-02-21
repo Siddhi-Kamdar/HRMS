@@ -1,44 +1,44 @@
+
 package com.example.backend.entity;
 
-import com.example.backend.entity.ApprovalStatus;
-import com.example.backend.entity.Employee;
-import com.example.backend.entity.ExpensesDetail;
 import jakarta.persistence.*;
+import java.util.Date;
 
 @Entity
-@Table(name = "expenses_review")
+@Table(name="expenses_review")
 public class ExpensesReview {
-    @Id
-    @Column(name = "expense_review_id", nullable = false)
-    private int expenseReviewId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "expense_id", nullable = false)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name="expense_review_id")
+    private Integer id;
+
+    @ManyToOne
+    @JoinColumn(name="expense_id")
     private ExpensesDetail expense;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "reviewed_by_id", nullable = false)
+    @ManyToOne
+    @JoinColumn(name="reviewed_by_id")
     private Employee reviewedBy;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "review_status_id", nullable = false)
-    private ApprovalStatus reviewStatus;
+    @ManyToOne
+    @JoinColumn(name="review_status_id")
+    private ApprovalStatus status;
 
-    @Column(length = 400)
     private String comment;
 
-    @Column(nullable = false)
-    private String timestamp;
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date timestamp = new Date();
 
-    @Column(name = "is_deleted")
-    private String isDeleted;
+    @Column(name="is_deleted")
+    private Boolean isDeleted=false;
 
-    public int getExpenseReviewId() {
-        return expenseReviewId;
+    public Integer getId() {
+        return id;
     }
 
-    public void setExpenseReviewId(int expenseReviewId) {
-        this.expenseReviewId = expenseReviewId;
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public ExpensesDetail getExpense() {
@@ -57,12 +57,12 @@ public class ExpensesReview {
         this.reviewedBy = reviewedBy;
     }
 
-    public ApprovalStatus getReviewStatus() {
-        return reviewStatus;
+    public ApprovalStatus getStatus() {
+        return status;
     }
 
-    public void setReviewStatus(ApprovalStatus reviewStatus) {
-        this.reviewStatus = reviewStatus;
+    public void setStatus(ApprovalStatus status) {
+        this.status = status;
     }
 
     public String getComment() {
@@ -73,19 +73,19 @@ public class ExpensesReview {
         this.comment = comment;
     }
 
-    public String getTimestamp() {
+    public Date getTimestamp() {
         return timestamp;
     }
 
-    public void setTimestamp(String timestamp) {
+    public void setTimestamp(Date timestamp) {
         this.timestamp = timestamp;
     }
 
-    public String getIsDeleted() {
+    public Boolean getDeleted() {
         return isDeleted;
     }
 
-    public void setIsDeleted(String isDeleted) {
-        this.isDeleted = isDeleted;
+    public void setDeleted(Boolean deleted) {
+        isDeleted = deleted;
     }
 }

@@ -4,20 +4,22 @@ import jakarta.persistence.*;
 
 @Entity
 @Table(name = "approval_statuses")
-public class ApprovalStatus{
-    @Id
-    @Column(name = "approval_status_id", nullable = false)
-    private int approval_status_id;
+public class ApprovalStatus {
 
-    @Column(name = "approval_status_name", nullable = false, length = 50)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "approval_status_id")
+    private Integer approvalStatusId;
+
+    @Column(name = "approval_status_name")
     private String approvalStatusName;
 
-    public int getApproval_status_id() {
-        return approval_status_id;
+    public Integer getApprovalStatusId() {
+        return approvalStatusId;
     }
 
-    public void setApproval_status_id(int approval_status_id) {
-        this.approval_status_id = approval_status_id;
+    public void setApprovalStatusId(Integer approvalStatusId) {
+        this.approvalStatusId = approvalStatusId;
     }
 
     public String getApprovalStatusName() {
