@@ -1,5 +1,6 @@
 package com.example.backend.controller;
 
+import com.example.backend.dto.response.OrgChartResponseDTO;
 import com.example.backend.dto.response.OrganizationalHierarchyDTO;
 import com.example.backend.dto.response.SlotResponseDTO;
 import com.example.backend.service.OrganizationalHierarchyService;
@@ -19,7 +20,7 @@ public class OrganizationalHierarchyController {
         this.service = service;
     }
     @GetMapping("/{empId}/hierarchy")
-    public List<OrganizationalHierarchyDTO> getHierarchy(@PathVariable int empId) {
+    public OrgChartResponseDTO getHierarchy(@PathVariable int empId) {
         return service.getHierarchy(empId);
     }
 }

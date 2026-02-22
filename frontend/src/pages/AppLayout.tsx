@@ -16,7 +16,7 @@ const AppLayout: React.FC = () => {
     { label: "Achievements", route: "achievements" },
     { label: "Games", route: "games" },
     { label: "Jobs", route: "jobs" },
-    ...(user.role === "HR" ? [{label: "Expenses", route: "expenses"}] : [])
+    ...(user.role === "HR" ? [{ label: "Expenses", route: "expenses" }] : [])
   ];
 
   return (
@@ -25,13 +25,20 @@ const AppLayout: React.FC = () => {
       <nav className="navbar navbar-expand bg-white shadow-sm px-4">
         <span className="navbar-brand fw-bold">HRMS</span>
 
+
         <div className="ms-auto d-flex align-items-center gap-3">
-          <div
-            className="rounded-circle bg-success text-white d-flex justify-content-center align-items-center"
-            style={{ width: "36px", height: "36px" }}
+          <button
+            onClick={() => navigate(`org-chart/${user.employeeId}`)}
+            style={{ border: "none", background: "transparent" }}
+            title="View Organization Chart"
           >
-            {user?.fullName?.charAt(0) || "U"}
-          </div>
+            <div
+              className="rounded-circle bg-success text-white d-flex justify-content-center align-items-center"
+              style={{ width: "36px", height: "36px" }}
+            >
+              {user?.fullName?.charAt(0) || "U"}
+            </div>
+          </button>
 
           <span className="fw-semibold">
             {user?.fullName || "User"}
@@ -53,10 +60,9 @@ const AppLayout: React.FC = () => {
               key={module.route}
               to={module.route}
               className={({ isActive }) =>
-                `text-decoration-none fw-semibold pb-2 ${
-                  isActive
-                    ? "text-success border-bottom border-2 border-success"
-                    : "text-dark"
+                `text-decoration-none fw-semibold pb-2 ${isActive
+                  ? "text-success border-bottom border-2 border-success"
+                  : "text-dark"
                 }`
               }
             >
