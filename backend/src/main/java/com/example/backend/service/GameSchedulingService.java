@@ -27,8 +27,8 @@ public class GameSchedulingService {
     }
 
     @PreAuthorize("hasAnyAuthority('ROLE_HR','ROLE_MANAGER','ROLE_EMPLOYEE')")
-    public List<SlotResponseDTO> getAvailableSlots(int gameId) {
-        return repository.getAvailableSlots(gameId);
+    public List<SlotResponseDTO> getAvailableSlots(int gameId, int empId) {
+        return repository.getAvailableSlots(gameId, empId);
     }
 
     @PreAuthorize("hasAnyAuthority('ROLE_HR','ROLE_MANAGER','ROLE_EMPLOYEE')")

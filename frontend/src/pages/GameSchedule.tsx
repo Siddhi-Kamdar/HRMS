@@ -27,10 +27,10 @@ const GameSchedule: React.FC = () => {
     const data = await getGames();
     setGames(data);
   };
-
+  const user = JSON.parse(localStorage.getItem("user")|| "{}");
   const handleGameSelect = async (gameId: number) => {
     setSelectedGame(gameId);
-    const data = await getSlots(gameId);
+    const data = await getSlots(gameId, user.employeeId);
     setSlots(data);
   };
 
@@ -40,41 +40,65 @@ const GameSchedule: React.FC = () => {
   //     setSlots(data);
   //   }
   // };
-
   const calendarEvents = slots.map((slot) => {
 
     const start = `${slot.slotDate}T${slot.startTime}`;
     const end = `${slot.slotDate}T${slot.endTime}`;
 
     const getColor = () => {
+
+      if (slot.isMySlot) {
+        return "#b6d722";
+      }
+
       switch (slot.status) {
         case "OPEN":
           return "#63ec83";
+
         case "BOOKED":
           return "#c05c66";
+
         case "COMPLETED":
           return "#6c757d";
+
         case "CANCLED":
           return "#ec9e5f";
+
         default:
           return "#0d6efd";
       }
     };
 
+    const title =
+      slot.status === "OPEN"
+        ? "Available"
+        : slot.isMySlot
+          ? `Your Slot`
+          : `Booked: ${slot.bookedBy ?? "Employee"}`;
+
+    console.log(slot);
     return {
       id: slot.slotId.toString(),
-      title: `${slot.startTime} - ${slot.endTime}`,
+      title,
       start,
       end,
       backgroundColor: getColor(),
       borderColor: getColor(),
+
       extendedProps: {
-        status: slot.status
+        status: slot.status,
+        bookedBy: slot.bookedBy,
+        isMySlot: slot.isMySlot
       }
     };
   });
 
-  const handleEventClick = (info: any) => {
+ const handleEventClick = (info: any) => {
+
+  const status = info.event.extendedProps.status;
+
+  if (status === "COMPLETED") return;
+
   const slotId = Number(info.event.id);
   navigate(`/app/games/slot/${slotId}/book`);
 };
@@ -109,11 +133,21 @@ const GameSchedule: React.FC = () => {
             right: ""
           }}
           allDaySlot={false}
+          slotDuration="00:30:00"
           slotMinTime="00:00:00"
           slotMaxTime="24:00:00"
+          height="90vh"
+          slotLabelInterval="01:00"
           events={calendarEvents}
           eventClick={handleEventClick}
-          height="auto"
+          eventDidMount={(info) => {
+            const bookedBy = info.event.extendedProps.bookedBy;
+
+            if (bookedBy) {
+              info.el.title = `Booked by: ${bookedBy}`;
+            }
+          }}
+          expandRows={true}
         />
       )}
     </div>

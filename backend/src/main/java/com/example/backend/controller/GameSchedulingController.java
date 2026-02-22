@@ -26,8 +26,8 @@ public class GameSchedulingController {
     }
 
     @GetMapping("/{gameId}/slots")
-    public List<SlotResponseDTO> getSlots(@PathVariable int gameId) {
-        return service.getAvailableSlots(gameId);
+    public List<SlotResponseDTO> getSlots(@PathVariable int gameId, @RequestParam int empId) {
+        return service.getAvailableSlots(gameId, empId);
     }
 
     @PostMapping("/apply")

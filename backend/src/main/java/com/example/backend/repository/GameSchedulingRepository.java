@@ -36,17 +36,19 @@ public class GameSchedulingRepository {
     }
 
     //--------------- get available slots -----------
-    public List<SlotResponseDTO> getAvailableSlots(int gameId) {
+    public List<SlotResponseDTO> getAvailableSlots(int gameId, int empId) {
         return jdbcTemplate.query(
-                "EXEC pr_gamemod_get_available_slots @game_id = ?",
-                new Object[]{gameId},
+                "EXEC pr_gamemod_get_available_slots ?,?",
+                new Object[]{gameId, empId},
                 (rs, rowNum) ->
                         new SlotResponseDTO(
                                 rs.getInt("slot_id"),
                                 rs.getString("slot_date"),
                                 rs.getString("start_time"),
                                 rs.getString("end_time"),
-                                rs.getString("status")
+                                rs.getString("status"),
+                                rs.getString("booked_by"),
+                                rs.getBoolean("is_my_slot")
                         )
         );
     }
