@@ -145,7 +145,6 @@ const SlotDetailPage: React.FC = () => {
           </button>
         )}
 
-        {/* CANCEL BUTTON */}
         {slot.myStatus === "CONFIRMED" && (
 
           <button
