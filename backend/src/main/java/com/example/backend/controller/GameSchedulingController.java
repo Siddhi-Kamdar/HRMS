@@ -3,6 +3,7 @@ package com.example.backend.controller;
 import com.example.backend.dto.request.ApplySlotRequestDTO;
 import com.example.backend.dto.request.CancelBookingRequestDTO;
 import com.example.backend.dto.response.GameResponseDTO;
+import com.example.backend.dto.response.SlotDetailDTO;
 import com.example.backend.dto.response.SlotResponseDTO;
 import com.example.backend.service.GameSchedulingService;
 import org.springframework.http.ResponseEntity;
@@ -59,6 +60,14 @@ public class GameSchedulingController {
     public ResponseEntity<String> complete(@PathVariable int slotId) {
         service.completeSlot(slotId);
         return ResponseEntity.ok("Slot completed successfully");
+    }
+
+    @GetMapping("/slot/{slotId}")
+    public SlotDetailDTO getSlotDetail(
+            @PathVariable int slotId,
+            @RequestParam int empId){
+
+        return service.getSlotDetail(slotId, empId);
     }
 
 }

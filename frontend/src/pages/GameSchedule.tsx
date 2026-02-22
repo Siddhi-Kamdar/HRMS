@@ -6,6 +6,7 @@ import interactionPlugin from "@fullcalendar/interaction";
 import {
   getGames,
   getSlots,
+  cancelBooking,
   type Game,
   type Slot
 } from "../services/gameService";
@@ -45,8 +46,12 @@ const GameSchedule: React.FC = () => {
     const start = `${slot.slotDate}T${slot.startTime}`;
     const end = `${slot.slotDate}T${slot.endTime}`;
 
+    const slotStartTime = new Date(start);
+    const isExpired = slotStartTime.getTime() < new Date().getTime();
     const getColor = () => {
-
+      if(isExpired){
+        return "#6c757d"
+      }
       if (slot.isMySlot) {
         return "#b6d722";
       }
@@ -70,11 +75,12 @@ const GameSchedule: React.FC = () => {
     };
 
     const title =
+    isExpired ? "Expired" :
       slot.status === "OPEN"
         ? "Available"
         : slot.isMySlot
           ? `Your Slot`
-          : `Booked: ${slot.bookedBy ?? "Employee"}`;
+          : `Booked By: ${slot.bookedBy ?? "Employee"} (Join Queue)`;
 
     console.log(slot);
     return {
@@ -88,21 +94,70 @@ const GameSchedule: React.FC = () => {
       extendedProps: {
         status: slot.status,
         bookedBy: slot.bookedBy,
-        isMySlot: slot.isMySlot
+        isMySlot: slot.isMySlot,
+        isExpired
       }
     };
   });
 
- const handleEventClick = (info: any) => {
+//  const handleEventClick = (info: any) => {
 
-  const status = info.event.extendedProps.status;
+//   const slotId = Number(info.event.id);
 
-  if (status === "COMPLETED") return;
+//   const {
+//     status,
+//     isMySlot
+//   } = info.event.extendedProps;
 
+//   if (status === "COMPLETED") return;
+
+//   if (isMySlot && status === "BOOKED") {
+
+//     const confirmCancel =
+//       window.confirm(
+//         "Cancel your booked slot?"
+//       );
+
+//     if (!confirmCancel) return;
+
+//     cancelBooking({
+//       slotId,
+//       cancelledByEmpId: user.employeeId
+//     })
+//     .then(async () => {
+
+//       alert("Slot cancelled");
+
+//       if (selectedGame) {
+//         const data =
+//           await getSlots(
+//             selectedGame,
+//             user.employeeId
+//           );
+//         setSlots(data);
+//       }
+
+//     })
+//     .catch(() =>
+//       alert("Cancel failed")
+//     );
+
+//     return;
+//   }
+
+//   navigate(`/app/games/slot/${slotId}/book`);
+// };
+
+const handleEventClick = (info: any) => {
+
+  const {isExpired} = info.event.extendedProps;
   const slotId = Number(info.event.id);
-  navigate(`/app/games/slot/${slotId}/book`);
-};
+  const { status } = info.event.extendedProps;
 
+  if (status === "COMPLETED" || isExpired ) return;
+
+  navigate(`/app/games/slot/${slotId}`);
+};
   return (
     <div className="container mt-4">
 

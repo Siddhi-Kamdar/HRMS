@@ -3,6 +3,7 @@ package com.example.backend.service;
 import com.example.backend.dto.request.ApplySlotRequestDTO;
 import com.example.backend.dto.request.CancelBookingRequestDTO;
 import com.example.backend.dto.response.GameResponseDTO;
+import com.example.backend.dto.response.SlotDetailDTO;
 import com.example.backend.dto.response.SlotResponseDTO;
 import com.example.backend.repository.GameSchedulingRepository;
 import org.springframework.http.HttpStatus;
@@ -54,6 +55,14 @@ public class GameSchedulingService {
 //    @PreAuthorize("hasAnyRole('HR','Employee','Manager')")
     public void completeSlot(int slotId) {
         repository.completeSlot(slotId);
+    }
+
+
+    public SlotDetailDTO getSlotDetail(
+            int slotId,
+            int empId){
+
+        return repository.getSlotDetail(slotId, empId);
     }
 
 }

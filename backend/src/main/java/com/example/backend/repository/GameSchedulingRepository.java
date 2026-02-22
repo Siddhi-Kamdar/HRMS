@@ -2,6 +2,7 @@ package com.example.backend.repository;
 
 import com.example.backend.dto.request.ApplySlotRequestDTO;
 import com.example.backend.dto.response.GameResponseDTO;
+import com.example.backend.dto.response.SlotDetailDTO;
 import com.example.backend.dto.response.SlotResponseDTO;
 import com.microsoft.sqlserver.jdbc.SQLServerCallableStatement;
 import com.microsoft.sqlserver.jdbc.SQLServerDataTable;
@@ -99,6 +100,24 @@ public class GameSchedulingRepository {
         jdbcTemplate.update(
                 "EXEC pr_gamemod_complete_slot @slot_id = ?",
                 slotId
+        );
+    }
+
+    public SlotDetailDTO getSlotDetail(
+            int slotId,
+            int empId){
+
+        return jdbcTemplate.queryForObject(
+                "EXEC pr_gamemod_get_slot_detail ?,?",
+                new Object[]{slotId,empId},
+                (rs,row)-> new SlotDetailDTO(
+                        rs.getString("game_name"),
+                        rs.getString("slot_date"),
+                        rs.getString("start_time"),
+                        rs.getString("end_time"),
+                        rs.getString("status"),
+                        rs.getString("my_status")
+                )
         );
     }
 

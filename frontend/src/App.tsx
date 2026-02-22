@@ -10,6 +10,7 @@ import TravelDetail from "./pages/TravelDetail";
 import ExpenseCreate from "./pages/ExpenseCreate";
 import ExpenseDashboard from "./pages/ExpenseDashboard";
 import OrgChart from "./pages/OrgChart";
+import SlotDetailPage from "./pages/SlotDetailPage";
 
 
 function App() {
@@ -35,7 +36,11 @@ function App() {
             path="expenses"
             element={<ExpenseDashboard />}
           />
-        <Route path="org-chart/:empId" element={<OrgChart />} />
+          <Route path="org-chart/:empId" element={<OrgChart />} />
+          <Route
+            path="games/slot/:slotId"
+            element={<SlotDetailPage />}
+          />
         </Route>
 
       </Routes>

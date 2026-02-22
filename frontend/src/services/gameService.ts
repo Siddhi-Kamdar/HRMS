@@ -12,11 +12,20 @@ export type Slot = {
   endTime: string;
   status: string;
   bookedBy?: string;
-  mySlot?: boolean;
+  isMySlot?: boolean;
 };
 export interface Employee {
   employeeId: number;
   fullName: string;
+}
+
+export interface SlotDetail {
+  gameName: string;
+  slotDate: string;
+  startTime: string;
+  endTime: string;
+  status: string;
+  myStatus: string;
 }
 
 export const getEmployees = async (): Promise<Employee[]> => {
@@ -51,3 +60,14 @@ export const cancelBooking = async (data: {
 export const completeSlot = async (slotId: number) => {
   return axiosInstance.post(`/api/games/${slotId}/complete`);
 };
+
+export const getSlotDetail = async (
+  slotId: number,
+  empId: number
+): Promise<SlotDetail> => {
+  const res = await axiosInstance.get(
+    `/api/games/slot/${slotId}`,
+    {params: {empId}}
+  );
+  return res.data;
+}
