@@ -13,7 +13,7 @@ const AppLayout: React.FC = () => {
 
   const modules = [
     { label: "Travel", route: "travel" },
-    { label: "Achievements", route: "achievements" },
+    // { label: "Achievements", route: "achievements" },
     { label: "Games", route: "games" },
     { label: "Jobs", route: "jobs" },
     ...(user.role === "HR" ? [{ label: "Expenses", route: "expenses" }] : [])

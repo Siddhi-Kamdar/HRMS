@@ -8,7 +8,9 @@ import {
   getSlots,
   cancelBooking,
   type Game,
-  type Slot
+  type Slot,
+  getSlotDetail,
+  completeSlot
 } from "../services/gameService";
 import { useNavigate } from "react-router-dom";
 
@@ -47,7 +49,12 @@ const GameSchedule: React.FC = () => {
     const end = `${slot.slotDate}T${slot.endTime}`;
 
     const slotStartTime = new Date(start);
-    const isExpired = slotStartTime.getTime() < new Date().getTime();
+    const slotEndTime = new Date(end);
+    const isExpired = slot.status === "COMPLETED" || slot.status === "BOOKED" ? false : slotStartTime.getTime() < new Date().getTime();
+
+    if(slot.status === "BOOKED" && slotEndTime.getTime() < new Date().getTime()){
+      completeSlot(slot.slotId);
+    }
     const getColor = () => {
       if(isExpired){
         return "#6c757d"
@@ -64,7 +71,7 @@ const GameSchedule: React.FC = () => {
           return "#c05c66";
 
         case "COMPLETED":
-          return "#6c757d";
+          return "#1768b0";
 
         case "CANCLED":
           return "#ec9e5f";

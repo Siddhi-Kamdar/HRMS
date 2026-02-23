@@ -48,9 +48,9 @@ public class ExpenseService {
             Integer expenseTypeId,
             BigDecimal amount,
             String comment,
-            String proofUrl){
+            String proofUrl) {
 
-        if(proofUrl == null || proofUrl.isEmpty())
+        if (proofUrl == null || proofUrl.isEmpty())
             throw new RuntimeException("Proof required");
 
         Travel travel =
@@ -58,10 +58,9 @@ public class ExpenseService {
                         .orElseThrow();
 
 
-
         Date today = new Date();
 
-        if(today.before(travel.getDepartDate()))
+        if (today.before(travel.getDepartDate()))
             throw new RuntimeException(
                     "Expense not allowed before travel start");
 
@@ -69,9 +68,9 @@ public class ExpenseService {
                 today.getTime()
                         - travel.getReturnDate().getTime();
 
-        long days = diff/(1000*60*60*24);
+        long days = diff / (1000 * 60 * 60 * 24);
 
-        if(days > 10)
+        if (days > 10)
             throw new RuntimeException(
                     "Expense submission window closed");
 
@@ -81,7 +80,7 @@ public class ExpenseService {
                 .stream().anyMatch(te -> te.getEmployee().
                         getEmployeeId() == employee.getEmployeeId());
 
-        if(!assigned){
+        if (!assigned) {
             throw new RuntimeException("you are not assinged to this travel");
         }
 
@@ -112,17 +111,19 @@ public class ExpenseService {
 //                                    + " submitted expense for "
 //                                    + travel.getDestination()
 //                    );
-//    try{
-//        emailService.sendMail(
-//                hrEmployee.getEmail(),
-//                "New Expense Submitted",
-//                employee.getFullName()
-//                        + " submitted expense for "
-//                        + travel.getDestination()
-//        );
-//    }catch (Exception e){
-//        System.out.println("mail sending failed!! ");
-//    }
+//                    try {
+//                        emailService.sendMail(
+//                                hrEmployee.getEmail(),
+//                                "New Expense Submitted",
+//                                employee.getFullName()
+//                                        + " submitted expense for "
+//                                        + travel.getDestination()
+//                        );
+//                    } catch (Exception e) {
+//                        System.out.println("mail sending failed!! ");
+//                        e.printStackTrace();
+//                        System.out.println(e.getMessage());
+//                    }
 //
 //                });
 
@@ -130,35 +131,32 @@ public class ExpenseService {
     }
 
 
-
     public void approveExpense(
             Integer expenseId,
-            Integer hrId){
+            Integer hrId) {
 
 
-        saveReview(expenseId,hrId,3,null);
+        saveReview(expenseId, hrId, 3, null);
     }
-
 
 
     public void rejectExpense(
             Integer expenseId,
             Integer hrId,
-            String remark){
+            String remark) {
 
-        if(remark==null || remark.isEmpty())
+        if (remark == null || remark.isEmpty())
             throw new RuntimeException("Remark required");
 
-        saveReview(expenseId,hrId,4,remark);
+        saveReview(expenseId, hrId, 4, remark);
     }
-
 
 
     private void saveReview(
             Integer expenseId,
             Integer hrId,
             Integer statusId,
-            String comment){
+            String comment) {
 
         ExpensesDetail expense =
                 expenseRepo.findById(expenseId)
@@ -208,8 +206,7 @@ public class ExpenseService {
     }
 
 
-
-    private Employee getLoggedInEmployee(){
+    private Employee getLoggedInEmployee() {
 
         String email =
                 SecurityContextHolder
@@ -223,8 +220,7 @@ public class ExpenseService {
     }
 
 
-
-    public List<ExpenseResponseDTO> getMyExpenses(){
+    public List<ExpenseResponseDTO> getMyExpenses() {
 
         Employee emp = loggedInUserService.getLoggedInEmployee();
 
@@ -236,7 +232,7 @@ public class ExpenseService {
                 .toList();
     }
 
-    private ExpenseResponseDTO mapExpense(ExpensesDetail expense){
+    private ExpenseResponseDTO mapExpense(ExpensesDetail expense) {
 
         ExpensesReview review =
                 reviewRepo
@@ -244,13 +240,13 @@ public class ExpenseService {
                                 expense.getExpenseId());
 
         String status =
-                review!=null
+                review != null
                         ? review.getStatus()
                         .getApprovalStatusName()
                         : "SUBMITTED";
 
         String remark =
-                review!=null
+                review != null
                         ? review.getComment()
                         : null;
 
@@ -266,7 +262,7 @@ public class ExpenseService {
         );
     }
 
-    public List<ExpenseResponseDTO> getAllExpenses(){
+    public List<ExpenseResponseDTO> getAllExpenses() {
 
         return expenseRepo.findAll()
                 .stream()
@@ -274,7 +270,7 @@ public class ExpenseService {
                 .toList();
     }
 
-    public List<ExpenseResponseDTO> getTeamExpenses(){
+    public List<ExpenseResponseDTO> getTeamExpenses() {
 
         Employee manager = getLoggedInEmployee();
 
@@ -296,7 +292,8 @@ public class ExpenseService {
                 .map(this::mapExpense)
                 .toList();
     }
-    public Double getTotalByTravel(Integer travelId){
+
+    public Double getTotalByTravel(Integer travelId) {
 
         return expenseRepo
                 .findByTravelTravelId(travelId)
