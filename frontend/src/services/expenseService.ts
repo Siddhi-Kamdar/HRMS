@@ -7,6 +7,16 @@ export interface ExpenseRequest {
   comment?: string;
   proofUrl: string;
 }
+export interface Expense{
+  expenseId: number,
+  employeeName: string,
+  destination: string,
+  amount: number,
+  status: string,
+  remark: string | null,
+  expenseDate: string,
+  proofUrl: string
+}
 
 export const createExpense = async (
   travelId: number,

@@ -153,6 +153,17 @@ const TravelDetail: React.FC = () => {
           Documents
         </button>
 
+        <button
+          className={`btn me-2 ${activeTab === "expenses"
+            ? "btn-success"
+            : "btn-outline-success"
+            }`}
+          onClick={() =>
+            setActiveTab("expenses")}
+        >
+          Expenses
+        </button>
+        
         {canSubmitExpense && (
           <button
             className="btn btn-primary mt-3"

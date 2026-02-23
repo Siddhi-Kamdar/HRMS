@@ -71,7 +71,7 @@ const GameSchedule: React.FC = () => {
           return "#c05c66";
 
         case "COMPLETED":
-          return "#1768b0";
+          return "#3fb1d1";
 
         case "CANCLED":
           return "#ec9e5f";
@@ -81,13 +81,19 @@ const GameSchedule: React.FC = () => {
       }
     };
 
-    const title =
+    var title;
+    title =
     isExpired ? "Expired" :
       slot.status === "OPEN"
         ? "Available"
         : slot.isMySlot
           ? `Your Slot`
           : `Booked By: ${slot.bookedBy ?? "Employee"} (Join Queue)`;
+
+      if(slot.status == "COMPLETED"){  
+          title =  "Completed Slot";
+      }
+    
 
     console.log(slot);
     return {
@@ -195,7 +201,7 @@ const handleEventClick = (info: any) => {
             right: ""
           }}
           allDaySlot={false}
-          slotDuration="00:30:00"
+          slotDuration="00:10:00"
           slotMinTime="00:00:00"
           slotMaxTime="24:00:00"
           height="90vh"

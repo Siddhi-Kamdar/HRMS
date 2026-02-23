@@ -23,7 +23,7 @@ function App() {
         <Route path="/app" element={<AppLayout />}>
           <Route path="travel" element={<TravelDisplay />} />
           <Route path="achievements" element={<div>Achievements Page</div>} />
-          <Route path="games" element={<GameSchedule />} />
+          <Route  path="games" element={<GameSchedule />} />
           <Route path="jobs" element={<JobDisplay />} />
           <Route path="games/slot/:slotId/book" element={<BookingForm />} />
           <Route path="travel/create" element={<TravelCreate />} />

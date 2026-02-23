@@ -27,6 +27,7 @@ const SlotDetailPage: React.FC = () => {
     );
 
     setSlot(data);
+  
   };
 
   useEffect(() => {
@@ -123,6 +124,11 @@ const SlotDetailPage: React.FC = () => {
         {slot.myStatus === "WAITING" &&
           <span className="badge bg-warning">
             In Queue
+          </span>}
+
+          {slot.myStatus === "PREEMPTED" &&
+          <span className="badge bg-danger">
+            Someone with higher priority then you joined. You are kicked out 🦵
           </span>}
 
         {slot.myStatus === "NONE" &&
