@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-
+import { NavLink, useNavigate, useParams } from "react-router-dom";
+import { Container, Row, Col, Card } from "react-bootstrap";
 import {
   getTravelById,
   type Travel
@@ -12,8 +12,10 @@ import {
   type TravelDocument
 } from "../services/documentService";
 
-import ExpenseSection from "../pages/ExpenseSection";
-
+import {
+  getMyExpenses,
+  type Expense
+} from "../services/expenseService";
 const TravelDetail: React.FC = () => {
 
   const { travelId } = useParams();
@@ -39,6 +41,17 @@ const TravelDetail: React.FC = () => {
     setCanSubmitExpense] =
     useState(false);
 
+  const [expenses, setExpenses] = useState<Expense[]>([]);
+
+  useEffect(() => {
+    loadExpenses();
+  }, []);
+
+  const loadExpenses = async () => {
+    const data = await getMyExpenses();
+    setExpenses(data);
+    console.log(expenses);
+  };
 
 
   useEffect(() => {
@@ -163,7 +176,7 @@ const TravelDetail: React.FC = () => {
         >
           Expenses
         </button>
-        
+
         {canSubmitExpense && (
           <button
             className="btn btn-primary mt-3"
@@ -222,13 +235,56 @@ const TravelDetail: React.FC = () => {
 
 
       {activeTab === "expenses"
-        && canSubmitExpense && (
+        && (
+          <Container fluid style={{ marginTop: "20px" }}>
+            <Row className="gy-4">
+              {expenses.map(exp => {
+                if (exp.travelId.toString() === travelId) {
+                  return <Col
+                    key={exp.expenseId}
+                    sm={12} md={6} lg={4}
+                  >
+                    <Card className="shadow-sm h-100">
+                      <Card.Body>
+                         <Card.Title className="mb-3">
+                                          Expense #{exp.expenseId}
+                          </Card.Title>
+                        
+                      <Card.Text>
+                        <strong>Amount:</strong> {exp.amount}
+                      </Card.Text>
+                      {/* <Card.Text>
+                        <strong>Destination: </strong> {exp.destination}
+                      </Card.Text>
+                      <Card.Text>
+                        <strong>Travel Id: </strong> {exp.travelId}
+                      </Card.Text> */}
+                      <Card.Text>
+                        <strong>Status:</strong> {exp.status}
+                      </Card.Text>
 
-          <ExpenseSection
-            travelId={travelId!}
-          />
-
+                      {exp.remark && (
+                        <Card.Text>
+                          <strong>Remark:</strong> {exp.remark}
+                        </Card.Text>
+                      )}
+                      <NavLink
+                  to={`http://localhost:8080/${exp.proofUrl}`}
+                        target="_blank" className="text-success fw-semibold text-decoration-none"
+                      >
+                        View Proof
+                      </NavLink>
+                      
+                      </Card.Body>
+                    </Card>
+                  </Col>
+                }
+              })}
+            </Row>
+          </Container>
         )}
+
+
 
     </div>
   );

@@ -11,6 +11,7 @@ import ExpenseCreate from "./pages/ExpenseCreate";
 import ExpenseDashboard from "./pages/ExpenseDashboard";
 import OrgChart from "./pages/OrgChart";
 import SlotDetailPage from "./pages/SlotDetailPage";
+import ExpenseSection from "./pages/ExpenseSection";
 
 
 function App() {
@@ -41,6 +42,7 @@ function App() {
             path="games/slot/:slotId"
             element={<SlotDetailPage />}
           />
+          <Route path = "travel/personal-expenses" element={<ExpenseSection/>} />
         </Route>
 
       </Routes>

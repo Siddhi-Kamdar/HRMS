@@ -1,6 +1,7 @@
 package com.example.backend.dto.response;
 
 public class OrganizationalHierarchyDTO {
+    private Integer employeeId;
     private String employeeName;
     private String supervisiorName;
     private String employeePosition;
@@ -8,7 +9,16 @@ public class OrganizationalHierarchyDTO {
     private String employeeProfilePicture;
     private String supervisiorProfilePicture;
 
-    public OrganizationalHierarchyDTO(String employeeName, String supervisiorName, String employeePosition, String supervisiorPosition, String employeeProfilePicture, String supervisiorProfilePicture) {
+    public Integer getEmployeeId() {
+        return employeeId;
+    }
+
+    public void setEmployeeId(Integer employeeId) {
+        this.employeeId = employeeId;
+    }
+
+    public OrganizationalHierarchyDTO(Integer employeeId, String employeeName, String supervisiorName, String employeePosition, String supervisiorPosition, String employeeProfilePicture, String supervisiorProfilePicture) {
+        this.employeeId = employeeId;
         this.employeeName = employeeName;
         this.supervisiorName = supervisiorName;
         this.employeePosition = employeePosition;

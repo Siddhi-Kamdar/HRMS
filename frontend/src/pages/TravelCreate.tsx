@@ -68,6 +68,7 @@ const TravelCreate: React.FC = () => {
             className="form-control"
             value={departDate}
             onChange={(e) => setDepartDate(e.target.value)}
+            min={new Date().toJSON().slice(0, 10)}
             required
           />
         </div>
@@ -78,6 +79,7 @@ const TravelCreate: React.FC = () => {
             type="date"
             className="form-control"
             value={returnDate}
+            min={new Date().toJSON().slice(0, 10)}
             onChange={(e) => setReturnDate(e.target.value)}
             required
           />

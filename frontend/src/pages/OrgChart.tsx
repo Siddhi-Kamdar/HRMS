@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { getHierarchy } from "../services/hierarchyService";
+import { useNavigate } from "react-router-dom";
 
 const OrgChart: React.FC = () => {
-
+  const navigate = useNavigate();
   const { empId } = useParams();
 
   const [managerData, setManagerData] = useState<any[]>([]);
@@ -52,7 +53,10 @@ const OrgChart: React.FC = () => {
     });
   });
 
+  console.log(directReports);
   managers.reverse();
+
+  console.log(managers);
 
   const selectedEmployee =
     managers[managers.length - 1];
@@ -102,9 +106,8 @@ const OrgChart: React.FC = () => {
 
 const EmployeeCard = ({ emp, highlight = false }: any) => (
   <div
-    className={`card text-center shadow-sm p-3 ${
-      highlight ? "border-success border-2" : ""
-    }`}
+    className={`card text-center shadow-sm p-3 ${highlight ? "border-success border-2" : ""
+      }`}
     style={{ width: "220px" }}
   >
     <img

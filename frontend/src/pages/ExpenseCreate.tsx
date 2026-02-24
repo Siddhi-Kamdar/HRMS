@@ -39,7 +39,7 @@ const ExpenseCreate: React.FC = () => {
             navigate("/app/travel");},10);
     } catch(error){
         console.error("expense failed:", error);
-        alert("expense saved but response error occurred.")
+        alert(error)
     }
     };
 
@@ -69,8 +69,6 @@ const ExpenseCreate: React.FC = () => {
                     setSelectedFile(e.target.files?.[0] || null)
                 }
             />
-
-
 
             <button
                 className="btn btn-success"

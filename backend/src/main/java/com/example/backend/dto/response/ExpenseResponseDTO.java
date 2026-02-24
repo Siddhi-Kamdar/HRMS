@@ -14,6 +14,12 @@ public class ExpenseResponseDTO {
     private Date expenseDate;
     private String proofUrl;
 
+    public Integer getTravelId() {
+        return travelId;
+    }
+
+    private Integer travelId;
+
     public ExpenseResponseDTO(
             Integer expenseId,
             String employeeName,
@@ -22,7 +28,7 @@ public class ExpenseResponseDTO {
             String status,
             String remark,
             Date expenseDate,
-            String proofUrl) {
+            String proofUrl, Integer travelId) {
 
         this.expenseId = expenseId;
         this.employeeName = employeeName;
@@ -32,6 +38,7 @@ public class ExpenseResponseDTO {
         this.remark = remark;
         this.expenseDate = expenseDate;
         this.proofUrl = proofUrl;
+        this.travelId = travelId;
     }
 
     public Integer getExpenseId() { return expenseId; }

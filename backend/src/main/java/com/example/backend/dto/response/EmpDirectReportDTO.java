@@ -1,16 +1,16 @@
 package com.example.backend.dto.response;
 
 public class EmpDirectReportDTO {
-    private int employeeId;
+    private Integer employeeId;
     private String name;
     private String designation;
     private String profilePicture;
 
-    public int getEmployeeId() {
+    public Integer getEmployeeId() {
         return employeeId;
     }
 
-    public void setEmployeeId(int employeeId) {
+    public void setEmployeeId(Integer employeeId) {
         this.employeeId = employeeId;
     }
 

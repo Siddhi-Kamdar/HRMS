@@ -29,9 +29,11 @@ public class OrganizationalHierarchyRepository {
 
         List<Map<String, Object>> managerRows =
                 (List<Map<String, Object>>) result.get("#result-set-1");
+        System.out.println(managerRows);
 
         List<Map<String, Object>> reportRows =
                 (List<Map<String, Object>>) result.get("#result-set-2");
+        System.out.println(reportRows);
 
 
         List<OrganizationalHierarchyDTO> managerChain = new ArrayList<>();
@@ -41,6 +43,7 @@ public class OrganizationalHierarchyRepository {
 
                 managerChain.add(
                         new OrganizationalHierarchyDTO(
+                                (Integer) row.get("employee_id"),
                                 (String) row.get("employee_name"),
                                 (String) row.get("supervision_name"),
                                 (String) row.get("employee_position"),
@@ -63,7 +66,7 @@ public class OrganizationalHierarchyRepository {
                         ((Number) row.get("employee_id")).intValue()
                 );
                 emp.setName((String) row.get("employee_name"));
-                emp.setDesignation((String) row.get("designation"));
+                emp.setDesignation((String) row.get("employee_position"));
                 emp.setProfilePicture((String) row.get("employee_pp"));
 
                 directReports.add(emp);
@@ -73,6 +76,7 @@ public class OrganizationalHierarchyRepository {
 
         OrgChartResponseDTO response = new OrgChartResponseDTO();
         response.setManagerChain(managerChain);
+        System.out.println(managerChain);
         response.setDirectReports(directReports);
 
         return response;

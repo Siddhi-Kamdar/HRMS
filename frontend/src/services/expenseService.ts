@@ -15,7 +15,8 @@ export interface Expense{
   status: string,
   remark: string | null,
   expenseDate: string,
-  proofUrl: string
+  proofUrl: string,
+  travelId:number
 }
 
 export const createExpense = async (

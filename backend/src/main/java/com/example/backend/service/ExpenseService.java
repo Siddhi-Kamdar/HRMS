@@ -32,9 +32,9 @@ public class ExpenseService {
 
     @Autowired
     private NotificationService notificationService;
-
-    @Autowired
-    private EmailService emailService;
+//
+//    @Autowired
+//    private EmailService emailService;
 
     @Autowired
     private LoggedInUserService loggedInUserService;
@@ -96,21 +96,21 @@ public class ExpenseService {
         ExpensesDetail savedExpense =
                 expenseRepo.save(expense);
 
-//        employeeRepository.findAll()
-//                .stream()
-//                .filter(e ->
-//                        e.getRole()
-//                                .getRoleName()
-//                                .equalsIgnoreCase("HR"))
-//                .forEach(hrEmployee -> {
-//
-//                    notificationService.create(
-//                            hrEmployee,
-//                            "New Expense Submitted",
-//                            employee.getFullName()
-//                                    + " submitted expense for "
-//                                    + travel.getDestination()
-//                    );
+        employeeRepository.findAll()
+                .stream()
+                .filter(e ->
+                        e.getRole()
+                                .getRoleName()
+                                .equalsIgnoreCase("HR"))
+                .forEach(hrEmployee -> {
+
+                    notificationService.create(
+                            hrEmployee,
+                            "New Expense Submitted",
+                            employee.getFullName()
+                                    + " submitted expense for "
+                                    + travel.getDestination()
+                    );
 //                    try {
 //                        emailService.sendMail(
 //                                hrEmployee.getEmail(),
@@ -125,7 +125,7 @@ public class ExpenseService {
 //                        System.out.println(e.getMessage());
 //                    }
 //
-//                });
+                });
 
         return savedExpense;
     }
@@ -184,12 +184,12 @@ public class ExpenseService {
         Employee expenseOwner =
                 expense.getEmployee();
 
-//        notificationService.create(
-//                expenseOwner,
-//                "Expense Status Updated",
-//                "Your expense is "
-//                        + status.getApprovalStatusName()
-//        );
+        notificationService.create(
+                expenseOwner,
+                "Expense Status Updated",
+                "Your expense is "
+                        + status.getApprovalStatusName()
+        );
 //    try{
 //        emailService.sendMail(
 //                expenseOwner.getEmail(),
@@ -258,7 +258,8 @@ public class ExpenseService {
                 status,
                 remark,
                 expense.getExpenseDate(),
-                expense.getProofUrl()
+                expense.getProofUrl(),
+                expense.getTravel().getTravelId()
         );
     }
 

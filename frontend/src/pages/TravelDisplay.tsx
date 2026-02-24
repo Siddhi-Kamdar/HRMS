@@ -22,6 +22,14 @@ const TravelDisplay: React.FC = () => {
   return (
     <Container fluid style={{ marginTop: "20px" }}>
 
+      <div className="d-flex justify-content-end mb-3">
+        <button
+          className="btn border-bottom border-success"
+          onClick={() => navigate("/app/travel/personal-expenses")}
+        >
+          My Expenses & Status 
+        </button>
+      </div>
       {user.role === "HR" && (
         <div className="d-flex justify-content-end mb-3">
           <button

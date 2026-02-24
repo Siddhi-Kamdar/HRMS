@@ -1,7 +1,10 @@
 package com.example.backend.dto.request;
 
+import jakarta.validation.constraints.Email;
+
 public class LoginRequestDTO {
 
+    @Email
     private String email;
     private String password;
 
