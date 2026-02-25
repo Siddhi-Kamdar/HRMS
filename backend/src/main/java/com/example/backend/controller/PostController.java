@@ -121,6 +121,21 @@ public class PostController {
                 .build();
     }
 
+    @DeleteMapping("/{postId}")
+    public void deletePost(
+            @PathVariable Long postId,
+            Principal principal
+    ) {
+        if (principal == null) {
+            throw new RuntimeException("User not authenticated");
+        }
+
+        String email = principal.getName();
+        Employee currentUser = employeeRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        postService.deletePost(postId, currentUser);
+    }
     private Employee getEmployeeFromToken(String authHeader) {
         String token = authHeader.replace("Bearer ", "");
         Claims claims = Jwts.parserBuilder()

@@ -72,6 +72,10 @@ export const unlikePost = async (postId: number) => {
   await axiosInstance.post(`/api/achievements/${postId}/unlike`);
 };
 
+export const deletePost = async (postId: number) => {
+  await axiosInstance.delete(`/api/achievements/${postId}`);
+};
+
 // export const toggleLikePost = async (postId: number): Promise<void> => {
 //   await axiosInstance.post(`/api/achievements/${postId}/like`);
 // };

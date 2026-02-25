@@ -55,3 +55,7 @@ body{
 .dialog button:hover {
   background: #0056b3;
 }
+
+button:hover {
+  color: red;
+}

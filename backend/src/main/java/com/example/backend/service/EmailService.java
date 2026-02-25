@@ -28,5 +28,6 @@ public class EmailService {
     }
 
     public void sendWarning(Employee author) {
+        System.out.println("huyaaaaa, how dare you post this!!!");
     }
 }
