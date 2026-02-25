@@ -13,12 +13,12 @@ import java.io.Serializable;
 @EqualsAndHashCode
 public class PostLikeId implements Serializable {
 
-    private Long postId;
-    private Long likedById;
+    private Integer postId;
+    private Integer likedById;
 
     public PostLikeId() {}
 
-    public PostLikeId(Long postId, Long likedById) {
+    public PostLikeId(Integer postId, Integer likedById) {
         this.postId = postId;
         this.likedById = likedById;
     }

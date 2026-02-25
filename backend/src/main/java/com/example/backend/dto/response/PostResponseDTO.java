@@ -12,7 +12,7 @@ import java.util.List;
 @Builder
 public class PostResponseDTO {
 
-    private Long postId;
+    private Integer postId;
     private String title;
     private String description;
     private String postImageUrl;

@@ -1,12 +1,8 @@
 package com.example.backend.service;
 
-import com.example.backend.dto.request.PostRequestDTO;
 import com.example.backend.dto.response.CommentResponseDTO;
 import com.example.backend.dto.response.PostResponseDTO;
-import com.example.backend.entity.Comment;
-import com.example.backend.entity.Employee;
-import com.example.backend.entity.Post;
-import com.example.backend.entity.PostLike;
+import com.example.backend.entity.*;
 import com.example.backend.repository.CommentRepository;
 import com.example.backend.repository.EmployeeRepository;
 import com.example.backend.repository.PostLikeRepository;
@@ -21,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -36,18 +33,16 @@ public class PostService {
     private CommentRepository commentRepository;
 
     @Autowired
-    private  EmailService emailService;
-
-    @Autowired
     private EmployeeRepository employeeRepository;
 
     @Autowired
     private AchievementImageStorageService imageStorageService;
 
-    public PostResponseDTO createPost(String title,
-                                      String description,
-                                      MultipartFile image,
-                                      Employee userPrincipal) {
+    @Autowired
+    private EmailService emailService;
+
+    public PostResponseDTO createPost(String title, String description, MultipartFile image, Employee userPrincipal) {
+        if (userPrincipal == null) throw new RuntimeException("User cannot be null");
 
         Employee author = employeeRepository.findById((long)userPrincipal.getEmployeeId())
                 .orElseThrow(() -> new RuntimeException("User not found"));
@@ -58,8 +53,11 @@ public class PostService {
         post.setAuthor(author);
         post.setSystemGenerated(false);
         post.setDeleted(false);
+        post.setComments(new ArrayList<>());
+        post.setLikes(new ArrayList<>());
 
         if (image != null && !image.isEmpty()) {
+            validateImage(image);
             String imageUrl = imageStorageService.uploadImage(image);
             post.setPostImageUrl(imageUrl);
         }
@@ -69,21 +67,13 @@ public class PostService {
     }
 
     public Page<PostResponseDTO> getFeed(int page, int size, Employee currentUser) {
-
-        Pageable pageable = PageRequest.of(
-                page,
-                size,
-                Sort.by(Sort.Direction.DESC, "createdDate")
-        );
-
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdDate"));
         Page<Post> posts = postRepository.findByIsDeletedFalse(pageable);
-
         return posts.map(post -> mapToResponse(post, currentUser));
     }
 
     @Transactional
     public void likePost(Long postId, Employee user) {
-
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new RuntimeException("Post not found"));
 
@@ -94,12 +84,14 @@ public class PostService {
         PostLike like = new PostLike();
         like.setPost(post);
         like.setLikedBy(user);
+        like.setId(new PostLikeId(post.getPostId(), user.getEmployeeId()));
 
         postLikeRepository.save(like);
     }
 
     @Transactional
     public void unlikePost(Long postId, Employee user) {
+        if (user == null) throw new RuntimeException("User cannot be null");
 
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new RuntimeException("Post not found"));
@@ -108,6 +100,7 @@ public class PostService {
     }
 
     public Comment addComment(Long postId, String text, Employee user) {
+        if (user == null) throw new RuntimeException("User cannot be null");
 
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new RuntimeException("Post not found"));
@@ -122,18 +115,13 @@ public class PostService {
 
     @Transactional
     public void deletePost(Long postId, Employee currentUser) {
-
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new RuntimeException("Post not found"));
 
-        boolean isAuthor = post.getAuthor().getEmployeeId()
-                == (currentUser.getEmployeeId());
+        boolean isAuthor = post.getAuthor() != null && post.getAuthor().getEmployeeId() == currentUser.getEmployeeId();
+        boolean isHR = currentUser.getRole() != null && "HR".equals(currentUser.getRole().getRoleName());
 
-        boolean isHR = currentUser.getRole().getRoleName().equals("HR");
-
-        if (!isAuthor && !isHR) {
-            throw new RuntimeException("Not authorized");
-        }
+        if (!isAuthor && !isHR) throw new RuntimeException("Not authorized");
 
         post.setDeleted(true);
         post.setDeletedBy(currentUser);
@@ -141,67 +129,60 @@ public class PostService {
         if (isHR && !isAuthor) {
             emailService.sendWarning(post.getAuthor());
         }
+
+        postRepository.save(post);
     }
 
     private PostResponseDTO mapToResponse(Post post, Employee currentUser) {
+        List<Comment> comments = post.getComments() != null ? post.getComments() : new ArrayList<>();
 
         long likeCount = postLikeRepository.countByPost(post);
-        long commentCount = post.getComments()
-                .stream()
+        boolean likedByUser = currentUser != null && postLikeRepository.existsByPostAndLikedBy(post, currentUser);
+
+        List<CommentResponseDTO> commentDTOS = comments.stream()
                 .filter(c -> !c.isDeleted())
-                .count();
+                .map(c -> CommentResponseDTO.builder()
+                        .commentId(c.getCommentId())
+                        .commentDescription(c.getCommentDescription())
+                        .authorId(c.getCommentor() != null ? c.getCommentor().getEmployeeId() : 0L) // default 0L
+                        .authorName(c.getCommentor() != null ? c.getCommentor().getFullName() : "Unknown")
+                        .createdDate(c.getDateTime())
+                        .build())
+                .toList();
 
-        boolean likedByUser =
-                postLikeRepository.existsByPostAndLikedBy(post, currentUser);
+        String imageUrl = post.getPostImageUrl() != null
+                ? ServletUriComponentsBuilder.fromCurrentContextPath()
+                .path(post.getPostImageUrl())
+                .toUriString()
+                : null;
 
-        List<CommentResponseDTO> commentDTOS =
-                post.getComments().stream()
-                        .filter(c -> !c.isDeleted())
-                        .map(comment -> CommentResponseDTO.builder()
-                                .commentId(comment.getCommentId())
-                                .commentDescription(comment.getCommentDescription())
-                                .authorId((long)comment.getCommentor().getEmployeeId())
-                                .authorName(comment.getCommentor().getFullName())
-                                .createdDate(comment.getDateTime())
-                                .build())
-                        .toList();
-
-        String imageUrl = null;
-        if (post.getPostImageUrl() != null) {
-            imageUrl = ServletUriComponentsBuilder.fromCurrentContextPath()
-                    .path(post.getPostImageUrl())
-                    .toUriString();
-        }
+        long authorId = post.getAuthor() != null ? post.getAuthor().getEmployeeId() : 0L;
+        String authorName = post.getAuthor() != null ? post.getAuthor().getFullName() : "Unknown";
 
         return PostResponseDTO.builder()
                 .postId(post.getPostId())
                 .title(post.getTitle())
                 .description(post.getDescription())
                 .postImageUrl(imageUrl)
-                .authorId((long)post.getAuthor().getEmployeeId())
-                .authorName(post.getAuthor().getFullName())
+                .authorId(authorId)
+                .authorName(authorName)
                 .systemGenerated(post.isSystemGenerated())
                 .createdDate(post.getCreatedDate())
                 .likeCount(likeCount)
-                .commentCount(commentCount)
+                .commentCount(commentDTOS.size())
                 .likedByCurrentUser(likedByUser)
                 .comments(commentDTOS)
                 .build();
     }
     private void validateImage(MultipartFile file) {
+        if (file == null || file.isEmpty()) return;
 
         String contentType = file.getContentType();
-
-        if (contentType == null ||
-                (!contentType.equals("image/png") &&
-                        !contentType.equals("image/jpeg") &&
-                        !contentType.equals("image/jpg"))) {
-
+        if (contentType == null || !(contentType.equals("image/png") || contentType.equals("image/jpeg") || contentType.equals("image/jpg"))) {
             throw new RuntimeException("Only PNG and JPG images are allowed");
         }
 
         long maxSize = 10 * 1024 * 1024;
-
         if (file.getSize() > maxSize) {
             throw new RuntimeException("File size must be less than 10MB");
         }
