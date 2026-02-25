@@ -24,7 +24,7 @@ export const NotificationDialog = ({ onClose }: any) => {
                 {
                     
                     notifications.map(notification =>(
-                        <div key={notification.notificationId} >
+                        <div className="border rounded m-2" key={notification.notificationId} >
                             {notification.message}
                         </div>
                     ))

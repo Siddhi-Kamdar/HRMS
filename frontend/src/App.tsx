@@ -12,6 +12,7 @@ import ExpenseDashboard from "./pages/ExpenseDashboard";
 import OrgChart from "./pages/OrgChart";
 import SlotDetailPage from "./pages/SlotDetailPage";
 import ExpenseSection from "./pages/ExpenseSection";
+import { AchievementsPage } from "./pages/AchievementsPage";
 
 
 function App() {
@@ -23,7 +24,6 @@ function App() {
 
         <Route path="/app" element={<AppLayout />}>
           <Route path="travel" element={<TravelDisplay />} />
-          <Route path="achievements" element={<div>Achievements Page</div>} />
           <Route  path="games" element={<GameSchedule />} />
           <Route path="jobs" element={<JobDisplay />} />
           <Route path="games/slot/:slotId/book" element={<BookingForm />} />
@@ -33,6 +33,7 @@ function App() {
             path="expense/create/:travelId"
             element={<ExpenseCreate />}
           />
+          <Route path="achievements" element={<AchievementsPage />} /> 
           <Route
             path="expenses"
             element={<ExpenseDashboard />}
