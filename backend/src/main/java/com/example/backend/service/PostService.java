@@ -165,6 +165,27 @@ public class PostService {
         comment.setDeleted(true);
         commentRepository.save(comment);
     }
+
+    @Transactional
+    public PostResponseDTO updatePost(Long postId, String title, String description, MultipartFile image, Employee currentUser) {
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new RuntimeException("Post not found"));
+
+        boolean isAuthor = post.getAuthor() != null && post.getAuthor().getEmployeeId() == currentUser.getEmployeeId();
+        if (!isAuthor) throw new RuntimeException("Not authorized to edit post");
+
+        post.setTitle(title);
+        post.setDescription(description);
+
+        if (image != null && !image.isEmpty()) {
+            validateImage(image);
+            String imageUrl = imageStorageService.uploadImage(image);
+            post.setPostImageUrl(imageUrl);
+        }
+
+        Post saved = postRepository.save(post);
+        return mapToResponse(saved, currentUser);
+    }
     private PostResponseDTO mapToResponse(Post post, Employee currentUser) {
         List<Comment> comments = post.getComments() != null ? post.getComments() : new ArrayList<>();
 

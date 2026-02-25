@@ -157,6 +157,17 @@ public class PostController {
         return postService.getPostLikes(postId);
     }
 
+    @PutMapping(value = "/{postId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public PostResponseDTO editPost(
+            @PathVariable Long postId,
+            @RequestParam String title,
+            @RequestParam String description,
+            @RequestParam(required = false) MultipartFile image,
+            @RequestHeader("Authorization") String authHeader) {
+
+        Employee user = getEmployeeFromToken(authHeader); 
+        return postService.updatePost(postId, title, description, image, user);
+    }
     private Employee getEmployeeFromToken(String authHeader) {
         String token = authHeader.replace("Bearer ", "");
         Claims claims = Jwts.parserBuilder()
