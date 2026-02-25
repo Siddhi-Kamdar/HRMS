@@ -32,6 +32,11 @@ export interface PostResponse {
   likedByCurrentUser: boolean;
   comments: CommentResponse[];
 }
+export interface LikeUser {
+  employeeId: number;
+  fullName: string;
+}
+
 
 export const createPost = async (post: PostRequest): Promise<PostResponse> => {
   const formData = new FormData();
@@ -88,5 +93,10 @@ export const addComment = async (
     `/api/achievements/${postId}/comments`,
     comment
   );
+  return response.data;
+};
+
+export const getPostLikes = async (postId: number): Promise<LikeUser[]> => {
+  const response = await axiosInstance.get(`/api/achievements/${postId}/likes`);
   return response.data;
 };

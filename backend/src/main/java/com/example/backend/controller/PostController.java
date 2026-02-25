@@ -2,6 +2,7 @@ package com.example.backend.controller;
 
 import com.example.backend.dto.request.CommentRequestDTO;
 import com.example.backend.dto.response.CommentResponseDTO;
+import com.example.backend.dto.response.LikeUserDTO;
 import com.example.backend.dto.response.PostResponseDTO;
 import com.example.backend.entity.Comment;
 import com.example.backend.entity.Employee;
@@ -19,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.nio.charset.StandardCharsets;
 import java.security.Principal;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/achievements")
@@ -136,6 +138,12 @@ public class PostController {
 
         postService.deletePost(postId, currentUser);
     }
+
+    @GetMapping("/{postId}/likes")
+    public List<LikeUserDTO> getPostLikes(@PathVariable Long postId) {
+        return postService.getPostLikes(postId);
+    }
+    
     private Employee getEmployeeFromToken(String authHeader) {
         String token = authHeader.replace("Bearer ", "");
         Claims claims = Jwts.parserBuilder()

@@ -5,6 +5,8 @@ import {
     unlikePost,
     addComment,
     deletePost,
+    getPostLikes,
+    type LikeUser,
     type CommentResponse,
 } from "../services/achievementsService";
 import "../index.css";
@@ -23,7 +25,27 @@ export const AchievementsFeed: React.FC<Props> = ({
     onPostsChange,
 }) => {
     const [commentText, setCommentText] = useState<{ [key: number]: string }>({});
+    const [expandedComments, setExpandedComments] = useState<{ [key: number]: boolean }>({});
+    const [likesModalPostId, setLikesModalPostId] = useState<number | null>(null);
+    const [likesUsers, setLikesUsers] = useState<LikeUser[]>([]);
 
+    const toggleComments = (postId: number) => {
+        setExpandedComments((prev) => ({
+            ...prev,
+            [postId]: !prev[postId],
+        }));
+    };
+
+    const handleShowLikes = async (postId: number) => {
+        try {
+            const users = await getPostLikes(postId);
+            setLikesUsers(users);
+            setLikesModalPostId(postId);
+        } catch (err) {
+            console.error(err);
+            alert("Failed to fetch likes.");
+        }
+    };
     const handleLike = async (post: PostResponse) => {
         try {
             if (post.likedByCurrentUser) {
@@ -174,47 +196,130 @@ export const AchievementsFeed: React.FC<Props> = ({
                                     </svg>
                                 )}
 
-                                <span>{post.likeCount}</span>
-                            </button>
-                            <span className="text-muted"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-chat" viewBox="0 0 16 16">
-                                <path d="M2.678 11.894a1 1 0 0 1 .287.801 11 11 0 0 1-.398 2c1.395-.323 2.247-.697 2.634-.893a1 1 0 0 1 .71-.074A8 8 0 0 0 8 14c3.996 0 7-2.807 7-6s-3.004-6-7-6-7 2.808-7 6c0 1.468.617 2.83 1.678 3.894m-.493 3.905a22 22 0 0 1-.713.129c-.2.032-.352-.176-.273-.362a10 10 0 0 0 .244-.637l.003-.01c.248-.72.45-1.548.524-2.319C.743 11.37 0 9.76 0 8c0-3.866 3.582-7 8-7s8 3.134 8 7-3.582 7-8 7a9 9 0 0 1-2.347-.306c-.52.263-1.639.742-3.468 1.105" />
-                            </svg> ({post.commentCount})</span>
-                        </div>
-
-                        <div className="mt-2">
-                            {post.comments.map((c) => (
-                                <div key={c.commentId} className="mb-1">
-                                    <strong>{c.authorName}</strong>: {c.commentDescription}{" "}
-                                    <small className="text-muted">({timeAgo(c.createdDate)})</small>
-                                </div>
-                            ))}
-
-                            <div className="input-group mt-2">
-                                <input
-                                    type="text"
-                                    className="form-control"
-                                    placeholder="Add a comment..."
-                                    value={commentText[post.postId] || ""}
-                                    onChange={(e) =>
-                                        setCommentText((prev) => ({
-                                            ...prev,
-                                            [post.postId]: e.target.value,
-                                        }))
-                                    }
-                                />
-                                <button
-                                    className="btn btn-outline-secondary"
-                                    onClick={() => handleComment(post.postId)}
+                                <span
+                                    style={{ cursor: "pointer" }}
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        handleShowLikes(post.postId);
+                                    }}
                                 >
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-send" viewBox="0 0 16 16">
-                                        <path d="M15.854.146a.5.5 0 0 1 .11.54l-5.819 14.547a.75.75 0 0 1-1.329.124l-3.178-4.995L.643 7.184a.75.75 0 0 1 .124-1.33L15.314.037a.5.5 0 0 1 .54.11ZM6.636 10.07l2.761 4.338L14.13 2.576zm6.787-8.201L1.591 6.602l4.339 2.76z" />
-                                    </svg>
-                                </button>
-                            </div>
+                                    {post.likeCount}
+                                </span>
+                            </button>
+                            <button
+                                className="btn btn-sm border-0 bg-transparent text-muted d-flex align-items-center gap-1"
+                                onClick={() => toggleComments(post.postId)}
+                            >
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    width="16"
+                                    height="16"
+                                    fill="currentColor"
+                                    viewBox="0 0 16 16"
+                                >
+                                    <path d="M2.678 11.894a1 1 0 0 1 .287.801 11 11 0 0 1-.398 2c1.395-.323 2.247-.697 2.634-.893a1 1 0 0 1 .71-.074A8 8 0 0 0 8 14c3.996 0 7-2.807 7-6s-3.004-6-7-6-7 2.808-7 6c0 1.468.617 2.83 1.678 3.894" />
+                                </svg>
+
+                                <span>{post.commentCount}</span>
+                            </button>
+                        </div>
+                        <div className="input-group mt-2">
+                            <input
+                                type="text"
+                                className="form-control form-control-sm"
+                                placeholder="Add a comment..."
+                                value={commentText[post.postId] || ""}
+                                onChange={(e) =>
+                                    setCommentText((prev) => ({
+                                        ...prev,
+                                        [post.postId]: e.target.value,
+                                    }))
+                                }
+                            />
+                            <button
+                                className="btn btn-sm btn-outline-secondary"
+                                onClick={() => handleComment(post.postId)}
+                            >
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-send" viewBox="0 0 16 16">
+                                    <path d="M15.854.146a.5.5 0 0 1 .11.54l-5.819 14.547a.75.75 0 0 1-1.329.124l-3.178-4.995L.643 7.184a.75.75 0 0 1 .124-1.33L15.314.037a.5.5 0 0 1 .54.11ZM6.636 10.07l2.761 4.338L14.13 2.576zm6.787-8.201L1.591 6.602l4.339 2.76z" />
+                                </svg>
+                            </button>
+                        </div>
+                        <div className="mt-2">
+                            {expandedComments[post.postId] && (
+                                <div className="mt-3 border-top pt-2">
+                                    {post.comments.length === 0 && (
+                                        <div className="text-muted small mb-2">
+                                            No comments yet
+                                        </div>
+                                    )}
+
+
+
+                                    {post.comments.map((c) => (
+                                        <div key={c.commentId} className="mb-2 small">
+                                            <strong>{c.authorName}</strong>{" "}
+                                            <span className="text-muted">{timeAgo(c.createdDate)}</span>
+                                            <div>{c.commentDescription}</div>
+                                        </div>
+                                    ))}
+
+
+                                </div>
+                            )}
+
                         </div>
                     </div>
                 </div>
             ))}
+            {likesModalPostId && (
+                <div
+                    className="modal fade show"
+                    style={{ display: "block", backgroundColor: "rgba(0,0,0,0.5)" }}
+                    onClick={() => setLikesModalPostId(null)}
+                >
+                    <div
+                        className="modal-dialog modal-dialog-centered"
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        <div className="modal-content">
+                            <div className="modal-header">
+                                <h5 className="modal-title">Liked by</h5>
+                                <button
+                                    className="btn-close"
+                                    onClick={() => setLikesModalPostId(null)}
+                                />
+                            </div>
+                            <div
+                                className="modal-body"
+                                style={{
+                                    maxHeight: "400px",
+                                    overflowY: "auto"
+                                }}
+                            >
+                                {likesUsers.length === 0 ? (
+                                    <div className="text-muted">No likes yet</div>
+                                ) : (
+                                    likesUsers.map((user) => (
+                                        <div
+                                            key={user.employeeId}
+                                            className="d-flex align-items-center mb-2"
+                                        >
+                                            <div
+                                                className="rounded-circle bg-primary text-white d-flex justify-content-center align-items-center me-2"
+                                                style={{ width: 35, height: 35 }}
+                                            >
+                                                {user.fullName.charAt(0)}
+                                            </div>
+                                            <div>{user.fullName}</div>
+                                        </div>
+                                    ))
+                                )}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

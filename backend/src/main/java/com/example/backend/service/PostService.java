@@ -1,6 +1,7 @@
 package com.example.backend.service;
 
 import com.example.backend.dto.response.CommentResponseDTO;
+import com.example.backend.dto.response.LikeUserDTO;
 import com.example.backend.dto.response.PostResponseDTO;
 import com.example.backend.entity.*;
 import com.example.backend.repository.CommentRepository;
@@ -97,6 +98,20 @@ public class PostService {
                 .orElseThrow(() -> new RuntimeException("Post not found"));
 
         postLikeRepository.deleteByPostAndLikedBy(post, user);
+    }
+
+    public List<LikeUserDTO> getPostLikes(Long postId) {
+
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new RuntimeException("Post not found"));
+
+        return postLikeRepository.findByPost(post)
+                .stream()
+                .map(like -> new LikeUserDTO(
+                        (long) like.getLikedBy().getEmployeeId(),
+                        like.getLikedBy().getFullName()
+                ))
+                .toList();
     }
 
     public Comment addComment(Long postId, String text, Employee user) {
