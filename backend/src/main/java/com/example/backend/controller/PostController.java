@@ -1,6 +1,9 @@
 package com.example.backend.controller;
 
+import com.example.backend.dto.request.CommentRequestDTO;
+import com.example.backend.dto.response.CommentResponseDTO;
 import com.example.backend.dto.response.PostResponseDTO;
+import com.example.backend.entity.Comment;
 import com.example.backend.entity.Employee;
 import com.example.backend.repository.EmployeeRepository;
 import com.example.backend.service.PostService;
@@ -10,10 +13,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.nio.charset.StandardCharsets;
+import java.security.Principal;
+
 @RestController
 @RequestMapping("/api/achievements")
 @RequiredArgsConstructor
@@ -58,7 +64,6 @@ public class PostController {
             @RequestParam(defaultValue = "10") int size,
             @RequestHeader("Authorization") String authHeader) {
 
-        // Fetch logged-in user same way as above
         String token = authHeader.replace("Bearer ", "");
         Claims claims = Jwts.parserBuilder()
                 .setSigningKey(secretKey.getBytes(StandardCharsets.UTF_8))
@@ -95,7 +100,27 @@ public class PostController {
         return ResponseEntity.ok().build();
     }
 
-    //method to fetch Employee from JWT token
+
+    @PostMapping("/{postId}/comments")
+    public CommentResponseDTO addComment(
+            @PathVariable Long postId,
+            @RequestBody CommentRequestDTO request,
+            Principal principal
+    ) {
+        Employee currentUser = employeeRepository.findByEmail(principal.getName())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        Comment comment = postService.addComment(postId, request.getCommentDescription(), currentUser);
+
+        return CommentResponseDTO.builder()
+                .commentId(comment.getCommentId())
+                .commentDescription(comment.getCommentDescription())
+                .authorId((long) comment.getCommentor().getEmployeeId())
+                .authorName(comment.getCommentor().getFullName())
+                .createdDate(comment.getDateTime())
+                .build();
+    }
+
     private Employee getEmployeeFromToken(String authHeader) {
         String token = authHeader.replace("Bearer ", "");
         Claims claims = Jwts.parserBuilder()

@@ -64,10 +64,17 @@ export const getAchievementsFeed = async (
   return response.data.content;
 };
 
-
-export const toggleLikePost = async (postId: number): Promise<void> => {
+export const likePost = async (postId: number) => {
   await axiosInstance.post(`/api/achievements/${postId}/like`);
 };
+
+export const unlikePost = async (postId: number) => {
+  await axiosInstance.post(`/api/achievements/${postId}/unlike`);
+};
+
+// export const toggleLikePost = async (postId: number): Promise<void> => {
+//   await axiosInstance.post(`/api/achievements/${postId}/like`);
+// };
 
 export const addComment = async (
   postId: number,
