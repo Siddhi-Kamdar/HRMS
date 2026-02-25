@@ -9,6 +9,7 @@ import {
     type LikeUser,
     type CommentResponse,
     deleteComment,
+    editPost,
 } from "../services/achievementsService";
 import "../index.css";
 
@@ -29,6 +30,11 @@ export const AchievementsFeed: React.FC<Props> = ({
     const [expandedComments, setExpandedComments] = useState<{ [key: number]: boolean }>({});
     const [likesModalPostId, setLikesModalPostId] = useState<number | null>(null);
     const [likesUsers, setLikesUsers] = useState<LikeUser[]>([]);
+
+    const [editingPostId, setEditingPostId] = useState<number | null>(null);
+    const [editTitle, setEditTitle] = useState<string>("");
+    const [editDescription, setEditDescription] = useState<string>("");
+    const [editImage, setEditImage] = useState<File | null>(null);
 
     const toggleComments = (postId: number) => {
         setExpandedComments((prev) => ({
@@ -73,7 +79,26 @@ export const AchievementsFeed: React.FC<Props> = ({
             alert("Failed to toggle like. Are you logged in?");
         }
     };
+    const handleEditPost = async (postId: number) => {
+        if (!editTitle.trim()) return alert("Title cannot be empty");
+        if (!editDescription.trim()) return alert("Description cannot be empty");
 
+        try {
+            const updatedPost = await editPost(postId, editTitle, editDescription, editImage);
+
+            onPostsChange(
+                posts.map((p) => (p.postId === postId ? updatedPost : p))
+            );
+
+            setEditingPostId(null);
+            setEditTitle("");
+            setEditDescription("");
+            setEditImage(null);
+        } catch (err) {
+            console.error(err);
+            alert("Failed to update post. Are you authorized?");
+        }
+    };
     const handleComment = async (postId: number) => {
         const text = commentText[postId];
         if (!text?.trim()) return;
@@ -175,16 +200,69 @@ export const AchievementsFeed: React.FC<Props> = ({
                                     </svg>
                                 </button>
                             )}
+                            {post.authorId === currentUserId && (
+                                <button
+                                    className="btn btn-sm btn-outline-primary ms-2"
+                                    onClick={() => {
+                                        setEditingPostId(post.postId);
+                                        setEditTitle(post.title);
+                                        setEditDescription(post.description);
+                                        setEditImage(null);
+                                    }}
+                                >
+                                    Edit
+                                </button>
+                            )}
+
                         </div>
 
-                        <p>{post.description}</p>
-                        {post.postImageUrl && (
-                            <img
-                                src={post.postImageUrl}
-                                alt="Post"
-                                className="img-fluid rounded mb-2"
-                                style={{ maxHeight: 400, objectFit: "cover" }}
-                            />
+                        {editingPostId === post.postId ? (
+                            <div className="mb-2">
+                                <input
+                                    type="text"
+                                    className="form-control mb-1"
+                                    value={editTitle}
+                                    onChange={(e) => setEditTitle(e.target.value)}
+                                    placeholder="Post title"
+                                />
+                                <textarea
+                                    className="form-control mb-1"
+                                    value={editDescription}
+                                    onChange={(e) => setEditDescription(e.target.value)}
+                                    placeholder="Post description"
+                                />
+                                <input
+                                    type="file"
+                                    className="form-control mb-1"
+                                    onChange={(e) => setEditImage(e.target.files ? e.target.files[0] : null)}
+                                />
+                                <div className="d-flex gap-2">
+                                    <button
+                                        className="btn btn-sm btn-success"
+                                        onClick={() => handleEditPost(post.postId)}
+                                    >
+                                        Save
+                                    </button>
+                                    <button
+                                        className="btn btn-sm btn-secondary"
+                                        onClick={() => setEditingPostId(null)}
+                                    >
+                                        Cancel
+                                    </button>
+                                </div>
+                            </div>
+                        ) : (
+                            <>
+                                <p>{post.description}</p>
+                                {post.postImageUrl && (
+                                    <img
+                                        src={post.postImageUrl}
+                                        alt="Post"
+                                        className="img-fluid rounded mb-2"
+                                        style={{ maxHeight: 400, objectFit: "cover" }}
+                                    />
+                                )}
+                            </>
                         )}
 
                         <div className="d-flex gap-3 mb-2">

@@ -106,3 +106,23 @@ export const getPostLikes = async (postId: number): Promise<LikeUser[]> => {
   const response = await axiosInstance.get(`/api/achievements/${postId}/likes`);
   return response.data;
 };
+
+export const editPost = async (
+  postId: number,
+  title: string,
+  description: string,
+  image?: File | null
+) => {
+  const formData = new FormData();
+  formData.append("title", title);
+  formData.append("description", description);
+  if (image) formData.append("image", image); 
+
+  const response = await axiosInstance.put(`/api/achievements/${postId}`, formData, {
+    headers: {
+      "Content-Type": "multipart/form-data" 
+    },
+  });
+
+  return response.data;
+};

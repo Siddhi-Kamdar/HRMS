@@ -14,7 +14,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -163,11 +162,19 @@ public class PostController {
             @RequestParam String title,
             @RequestParam String description,
             @RequestParam(required = false) MultipartFile image,
-            @RequestHeader("Authorization") String authHeader) {
+            Principal principal) {
 
-        Employee user = getEmployeeFromToken(authHeader); 
-        return postService.updatePost(postId, title, description, image, user);
+        if (principal == null) {
+            throw new RuntimeException("User not authenticated");
+        }
+
+        String email = principal.getName();
+        Employee currentUser = employeeRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        return postService.updatePost(postId, title, description, image, currentUser);
     }
+
     private Employee getEmployeeFromToken(String authHeader) {
         String token = authHeader.replace("Bearer ", "");
         Claims claims = Jwts.parserBuilder()
