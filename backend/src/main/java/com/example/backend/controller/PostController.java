@@ -139,11 +139,24 @@ public class PostController {
         postService.deletePost(postId, currentUser);
     }
 
+    @DeleteMapping("/comments/{commentId}")
+    public ResponseEntity<Void> deleteComment(@PathVariable Long commentId,
+                                              Principal principal) {
+        if (principal == null) {
+            throw new RuntimeException("User not authenticated");
+        }
+        String email = principal.getName();
+        Employee currentUser = employeeRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        postService.deleteComment(commentId, currentUser);
+        return ResponseEntity.noContent().build();
+    }
+
     @GetMapping("/{postId}/likes")
     public List<LikeUserDTO> getPostLikes(@PathVariable Long postId) {
         return postService.getPostLikes(postId);
     }
-    
+
     private Employee getEmployeeFromToken(String authHeader) {
         String token = authHeader.replace("Bearer ", "");
         Claims claims = Jwts.parserBuilder()

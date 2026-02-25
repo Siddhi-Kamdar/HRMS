@@ -8,6 +8,7 @@ import {
     getPostLikes,
     type LikeUser,
     type CommentResponse,
+    deleteComment,
 } from "../services/achievementsService";
 import "../index.css";
 
@@ -95,6 +96,26 @@ export const AchievementsFeed: React.FC<Props> = ({
         } catch (err) {
             console.error(err);
             alert("Failed to add comment. Are you logged in?");
+        }
+    };
+    const handleDeleteComment = async (commentId: number, postId: number) => {
+        if (!confirm("Are you sure you want to delete this comment?")) return;
+        try {
+            await deleteComment(commentId);
+            onPostsChange(
+                posts.map((p) =>
+                    p.postId === postId
+                        ? {
+                            ...p,
+                            comments: p.comments.filter((c) => c.commentId !== commentId),
+                            commentCount: p.commentCount - 1,
+                        }
+                        : p
+                )
+            );
+        } catch (err) {
+            console.error(err);
+            alert("Failed to delete comment.");
         }
     };
 
@@ -256,11 +277,24 @@ export const AchievementsFeed: React.FC<Props> = ({
 
 
 
-                                    {post.comments.map((c) => (
-                                        <div key={c.commentId} className="mb-2 small">
-                                            <strong>{c.authorName}</strong>{" "}
-                                            <span className="text-muted">{timeAgo(c.createdDate)}</span>
-                                            <div>{c.commentDescription}</div>
+                                    {[...post.comments].reverse().map((c) => (
+                                        <div key={c.commentId} className="mb-2 small d-flex justify-content-between align-items-start">
+                                            <div>
+                                                <strong>{c.authorName}</strong>{" "}
+                                                <span className="text-muted">{timeAgo(c.createdDate)}</span>
+                                                <div>{c.commentDescription}</div>
+                                            </div>
+                                            {(c.authorId === currentUserId || currentUserRole === "HR") && (
+                                                <button
+                                                    className="btn btn-sm border-0 btn-outline-danger ms-2"
+                                                    onClick={() => handleDeleteComment(c.commentId, post.postId)}
+                                                >
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-trash" viewBox="0 0 16 16">
+                                                        <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z" />
+                                                        <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z" />
+                                                    </svg>
+                                                </button>
+                                            )}
                                         </div>
                                     ))}
 

@@ -74,12 +74,13 @@ export const likePost = async (postId: number) => {
 };
 
 export const unlikePost = async (postId: number) => {
-  await axiosInstance.post(`/api/achievements/${postId}/unlike`);
+  await axiosInstance.delete(`/api/achievements/${postId}/like`);
 };
 
 export const deletePost = async (postId: number) => {
   await axiosInstance.delete(`/api/achievements/${postId}`);
 };
+
 
 // export const toggleLikePost = async (postId: number): Promise<void> => {
 //   await axiosInstance.post(`/api/achievements/${postId}/like`);
@@ -95,6 +96,11 @@ export const addComment = async (
   );
   return response.data;
 };
+
+export const deleteComment = async (commentId: number): Promise<void> => {
+  await axiosInstance.delete(`/api/achievements/comments/${commentId}`);
+};
+
 
 export const getPostLikes = async (postId: number): Promise<LikeUser[]> => {
   const response = await axiosInstance.get(`/api/achievements/${postId}/likes`);

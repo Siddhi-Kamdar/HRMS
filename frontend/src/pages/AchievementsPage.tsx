@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { CreatePost } from "./CreatePost";
-import { AchievementsFeed } from "./AchievementsFeed";
+import { CreatePost } from "../components/CreatePost";
+import { AchievementsFeed } from "../components/AchievementsFeed";
 import {
   getAchievementsFeed,
   type PostResponse,

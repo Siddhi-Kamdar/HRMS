@@ -148,6 +148,23 @@ public class PostService {
         postRepository.save(post);
     }
 
+
+    @Transactional
+    public void deleteComment(Long commentId, Employee currentUser) {
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new RuntimeException("Comment not found"));
+
+        boolean isAuthor = comment.getCommentor() != null
+                && comment.getCommentor().getEmployeeId()==(currentUser.getEmployeeId());
+        boolean isHR = currentUser.getRole() != null && "HR".equals(currentUser.getRole().getRoleName());
+
+        if (!isAuthor && !isHR) {
+            throw new RuntimeException("Not authorized to delete this comment");
+        }
+
+        comment.setDeleted(true);
+        commentRepository.save(comment);
+    }
     private PostResponseDTO mapToResponse(Post post, Employee currentUser) {
         List<Comment> comments = post.getComments() != null ? post.getComments() : new ArrayList<>();
 
