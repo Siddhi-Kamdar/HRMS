@@ -14,7 +14,10 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import com.example.backend.specification.PostSpecification;
+import org.springframework.data.jpa.domain.Specification;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -163,6 +166,10 @@ public class PostService {
         }
 
         comment.setDeleted(true);
+
+        if (isHR && !isAuthor) {
+            emailService.sendWarning(comment.getCommentor());
+        }
         commentRepository.save(comment);
     }
 
@@ -272,6 +279,44 @@ public class PostService {
                 .likedByCurrentUser(likedByUser)
                 .comments(commentDTOS)
                 .build();
+    }
+
+    public List<LikeUserDTO> getCommentLikes(Integer commentId) {
+
+        Comment comment = commentRepository.findById(Long.valueOf(commentId))
+                .orElseThrow(() -> new RuntimeException("Comment not found"));
+
+        List<CommentLike> likes = commentLikeRepository.findByComment(comment);
+
+        return likes.stream()
+                .map(like -> new LikeUserDTO(
+                        (long) like.getLikedBy().getEmployeeId(),
+                        like.getLikedBy().getFullName()
+                ))
+                .toList();
+    }
+
+    public List<PostResponseDTO> searchPosts(
+            String keyword,
+            Integer authorId,
+            LocalDateTime from,
+            LocalDateTime to,
+            Employee currentUser
+    ) {
+
+        Specification<Post> spec = Specification
+                .where(PostSpecification.containsKeyword(keyword))
+                .and(PostSpecification.hasAuthor(authorId))
+                .and(PostSpecification.createdAfter(from))
+                .and(PostSpecification.createdBefore(to));
+
+        List<Post> posts = postRepository.findAll(spec);
+
+        return posts.stream()
+                .filter(post -> !post.isDeleted())
+                .sorted((a, b) -> b.getCreatedDate().compareTo(a.getCreatedDate()))
+                .map(post -> mapToResponse(post, currentUser))
+                .toList();
     }
     private void validateImage(MultipartFile file) {
         if (file == null || file.isEmpty()) return;

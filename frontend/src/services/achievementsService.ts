@@ -135,3 +135,29 @@ export const editPost = async (
 
   return response.data;
 };
+
+export const getCommentLikes = async (commentId: number) => {
+  const response = await axiosInstance.get(
+    `/api/achievements/comments/${commentId}/likes`
+  );
+  return response.data;
+};
+export const searchPosts = async (
+  keyword?: string,
+  authorId?: number,
+  from?: string,
+  to?: string
+) => {
+  const params = new URLSearchParams();
+
+  if (keyword) params.append("keyword", keyword);
+  if (authorId) params.append("authorId", authorId.toString());
+  if (from) params.append("from", from);
+  if (to) params.append("to", to);
+
+  const response = await axiosInstance.get(
+    `/api/achievements/search?${params.toString()}`
+  );
+
+  return response.data;
+};

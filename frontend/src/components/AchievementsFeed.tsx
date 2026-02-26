@@ -12,6 +12,8 @@ import {
     editPost,
     likeComment,
     unlikeComment,
+    getCommentLikes,
+    searchPosts
 } from "../services/achievementsService";
 import "../index.css";
 
@@ -37,6 +39,10 @@ export const AchievementsFeed: React.FC<Props> = ({
     const [editTitle, setEditTitle] = useState<string>("");
     const [editDescription, setEditDescription] = useState<string>("");
     const [editImage, setEditImage] = useState<File | null>(null);
+    const [commentLikesModalId, setCommentLikesModalId] = useState<number | null>(null);
+    const [searchKeyword, setSearchKeyword] = useState("");
+    const [isSearching, setIsSearching] = useState(false);
+    const [selectedAuthorId, setSelectedAuthorId] = useState<number | null>(null);
 
     const toggleComments = (postId: number) => {
         setExpandedComments((prev) => ({
@@ -44,7 +50,6 @@ export const AchievementsFeed: React.FC<Props> = ({
             [postId]: !prev[postId],
         }));
     };
-
     const handleShowLikes = async (postId: number) => {
         try {
             const users = await getPostLikes(postId);
@@ -53,6 +58,21 @@ export const AchievementsFeed: React.FC<Props> = ({
         } catch (err) {
             console.error(err);
             alert("Failed to fetch likes.");
+        }
+    };
+    const handleSearch = async () => {
+        try {
+            setIsSearching(true);
+            const results = await searchPosts(
+                searchKeyword,
+                selectedAuthorId ?? undefined
+            );
+            onPostsChange(results);
+        } catch (err) {
+            console.error(err);
+            alert("Search failed");
+        } finally {
+            setIsSearching(false);
         }
     };
     const handleLike = async (post: PostResponse) => {
@@ -206,123 +226,204 @@ export const AchievementsFeed: React.FC<Props> = ({
     };
 
     return (
-        <div className="d-flex flex-column gap-3">
-            {posts.map((post) => (
-                <div key={post.postId} className="card shadow-sm">
-                    <div className="card-body">
-                        <div className="d-flex align-items-center mb-2">
-                            <div
-                                className="rounded-circle bg-primary text-white d-flex justify-content-center align-items-center me-2"
-                                style={{ width: 40, height: 40 }}
-                            >
-                                {post.authorName.charAt(0)}
-                            </div>
-                            <div>
-                                <strong>{post.authorName}</strong>{" "}
-                                {post.systemGenerated && (
-                                    <span className="badge bg-secondary">System</span>
+        <>
+            <div className="card shadow-sm p-3 mb-3">
+                <div className="row g-2">
+
+                    <div className="col-md-5">
+                        <input
+                            type="text"
+                            className="form-control"
+                            placeholder="Search keyword..."
+                            value={searchKeyword}
+                            onChange={(e) => setSearchKeyword(e.target.value)}
+                        />
+                    </div>
+
+                    <div className="col-md-4">
+                        <select
+                            className="form-select"
+                            value={selectedAuthorId ?? ""}
+                            onChange={(e) =>
+                                setSelectedAuthorId(
+                                    e.target.value ? Number(e.target.value) : null
+                                )
+                            }
+                        >
+                            <option value="">All Authors</option>
+                            {posts
+                                .map((p) => ({
+                                    id: p.authorId,
+                                    name: p.authorName,
+                                }))
+                                .filter(
+                                    (v, i, arr) =>
+                                        arr.findIndex((x) => x.id === v.id) === i
+                                )
+                                .map((author) => (
+                                    <option key={author.id} value={author.id}>
+                                        {author.name}
+                                    </option>
+                                ))}
+                        </select>
+                    </div>
+
+                    <div className="col-md-3 d-grid">
+                        <button
+                            className="btn btn-primary"
+                            onClick={handleSearch}
+                            disabled={isSearching}
+                        >
+                            {isSearching ? "Searching..." : "Search"}
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+            <div className="d-flex flex-column gap-3">
+                {posts.map((post) => (
+                    <div key={post.postId} className="card shadow-sm">
+                        <div className="card-body">
+                            <div className="d-flex align-items-center mb-2">
+                                <div
+                                    className="rounded-circle bg-success text-white d-flex justify-content-center align-items-center me-2"
+                                    style={{ width: 40, height: 40 }}
+                                >
+                                    {post.authorName.charAt(0)}
+                                </div>
+                                <div>
+                                    <strong>{post.authorName}</strong>{" "}
+                                    {post.systemGenerated && (
+                                        <span className="badge bg-secondary">System</span>
+                                    )}
+                                    <div className="text-muted" style={{ fontSize: "0.8rem" }}>
+                                        {timeAgo(post.createdDate)}
+                                    </div>
+                                </div>
+
+                                {(post.authorId === currentUserId || currentUserRole === "HR") && (
+                                    <button
+                                        className="btn btn-sm border-0 btn-outline-danger ms-auto"
+                                        onClick={() => handleDelete(post.postId)}
+                                    >
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-trash" viewBox="0 0 16 16">
+                                            <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z" />
+                                            <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z" />
+                                        </svg>
+                                    </button>
                                 )}
-                                <div className="text-muted" style={{ fontSize: "0.8rem" }}>
-                                    {timeAgo(post.createdDate)}
-                                </div>
+                                {post.authorId === currentUserId && (
+                                    <button
+                                        className="btn btn-sm btn-outline-primary border-0 ms-2"
+                                        onClick={() => {
+                                            setEditingPostId(post.postId);
+                                            setEditTitle(post.title);
+                                            setEditDescription(post.description);
+                                            setEditImage(null);
+                                        }}
+                                    >
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-pencil" viewBox="0 0 16 16">
+                                            <path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325" />
+                                        </svg>
+                                    </button>
+                                )}
+
                             </div>
 
-                            {(post.authorId === currentUserId || currentUserRole === "HR") && (
-                                <button
-                                    className="btn btn-sm border-0 btn-outline-danger ms-auto"
-                                    onClick={() => handleDelete(post.postId)}
-                                >
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-trash" viewBox="0 0 16 16">
-                                        <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z" />
-                                        <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z" />
-                                    </svg>
-                                </button>
-                            )}
-                            {post.authorId === currentUserId && (
-                                <button
-                                    className="btn btn-sm btn-outline-primary ms-2"
-                                    onClick={() => {
-                                        setEditingPostId(post.postId);
-                                        setEditTitle(post.title);
-                                        setEditDescription(post.description);
-                                        setEditImage(null);
-                                    }}
-                                >
-                                    Edit
-                                </button>
-                            )}
-
-                        </div>
-
-                        {editingPostId === post.postId ? (
-                            <div className="mb-2">
-                                <input
-                                    type="text"
-                                    className="form-control mb-1"
-                                    value={editTitle}
-                                    onChange={(e) => setEditTitle(e.target.value)}
-                                    placeholder="Post title"
-                                />
-                                <textarea
-                                    className="form-control mb-1"
-                                    value={editDescription}
-                                    onChange={(e) => setEditDescription(e.target.value)}
-                                    placeholder="Post description"
-                                />
-                                <input
-                                    type="file"
-                                    className="form-control mb-1"
-                                    onChange={(e) => setEditImage(e.target.files ? e.target.files[0] : null)}
-                                />
-                                <div className="d-flex gap-2">
-                                    <button
-                                        className="btn btn-sm btn-success"
-                                        onClick={() => handleEditPost(post.postId)}
-                                    >
-                                        Save
-                                    </button>
-                                    <button
-                                        className="btn btn-sm btn-secondary"
-                                        onClick={() => setEditingPostId(null)}
-                                    >
-                                        Cancel
-                                    </button>
-                                </div>
-                            </div>
-                        ) : (
-                            <>
-                                <h6>{post.title}</h6>
-                                <p>{post.description}</p>
-                                {post.postImageUrl && (
-                                    <img
-                                        src={post.postImageUrl}
-                                        alt="Post"
-                                        className="img-fluid rounded mb-2"
-                                        style={{ maxHeight: 400, objectFit: "cover" }}
+                            {editingPostId === post.postId ? (
+                                <div className="mb-2">
+                                    <input
+                                        type="text"
+                                        className="form-control mb-1"
+                                        value={editTitle}
+                                        onChange={(e) => setEditTitle(e.target.value)}
+                                        placeholder="Post title"
                                     />
-                                )}
-                            </>
-                        )}
-
-                        <div className="d-flex gap-3 mb-2">
-                            <button
-                                className="btn btn-sm border-0 bg-transparent d-flex align-items-center gap-1"
-                                onClick={() => handleLike(post)}
-                            >
-                                {post.likedByCurrentUser ? (
-                                    <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        width="16"
-                                        height="16"
-                                        fill="red"
-                                        viewBox="0 0 16 16"
-                                    >
-                                        <path
-                                            fillRule="evenodd"
-                                            d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314"
+                                    <textarea
+                                        className="form-control mb-1"
+                                        value={editDescription}
+                                        onChange={(e) => setEditDescription(e.target.value)}
+                                        placeholder="Post description"
+                                    />
+                                    <input
+                                        type="file"
+                                        className="form-control mb-1"
+                                        onChange={(e) => setEditImage(e.target.files ? e.target.files[0] : null)}
+                                    />
+                                    <div className="d-flex gap-2">
+                                        <button
+                                            className="btn btn-sm btn-success"
+                                            onClick={() => handleEditPost(post.postId)}
+                                        >
+                                            Save
+                                        </button>
+                                        <button
+                                            className="btn btn-sm btn-secondary"
+                                            onClick={() => setEditingPostId(null)}
+                                        >
+                                            Cancel
+                                        </button>
+                                    </div>
+                                </div>
+                            ) : (
+                                <>
+                                    <h6>{post.title}</h6>
+                                    <p>{post.description}</p>
+                                    {post.postImageUrl && (
+                                        <img
+                                            src={post.postImageUrl}
+                                            alt="Post"
+                                            className="img-fluid rounded mb-2"
+                                            style={{ maxHeight: 400, objectFit: "cover" }}
                                         />
-                                    </svg>
-                                ) : (
+                                    )}
+                                </>
+                            )}
+
+                            <div className="d-flex gap-3 mb-2">
+                                <button
+                                    className="btn btn-sm border-0 bg-transparent d-flex align-items-center gap-1"
+                                    onClick={() => handleLike(post)}
+                                >
+                                    {post.likedByCurrentUser ? (
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            width="16"
+                                            height="16"
+                                            fill="red"
+                                            viewBox="0 0 16 16"
+                                        >
+                                            <path
+                                                fillRule="evenodd"
+                                                d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314"
+                                            />
+                                        </svg>
+                                    ) : (
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            width="16"
+                                            height="16"
+                                            fill="currentColor"
+                                            viewBox="0 0 16 16"
+                                        >
+                                            <path d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143q.09.083.176.171a3 3 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15" />
+                                        </svg>
+                                    )}
+
+                                    <span
+                                        style={{ cursor: "pointer" }}
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            handleShowLikes(post.postId);
+                                        }}
+                                    >
+                                        {post.likeCount}
+                                    </span>
+                                </button>
+                                <button
+                                    className="btn btn-sm border-0 bg-transparent text-muted d-flex align-items-center gap-1"
+                                    onClick={() => toggleComments(post.postId)}
+                                >
                                     <svg
                                         xmlns="http://www.w3.org/2000/svg"
                                         width="16"
@@ -330,190 +431,177 @@ export const AchievementsFeed: React.FC<Props> = ({
                                         fill="currentColor"
                                         viewBox="0 0 16 16"
                                     >
-                                        <path d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143q.09.083.176.171a3 3 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15" />
+                                        <path d="M2.678 11.894a1 1 0 0 1 .287.801 11 11 0 0 1-.398 2c1.395-.323 2.247-.697 2.634-.893a1 1 0 0 1 .71-.074A8 8 0 0 0 8 14c3.996 0 7-2.807 7-6s-3.004-6-7-6-7 2.808-7 6c0 1.468.617 2.83 1.678 3.894" />
                                     </svg>
-                                )}
 
-                                <span
-                                    style={{ cursor: "pointer" }}
-                                    onClick={(e) => {
-                                        e.stopPropagation();
-                                        handleShowLikes(post.postId);
-                                    }}
+                                    <span>{post.commentCount}</span>
+                                </button>
+                            </div>
+                            <div className="input-group mt-2">
+                                <input
+                                    type="text"
+                                    className="form-control form-control-sm"
+                                    placeholder="Add a comment..."
+                                    value={commentText[post.postId] || ""}
+                                    onChange={(e) =>
+                                        setCommentText((prev) => ({
+                                            ...prev,
+                                            [post.postId]: e.target.value,
+                                        }))
+                                    }
+                                />
+                                <button
+                                    className="btn btn-sm btn-outline-secondary"
+                                    onClick={() => handleComment(post.postId)}
                                 >
-                                    {post.likeCount}
-                                </span>
-                            </button>
-                            <button
-                                className="btn btn-sm border-0 bg-transparent text-muted d-flex align-items-center gap-1"
-                                onClick={() => toggleComments(post.postId)}
-                            >
-                                <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    width="16"
-                                    height="16"
-                                    fill="currentColor"
-                                    viewBox="0 0 16 16"
-                                >
-                                    <path d="M2.678 11.894a1 1 0 0 1 .287.801 11 11 0 0 1-.398 2c1.395-.323 2.247-.697 2.634-.893a1 1 0 0 1 .71-.074A8 8 0 0 0 8 14c3.996 0 7-2.807 7-6s-3.004-6-7-6-7 2.808-7 6c0 1.468.617 2.83 1.678 3.894" />
-                                </svg>
-
-                                <span>{post.commentCount}</span>
-                            </button>
-                        </div>
-                        <div className="input-group mt-2">
-                            <input
-                                type="text"
-                                className="form-control form-control-sm"
-                                placeholder="Add a comment..."
-                                value={commentText[post.postId] || ""}
-                                onChange={(e) =>
-                                    setCommentText((prev) => ({
-                                        ...prev,
-                                        [post.postId]: e.target.value,
-                                    }))
-                                }
-                            />
-                            <button
-                                className="btn btn-sm btn-outline-secondary"
-                                onClick={() => handleComment(post.postId)}
-                            >
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-send" viewBox="0 0 16 16">
-                                    <path d="M15.854.146a.5.5 0 0 1 .11.54l-5.819 14.547a.75.75 0 0 1-1.329.124l-3.178-4.995L.643 7.184a.75.75 0 0 1 .124-1.33L15.314.037a.5.5 0 0 1 .54.11ZM6.636 10.07l2.761 4.338L14.13 2.576zm6.787-8.201L1.591 6.602l4.339 2.76z" />
-                                </svg>
-                            </button>
-                        </div>
-                        <div className="mt-2">
-                            {expandedComments[post.postId] && (
-                                <div className="mt-3 border-top pt-2">
-                                    {post.comments.length === 0 ? (
-                                        <div className="text-muted small mb-2">No comments yet</div>
-                                    ) : (
-                                        <div
-                                            className="comment-list"
-                                            style={{
-                                                maxHeight: post.comments.length > 5 ? "250px" : "auto",
-                                                overflowY: post.comments.length > 5 ? "auto" : "visible",
-                                                paddingRight: "5px",
-                                            }}
-                                        >
-                                            {[...post.comments].reverse().map((c) => (
-                                                <div key={c.commentId} className="mb-2 small d-flex justify-content-between align-items-start">
-                                                    <div>
-                                                        <strong>{c.authorName}</strong>{" "}
-                                                        <span className="text-muted">{timeAgo(c.createdDate)}</span>
-                                                        <div>{c.commentDescription}</div>
-                                                        <div className="d-flex align-items-center gap-2 mt-1">
-                                                            <button
-                                                                className="btn btn-sm border-0 bg-transparent p-0"
-                                                                onClick={() => handleCommentLike(post.postId, c)}
-                                                            >
-                                                                {c.likedByCurrentUser ? (
-                                                                    <svg
-                                                                        xmlns="http://www.w3.org/2000/svg"
-                                                                        width="14"
-                                                                        height="14"
-                                                                        fill="red"
-                                                                        viewBox="0 0 16 16"
-                                                                    >
-                                                                        <path
-                                                                            fillRule="evenodd"
-                                                                            d="M8 1.314C12.438-3.248 23.534 4.735 8 15
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-send" viewBox="0 0 16 16">
+                                        <path d="M15.854.146a.5.5 0 0 1 .11.54l-5.819 14.547a.75.75 0 0 1-1.329.124l-3.178-4.995L.643 7.184a.75.75 0 0 1 .124-1.33L15.314.037a.5.5 0 0 1 .54.11ZM6.636 10.07l2.761 4.338L14.13 2.576zm6.787-8.201L1.591 6.602l4.339 2.76z" />
+                                    </svg>
+                                </button>
+                            </div>
+                            <div className="mt-2">
+                                {expandedComments[post.postId] && (
+                                    <div className="mt-3 border-top pt-2">
+                                        {post.comments.length === 0 ? (
+                                            <div className="text-muted small mb-2">No comments yet</div>
+                                        ) : (
+                                            <div
+                                                className="comment-list"
+                                                style={{
+                                                    maxHeight: post.comments.length > 5 ? "250px" : "auto",
+                                                    overflowY: post.comments.length > 5 ? "auto" : "visible",
+                                                    paddingRight: "5px",
+                                                }}
+                                            >
+                                                {[...post.comments].reverse().map((c) => (
+                                                    <div key={c.commentId} className="mb-2 small d-flex justify-content-between align-items-start">
+                                                        <div>
+                                                            <strong>{c.authorName}</strong>{" "}
+                                                            <span className="text-muted">{timeAgo(c.createdDate)}</span>
+                                                            <div>{c.commentDescription}</div>
+                                                            <div className="d-flex align-items-center gap-2 mt-1">
+                                                                <button
+                                                                    className="btn btn-sm border-0 bg-transparent p-0"
+                                                                    onClick={() => handleCommentLike(post.postId, c)}
+                                                                >
+                                                                    {c.likedByCurrentUser ? (
+                                                                        <svg
+                                                                            xmlns="http://www.w3.org/2000/svg"
+                                                                            width="14"
+                                                                            height="14"
+                                                                            fill="red"
+                                                                            viewBox="0 0 16 16"
+                                                                        >
+                                                                            <path
+                                                                                fillRule="evenodd"
+                                                                                d="M8 1.314C12.438-3.248 23.534 4.735 8 15
           -7.534 4.736 3.562-3.248 8 1.314"
-                                                                        />
-                                                                    </svg>
-                                                                ) : (
-                                                                    <svg
-                                                                        xmlns="http://www.w3.org/2000/svg"
-                                                                        width="14"
-                                                                        height="14"
-                                                                        fill="currentColor"
-                                                                        viewBox="0 0 16 16"
-                                                                    >
-                                                                        <path d="m8 2.748-.717-.737C5.6.281 2.514.878
+                                                                            />
+                                                                        </svg>
+                                                                    ) : (
+                                                                        <svg
+                                                                            xmlns="http://www.w3.org/2000/svg"
+                                                                            width="14"
+                                                                            height="14"
+                                                                            fill="currentColor"
+                                                                            viewBox="0 0 16 16"
+                                                                        >
+                                                                            <path d="m8 2.748-.717-.737C5.6.281 2.514.878
         1.4 3.053c-.523 1.023-.641 2.5.314 4.385
         .92 1.815 2.834 3.989 6.286 6.357
         3.452-2.368 5.365-4.542 6.286-6.357
         .955-1.886.838-3.362.314-4.385
         C13.486.878 10.4.28 8.717 2.01z" />
-                                                                    </svg>
-                                                                )}
-                                                            </button>
+                                                                        </svg>
+                                                                    )}
+                                                                </button>
 
-                                                            <span className="text-muted small">
-                                                                {c.likeCount}
-                                                            </span>
+                                                                <span
+                                                                    className="text-muted small"
+                                                                    style={{ cursor: "pointer" }}
+                                                                    onClick={async () => {
+                                                                        const users = await getCommentLikes(c.commentId);
+                                                                        setLikesUsers(users);
+                                                                        setCommentLikesModalId(c.commentId);
+                                                                    }}
+                                                                >
+                                                                    {c.likeCount}
+                                                                </span>
+                                                            </div>
                                                         </div>
+                                                        {(c.authorId === currentUserId || currentUserRole === "HR") && (
+                                                            <button
+                                                                className="btn btn-sm border-0 btn-outline-danger ms-2"
+                                                                onClick={() => handleDeleteComment(c.commentId, post.postId)}
+                                                            >
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-trash" viewBox="0 0 16 16">
+                                                                    <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z" />
+                                                                    <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z" />
+                                                                </svg>
+                                                            </button>
+                                                        )}
                                                     </div>
-                                                    {(c.authorId === currentUserId || currentUserRole === "HR") && (
-                                                        <button
-                                                            className="btn btn-sm border-0 btn-outline-danger ms-2"
-                                                            onClick={() => handleDeleteComment(c.commentId, post.postId)}
-                                                        >
-                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-trash" viewBox="0 0 16 16">
-                                                                <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z" />
-                                                                <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z" />
-                                                            </svg>
-                                                        </button>
-                                                    )}
-                                                </div>
-                                            ))}
-                                        </div>
-                                    )}
-                                </div>
-                            )}
-                        </div>
-                    </div>
-                </div>
-            ))}
-            {likesModalPostId && (
-                <div
-                    className="modal fade show"
-                    style={{ display: "block", backgroundColor: "rgba(0,0,0,0.5)" }}
-                    onClick={() => setLikesModalPostId(null)}
-                >
-                    <div
-                        className="modal-dialog modal-dialog-centered"
-                        onClick={(e) => e.stopPropagation()}
-                    >
-                        <div className="modal-content">
-                            <div className="modal-header">
-                                <h5 className="modal-title">Liked by</h5>
-                                <button
-                                    className="btn-close"
-                                    onClick={() => setLikesModalPostId(null)}
-                                />
-                            </div>
-                            <div
-                                className="modal-body"
-                                style={{
-                                    maxHeight: "400px",
-                                    overflowY: "auto"
-                                }}
-                            >
-                                {likesUsers.length === 0 ? (
-                                    <div className="text-muted">No likes yet</div>
-                                ) : (
-                                    likesUsers.map((user) => (
-                                        <div
-                                            key={user.employeeId}
-                                            className="d-flex align-items-center mb-2"
-                                        >
-                                            <div
-                                                className="rounded-circle bg-primary text-white d-flex justify-content-center align-items-center me-2"
-                                                style={{ width: 35, height: 35 }}
-                                            >
-                                                {user.fullName.charAt(0)}
+                                                ))}
                                             </div>
-                                            <div>{user.fullName}</div>
-                                        </div>
-                                    ))
+                                        )}
+                                    </div>
                                 )}
                             </div>
                         </div>
                     </div>
-                </div>
-            )}
-        </div>
+                ))}
+                {(likesModalPostId || commentLikesModalId) && (
+                    <div
+                        className="modal fade show"
+                        style={{ display: "block", backgroundColor: "rgba(0,0,0,0.5)" }}
+                        onClick={() => setLikesModalPostId(null)}
+                    >
+                        <div
+                            className="modal-dialog modal-dialog-centered"
+                            onClick={(e) => e.stopPropagation()}
+                        >
+                            <div className="modal-content">
+                                <div className="modal-header">
+                                    <h5 className="modal-title">Liked by</h5>
+                                    <button
+                                        className="btn-close"
+                                        onClick={() => {
+                                            setLikesModalPostId(null);
+                                            setCommentLikesModalId(null);
+                                        }}
+                                    />
+                                </div>
+                                <div
+                                    className="modal-body"
+                                    style={{
+                                        maxHeight: "400px",
+                                        overflowY: "auto"
+                                    }}
+                                >
+                                    {likesUsers.length === 0 ? (
+                                        <div className="text-muted">No likes yet</div>
+                                    ) : (
+                                        likesUsers.map((user) => (
+                                            <div
+                                                key={user.employeeId}
+                                                className="d-flex align-items-center mb-2"
+                                            >
+                                                <div
+                                                    className="rounded-circle bg-primary text-white d-flex justify-content-center align-items-center me-2"
+                                                    style={{ width: 35, height: 35 }}
+                                                >
+                                                    {user.fullName.charAt(0)}
+                                                </div>
+                                                <div>{user.fullName}</div>
+                                            </div>
+                                        ))
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                )}
+            </div>
+        </>
     );
 };

@@ -14,11 +14,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.nio.charset.StandardCharsets;
 import java.security.Principal;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -201,6 +203,39 @@ public class PostController {
         postService.unlikeComment(commentId, currentUser);
 
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/comments/{commentId}/likes")
+    public ResponseEntity<List<LikeUserDTO>> getCommentLikes(
+            @PathVariable Integer commentId
+    ) {
+        return ResponseEntity.ok(
+                postService.getCommentLikes(commentId)
+        );
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<PostResponseDTO>> searchPosts(
+            @RequestParam(required = false) String keyword,
+            @RequestParam(required = false) Integer authorId,
+            @RequestParam(required = false) String from,
+            @RequestParam(required = false) String to,
+            Principal principal
+    ) {
+
+        LocalDateTime fromDate = from != null
+                ? LocalDateTime.parse(from)
+                : null;
+
+        LocalDateTime toDate = to != null
+                ? LocalDateTime.parse(to)
+                : null;
+        Employee currentUser = employeeRepository
+                .findByEmail(principal.getName())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        return ResponseEntity.ok(
+                postService.searchPosts(keyword, authorId, fromDate, toDate, currentUser)
+        );
     }
 
     private Employee getEmployeeFromToken(String authHeader) {

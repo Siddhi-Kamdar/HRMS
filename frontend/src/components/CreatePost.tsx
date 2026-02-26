@@ -63,7 +63,7 @@ export const CreatePost: React.FC<Props> = ({ onPostCreated }) => {
           <button
             type="submit"
             disabled={loading}
-            className="btn btn-primary"
+            className="btn btn-outline-success"
           >
             {loading ? "Posting..." : "Post Achievement"}
           </button>

@@ -28,12 +28,16 @@ public class EmailService {
     }
 
     public void sendWarning(Employee author) {
-//        SimpleMailMessage message =
-//                new SimpleMailMessage();
-//
-//        message.setTo(author.getEmail());
-//        message.setSubject("Post Deleted due to Inappropriate Content");
-//        message.setText("Hi, \n This is to Inform you your post is deleted by HR, due to xyz reasons");
+        if (author == null || author.getEmail() == null) return;
+
+        sendMail(
+                author.getEmail(),
+                "Content Removed by HR",
+                "Dear " + author.getFullName() + ",\n\n" +
+                        "Your post/comment has been removed by HR due to policy violation.\n\n" +
+                        "If you believe this was a mistake, please contact HR.\n\n" +
+                        "Regards,\nHR Team"
+        );
         System.out.println("hiyaa, why you put this kinda post! you idiot!");
     }
 }

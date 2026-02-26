@@ -10,7 +10,7 @@ public class Employee {
 
     @Id
     @Column(name = "employee_id")
-    private int employeeId;
+    private Integer employeeId;
 
     @Column(name = "full_name")
     private String fullName;
