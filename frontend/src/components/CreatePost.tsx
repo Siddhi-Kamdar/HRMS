@@ -31,7 +31,7 @@ export const CreatePost: React.FC<Props> = ({ onPostCreated }) => {
   return (
     <div className="card mb-4 shadow-sm">
       <div className="card-body">
-        <h5 className="card-title">Create Achievement</h5>
+        <h5 className="card-title">Create Post</h5>
         <form onSubmit={handleSubmit}>
           <div className="mb-3">
             <input
@@ -39,7 +39,6 @@ export const CreatePost: React.FC<Props> = ({ onPostCreated }) => {
               placeholder="Title"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              required
               className="form-control"
             />
           </div>

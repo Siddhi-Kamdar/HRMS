@@ -82,7 +82,7 @@ public class PostController {
     // Like a post
     @PostMapping("/{id}/like")
     public ResponseEntity<?> like(
-            @PathVariable Long id,
+            @PathVariable Integer id,
             @RequestHeader("Authorization") String authHeader) {
 
         Employee user = getEmployeeFromToken(authHeader);
@@ -93,7 +93,7 @@ public class PostController {
     // Unlike a post
     @DeleteMapping("/{id}/like")
     public ResponseEntity<?> unlike(
-            @PathVariable Long id,
+            @PathVariable Integer id,
             @RequestHeader("Authorization") String authHeader) {
 
         Employee user = getEmployeeFromToken(authHeader);
@@ -104,7 +104,7 @@ public class PostController {
 
     @PostMapping("/{postId}/comments")
     public CommentResponseDTO addComment(
-            @PathVariable Long postId,
+            @PathVariable Integer postId,
             @RequestBody CommentRequestDTO request,
             Principal principal
     ) {
@@ -114,7 +114,7 @@ public class PostController {
         Comment comment = postService.addComment(postId, request.getCommentDescription(), currentUser);
 
         return CommentResponseDTO.builder()
-                .commentId(comment.getCommentId())
+                .commentId(Long.valueOf(comment.getCommentId()))
                 .commentDescription(comment.getCommentDescription())
                 .authorId((long) comment.getCommentor().getEmployeeId())
                 .authorName(comment.getCommentor().getFullName())
@@ -124,7 +124,7 @@ public class PostController {
 
     @DeleteMapping("/{postId}")
     public void deletePost(
-            @PathVariable Long postId,
+            @PathVariable Integer postId,
             Principal principal
     ) {
         if (principal == null) {
@@ -152,13 +152,13 @@ public class PostController {
     }
 
     @GetMapping("/{postId}/likes")
-    public List<LikeUserDTO> getPostLikes(@PathVariable Long postId) {
+    public List<LikeUserDTO> getPostLikes(@PathVariable Integer postId) {
         return postService.getPostLikes(postId);
     }
 
     @PutMapping(value = "/{postId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public PostResponseDTO editPost(
-            @PathVariable Long postId,
+            @PathVariable Integer postId,
             @RequestParam String title,
             @RequestParam String description,
             @RequestParam(required = false) MultipartFile image,
@@ -173,6 +173,34 @@ public class PostController {
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         return postService.updatePost(postId, title, description, image, currentUser);
+    }
+
+    @PostMapping("/comments/{commentId}/like")
+    public ResponseEntity<?> likeComment(
+            @PathVariable Integer commentId,
+            Principal principal) {
+
+        Employee currentUser = employeeRepository
+                .findByEmail(principal.getName())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        postService.likeComment(commentId, currentUser);
+
+        return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("/comments/{commentId}/like")
+    public ResponseEntity<?> unlikeComment(
+            @PathVariable Integer commentId,
+            Principal principal) {
+
+        Employee currentUser = employeeRepository
+                .findByEmail(principal.getName())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        postService.unlikeComment(commentId, currentUser);
+
+        return ResponseEntity.ok().build();
     }
 
     private Employee getEmployeeFromToken(String authHeader) {

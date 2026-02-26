@@ -4,10 +4,7 @@ import com.example.backend.dto.response.CommentResponseDTO;
 import com.example.backend.dto.response.LikeUserDTO;
 import com.example.backend.dto.response.PostResponseDTO;
 import com.example.backend.entity.*;
-import com.example.backend.repository.CommentRepository;
-import com.example.backend.repository.EmployeeRepository;
-import com.example.backend.repository.PostLikeRepository;
-import com.example.backend.repository.PostRepository;
+import com.example.backend.repository.*;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -35,6 +32,9 @@ public class PostService {
 
     @Autowired
     private EmployeeRepository employeeRepository;
+
+    @Autowired
+    private CommentLikeRepository commentLikeRepository;
 
     @Autowired
     private AchievementImageStorageService imageStorageService;
@@ -74,7 +74,7 @@ public class PostService {
     }
 
     @Transactional
-    public void likePost(Long postId, Employee user) {
+    public void likePost(Integer postId, Employee user) {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new RuntimeException("Post not found"));
 
@@ -91,7 +91,7 @@ public class PostService {
     }
 
     @Transactional
-    public void unlikePost(Long postId, Employee user) {
+    public void unlikePost(Integer postId, Employee user) {
         if (user == null) throw new RuntimeException("User cannot be null");
 
         Post post = postRepository.findById(postId)
@@ -100,7 +100,7 @@ public class PostService {
         postLikeRepository.deleteByPostAndLikedBy(post, user);
     }
 
-    public List<LikeUserDTO> getPostLikes(Long postId) {
+    public List<LikeUserDTO> getPostLikes(Integer postId) {
 
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new RuntimeException("Post not found"));
@@ -114,7 +114,7 @@ public class PostService {
                 .toList();
     }
 
-    public Comment addComment(Long postId, String text, Employee user) {
+    public Comment addComment(Integer postId, String text, Employee user) {
         if (user == null) throw new RuntimeException("User cannot be null");
 
         Post post = postRepository.findById(postId)
@@ -129,7 +129,7 @@ public class PostService {
     }
 
     @Transactional
-    public void deletePost(Long postId, Employee currentUser) {
+    public void deletePost(Integer postId, Employee currentUser) {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new RuntimeException("Post not found"));
 
@@ -167,7 +167,7 @@ public class PostService {
     }
 
     @Transactional
-    public PostResponseDTO updatePost(Long postId, String title, String description, MultipartFile image, Employee currentUser) {
+    public PostResponseDTO updatePost(Integer postId, String title, String description, MultipartFile image, Employee currentUser) {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new RuntimeException("Post not found"));
 
@@ -186,6 +186,33 @@ public class PostService {
         Post saved = postRepository.save(post);
         return mapToResponse(saved, currentUser);
     }
+
+    @Transactional
+    public void likeComment(Integer commentId, Employee user) {
+
+        Comment comment = commentRepository.findById(Long.valueOf(commentId))
+                .orElseThrow(() -> new RuntimeException("Comment not found"));
+
+        if (commentLikeRepository.existsByCommentAndLikedBy(comment, user)) {
+            throw new RuntimeException("Already liked");
+        }
+
+        CommentLike like = new CommentLike();
+        like.setComment(comment);
+        like.setLikedBy(user);
+        like.setId(new CommentLikeId(commentId, user.getEmployeeId()));
+
+        commentLikeRepository.save(like);
+    }
+
+    @Transactional
+    public void unlikeComment(Integer commentId, Employee user) {
+
+        Comment comment = commentRepository.findById(Long.valueOf(commentId))
+                .orElseThrow(() -> new RuntimeException("Comment not found"));
+
+        commentLikeRepository.deleteByCommentAndLikedBy(comment, user);
+    }
     private PostResponseDTO mapToResponse(Post post, Employee currentUser) {
         List<Comment> comments = post.getComments() != null ? post.getComments() : new ArrayList<>();
 
@@ -194,13 +221,32 @@ public class PostService {
 
         List<CommentResponseDTO> commentDTOS = comments.stream()
                 .filter(c -> !c.isDeleted())
-                .map(c -> CommentResponseDTO.builder()
-                        .commentId(c.getCommentId())
-                        .commentDescription(c.getCommentDescription())
-                        .authorId(c.getCommentor() != null ? c.getCommentor().getEmployeeId() : 0L) // default 0L
-                        .authorName(c.getCommentor() != null ? c.getCommentor().getFullName() : "Unknown")
-                        .createdDate(c.getDateTime())
-                        .build())
+                .map(c -> {
+
+                    long commentLikeCount = commentLikeRepository.countByComment(c);
+
+                    boolean commentLikedByUser =
+                            currentUser != null &&
+                                    commentLikeRepository.existsByCommentAndLikedBy(c, currentUser);
+
+                    return CommentResponseDTO.builder()
+                            .commentId(Long.valueOf(c.getCommentId()))
+                            .commentDescription(c.getCommentDescription())
+                            .authorId(
+                                    c.getCommentor() != null
+                                            ? (long) c.getCommentor().getEmployeeId()
+                                            : 0L
+                            )
+                            .authorName(
+                                    c.getCommentor() != null
+                                            ? c.getCommentor().getFullName()
+                                            : "Unknown"
+                            )
+                            .createdDate(c.getDateTime())
+                            .likeCount(commentLikeCount)
+                            .likedByCurrentUser(commentLikedByUser)
+                            .build();
+                })
                 .toList();
 
         String imageUrl = post.getPostImageUrl() != null

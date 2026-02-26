@@ -16,6 +16,8 @@ export interface CommentResponse {
   authorId: number;
   authorName: string;
   createdDate: string;
+  likeCount: number;              
+  likedByCurrentUser: boolean; 
 }
 
 export interface PostResponse {
@@ -101,6 +103,13 @@ export const deleteComment = async (commentId: number): Promise<void> => {
   await axiosInstance.delete(`/api/achievements/comments/${commentId}`);
 };
 
+export const likeComment = async (commentId: number) => {
+  await axiosInstance.post(`/api/achievements/comments/${commentId}/like`);
+};
+
+export const unlikeComment = async (commentId: number) => {
+  await axiosInstance.delete(`/api/achievements/comments/${commentId}/like`);
+};
 
 export const getPostLikes = async (postId: number): Promise<LikeUser[]> => {
   const response = await axiosInstance.get(`/api/achievements/${postId}/likes`);

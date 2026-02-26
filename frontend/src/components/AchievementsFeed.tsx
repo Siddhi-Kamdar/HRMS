@@ -10,6 +10,8 @@ import {
     type CommentResponse,
     deleteComment,
     editPost,
+    likeComment,
+    unlikeComment,
 } from "../services/achievementsService";
 import "../index.css";
 
@@ -143,7 +145,43 @@ export const AchievementsFeed: React.FC<Props> = ({
             alert("Failed to delete comment.");
         }
     };
+    const handleCommentLike = async (
+        postId: number,
+        comment: CommentResponse
+    ) => {
+        try {
+            if (comment.likedByCurrentUser) {
+                await unlikeComment(comment.commentId);
+            } else {
+                await likeComment(comment.commentId);
+            }
 
+            // Optimistic UI update
+            onPostsChange(
+                posts.map((p) =>
+                    p.postId === postId
+                        ? {
+                            ...p,
+                            comments: p.comments.map((c) =>
+                                c.commentId === comment.commentId
+                                    ? {
+                                        ...c,
+                                        likedByCurrentUser: !c.likedByCurrentUser,
+                                        likeCount: c.likedByCurrentUser
+                                            ? c.likeCount - 1
+                                            : c.likeCount + 1,
+                                    }
+                                    : c
+                            ),
+                        }
+                        : p
+                )
+            );
+        } catch (err) {
+            console.error(err);
+            alert("Failed to like comment");
+        }
+    };
     const handleDelete = async (postId: number) => {
         if (!confirm("Are you sure you want to delete this post?")) return;
         try {
@@ -253,6 +291,7 @@ export const AchievementsFeed: React.FC<Props> = ({
                             </div>
                         ) : (
                             <>
+                                <h6>{post.title}</h6>
                                 <p>{post.description}</p>
                                 {post.postImageUrl && (
                                     <img
@@ -364,6 +403,47 @@ export const AchievementsFeed: React.FC<Props> = ({
                                                         <strong>{c.authorName}</strong>{" "}
                                                         <span className="text-muted">{timeAgo(c.createdDate)}</span>
                                                         <div>{c.commentDescription}</div>
+                                                        <div className="d-flex align-items-center gap-2 mt-1">
+                                                            <button
+                                                                className="btn btn-sm border-0 bg-transparent p-0"
+                                                                onClick={() => handleCommentLike(post.postId, c)}
+                                                            >
+                                                                {c.likedByCurrentUser ? (
+                                                                    <svg
+                                                                        xmlns="http://www.w3.org/2000/svg"
+                                                                        width="14"
+                                                                        height="14"
+                                                                        fill="red"
+                                                                        viewBox="0 0 16 16"
+                                                                    >
+                                                                        <path
+                                                                            fillRule="evenodd"
+                                                                            d="M8 1.314C12.438-3.248 23.534 4.735 8 15
+          -7.534 4.736 3.562-3.248 8 1.314"
+                                                                        />
+                                                                    </svg>
+                                                                ) : (
+                                                                    <svg
+                                                                        xmlns="http://www.w3.org/2000/svg"
+                                                                        width="14"
+                                                                        height="14"
+                                                                        fill="currentColor"
+                                                                        viewBox="0 0 16 16"
+                                                                    >
+                                                                        <path d="m8 2.748-.717-.737C5.6.281 2.514.878
+        1.4 3.053c-.523 1.023-.641 2.5.314 4.385
+        .92 1.815 2.834 3.989 6.286 6.357
+        3.452-2.368 5.365-4.542 6.286-6.357
+        .955-1.886.838-3.362.314-4.385
+        C13.486.878 10.4.28 8.717 2.01z" />
+                                                                    </svg>
+                                                                )}
+                                                            </button>
+
+                                                            <span className="text-muted small">
+                                                                {c.likeCount}
+                                                            </span>
+                                                        </div>
                                                     </div>
                                                     {(c.authorId === currentUserId || currentUserRole === "HR") && (
                                                         <button
@@ -382,7 +462,6 @@ export const AchievementsFeed: React.FC<Props> = ({
                                     )}
                                 </div>
                             )}
-
                         </div>
                     </div>
                 </div>
