@@ -25,7 +25,9 @@ public class JobService {
     @Autowired
     private EmployeeRepository employeeRepository;
 
-    // ---------------- GET ALL ----------------
+    @Autowired
+    private EmailService emailService;
+
     public List<JobResponseDTO> getAllJobs() {
         return jobRepository.findAll()
                 .stream()
@@ -33,7 +35,6 @@ public class JobService {
                 .toList();
     }
 
-    // ---------------- GET BY ID ----------------
     public JobResponseDTO getJobById(Long jobId) {
         Job job = jobRepository.findById(jobId)
                 .orElseThrow(() -> new RuntimeException("Job not found"));
@@ -41,9 +42,7 @@ public class JobService {
         return mapToDTO(job);
     }
 
-    @PreAuthorize("hasRole('HR')")
 
-    // ---------------- CREATE ----------------
     public JobResponseDTO createJob(Job job, Long postedById) {
 
         Employee employee = employeeRepository.findById(postedById)
@@ -57,7 +56,6 @@ public class JobService {
         return mapToDTO(savedJob);
     }
 
-    // ---------------- UPDATE ----------------
     public JobResponseDTO updateJob(Long jobId, Job updatedJob) {
 
         Job existingJob = jobRepository.findById(jobId)
@@ -73,8 +71,6 @@ public class JobService {
         return mapToDTO(saved);
     }
 
-    @PreAuthorize("hasRole('HR')")
-    // ---------------- DELETE ----------------
     public void deleteJob(Long jobId) {
         Authentication aut = SecurityContextHolder.getContext().getAuthentication();
         System.out.println("AUTH OBJECT" + aut);
@@ -86,7 +82,6 @@ public class JobService {
         jobRepository.delete(job);
     }
 
-    // ---------------- CHANGE STATUS ----------------
     public JobResponseDTO updateJobStatus(Long jobId, String status) {
 
         Job job = jobRepository.findById(jobId)
@@ -97,7 +92,27 @@ public class JobService {
         return mapToDTO(jobRepository.save(job));
     }
 
-    // ---------------- DTO MAPPER ----------------
+    public void shareJob(Long jobId, List<String> emails) {
+
+        Job job = jobRepository.findById(jobId)
+                .orElseThrow(() -> new RuntimeException("Job not found"));
+
+        String subject = "Job Opportunity: " + job.getJob_title();
+
+        String body = "Job Title: " + job.getJob_title()
+                + "\nSummary: " + job.getJob_summary();
+
+        String filePath = job.getJob_description_url();
+
+        for (String email : emails) {
+            emailService.sendMailWithAttachment(
+                    email,
+                    subject,
+                    body,
+                    filePath
+            );
+        }
+    }
     private JobResponseDTO mapToDTO(Job job) {
 
         return new JobResponseDTO(
@@ -109,4 +124,6 @@ public class JobService {
                 job.getPosted_date()
         );
     }
+
+
 }

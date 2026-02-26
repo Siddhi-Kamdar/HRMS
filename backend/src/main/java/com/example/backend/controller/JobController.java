@@ -61,4 +61,13 @@ public class JobController {
     public void deleteJob(@PathVariable Long jobId) {
         jobService.deleteJob(jobId);
     }
+
+
+    @PostMapping("/{jobId}/share")
+    public void shareJob(
+            @PathVariable Long jobId,
+            @RequestBody List<String> emails
+    ) {
+        jobService.shareJob(jobId, emails);
+    }
 }

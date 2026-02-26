@@ -19,6 +19,9 @@ public class Post {
     @Column(name = "post_id")
     private Integer postId;
 
+    @Column(nullable = false)
+    private String visibility = "ALL";
+
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "author_id", nullable = false)
     private Employee author;

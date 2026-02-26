@@ -102,7 +102,7 @@ export const AchievementsFeed: React.FC<Props> = ({
         }
     };
     const handleEditPost = async (postId: number) => {
-        if (!editTitle.trim()) return alert("Title cannot be empty");
+        // if (!editTitle.trim()) return alert("Title cannot be empty");
         if (!editDescription.trim()) return alert("Description cannot be empty");
 
         try {
@@ -277,6 +277,12 @@ export const AchievementsFeed: React.FC<Props> = ({
                             {isSearching ? "Searching..." : "Search"}
                         </button>
                     </div>
+                    <button
+                        className="btn btn-outline-secondary"
+                        onClick={() => window.location.reload()}
+                    >
+                        Reset
+                    </button>
 
                 </div>
             </div>

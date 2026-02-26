@@ -318,6 +318,22 @@ public class PostService {
                 .map(post -> mapToResponse(post, currentUser))
                 .toList();
     }
+
+    private boolean canView(Post post, Employee currentUser) {
+
+        if ("ALL".equals(post.getVisibility())) {
+            return true;
+        }
+
+        if ("DEPARTMENT".equals(post.getVisibility())) {
+            return post.getAuthor()
+                    .getDepartment()
+                    .getDepartmentId()
+                    == (currentUser.getDepartment().getDepartmentId());
+        }
+
+        return false;
+    }
     private void validateImage(MultipartFile file) {
         if (file == null || file.isEmpty()) return;
 
