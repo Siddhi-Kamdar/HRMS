@@ -84,10 +84,6 @@ export const deletePost = async (postId: number) => {
 };
 
 
-// export const toggleLikePost = async (postId: number): Promise<void> => {
-//   await axiosInstance.post(`/api/achievements/${postId}/like`);
-// };
-
 export const addComment = async (
   postId: number,
   comment: CommentRequest
@@ -120,18 +116,25 @@ export const editPost = async (
   postId: number,
   title: string,
   description: string,
-  image?: File | null
+  image?: File | null,
+  removeImage: boolean = false
 ) => {
   const formData = new FormData();
   formData.append("title", title);
   formData.append("description", description);
-  if (image) formData.append("image", image); 
+  formData.append("removeImage", removeImage ? "true" : "false");
 
-  const response = await axiosInstance.put(`/api/achievements/${postId}`, formData, {
-    headers: {
-      "Content-Type": "multipart/form-data" 
-    },
-  });
+  if (image) formData.append("image", image);
+
+  const response = await axiosInstance.put(
+    `/api/achievements/${postId}`,
+    formData,
+    {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    }
+  );
 
   return response.data;
 };

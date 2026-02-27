@@ -11,8 +11,12 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.net.Authenticator;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Date;
 import java.util.List;
 
@@ -43,28 +47,72 @@ public class JobService {
     }
 
 
-    public JobResponseDTO createJob(Job job, Long postedById) {
+    public JobResponseDTO createJob(
+            String jobTitle,
+            String jobSummary,
+            String jobStatus,
+            MultipartFile file,
+            String loggedInEmail
+    ) {
 
-        Employee employee = employeeRepository.findById(postedById)
+        Employee employee = employeeRepository
+                .findByEmail(loggedInEmail)
                 .orElseThrow(() -> new RuntimeException("Employee not found"));
 
+        String uploadDir = "uploads/job-description-files/";
+        String fileName = System.currentTimeMillis()
+                + "_" + file.getOriginalFilename();
+
+        try {
+            Path path = Paths.get(uploadDir + fileName);
+            Files.write(path, file.getBytes());
+        } catch (Exception e) {
+            throw new RuntimeException("File upload failed");
+        }
+
+        Job job = new Job();
+        job.setJob_title(jobTitle);
+        job.setJob_summary(jobSummary);
+        job.setJob_status(jobStatus);
+        job.setJob_description_url(uploadDir+fileName);
         job.setPosted_by_employee(employee);
         job.setPosted_date(new Date());
 
-        Job savedJob = jobRepository.save(job);
+        Job saved = jobRepository.save(job);
 
-        return mapToDTO(savedJob);
+        return mapToDTO(saved);
     }
 
-    public JobResponseDTO updateJob(Long jobId, Job updatedJob) {
+    public JobResponseDTO updateJob(
+            Long jobId,
+            String jobTitle,
+            String jobSummary,
+            String jobStatus,
+            MultipartFile file
+    ) {
 
         Job existingJob = jobRepository.findById(jobId)
                 .orElseThrow(() -> new RuntimeException("Job not found"));
 
-        existingJob.setJob_title(updatedJob.getJob_title());
-        existingJob.setJob_summary(updatedJob.getJob_summary());
-        existingJob.setJob_description_url(updatedJob.getJob_description_url());
-        existingJob.setJob_status(updatedJob.getJob_status());
+        existingJob.setJob_title(jobTitle);
+        existingJob.setJob_summary(jobSummary);
+        existingJob.setJob_status(jobStatus);
+
+        if (file != null && !file.isEmpty()) {
+
+            String uploadDir = "uploads/job-description-files/";
+            String fileName = System.currentTimeMillis()
+                    + "_" + file.getOriginalFilename();
+
+            try {
+                Path path = Paths.get(uploadDir + fileName);
+                Files.write(path, file.getBytes());
+            } catch (Exception e) {
+                throw new RuntimeException("File upload failed");
+            }
+
+            existingJob.setJob_description_url(fileName);
+        }
 
         Job saved = jobRepository.save(existingJob);
 

@@ -5,7 +5,11 @@ import com.example.backend.dto.response.JobResponseDTO;
 import com.example.backend.entity.Job;
 import com.example.backend.service.JobService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -30,21 +34,44 @@ public class JobController {
     }
 
     // ---------------- CREATE ----------------
-    @PostMapping
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+//    @PreAuthorize("hasRole('HR')")
     public JobResponseDTO createJob(
-            @RequestBody Job job,
-            @RequestParam Long postedById
+            @RequestParam String jobTitle,
+            @RequestParam String jobSummary,
+            @RequestParam String jobStatus,
+            @RequestParam MultipartFile jobDescriptionFile,
+            Authentication authentication
     ) {
-        return jobService.createJob(job, postedById);
+        return jobService.createJob(
+                jobTitle,
+                jobSummary,
+                jobStatus,
+                jobDescriptionFile,
+                authentication.getName()
+        );
     }
 
     // ---------------- UPDATE ----------------
-    @PutMapping("/{jobId}")
+    @PutMapping(
+            value = "/{jobId}",
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE
+    )
+    @PreAuthorize("hasRole('HR')")
     public JobResponseDTO updateJob(
             @PathVariable Long jobId,
-            @RequestBody Job job
+            @RequestParam String jobTitle,
+            @RequestParam String jobSummary,
+            @RequestParam String jobStatus,
+            @RequestParam(required = false) MultipartFile jobDescriptionFile
     ) {
-        return jobService.updateJob(jobId, job);
+        return jobService.updateJob(
+                jobId,
+                jobTitle,
+                jobSummary,
+                jobStatus,
+                jobDescriptionFile
+        );
     }
 
     // ---------------- UPDATE STATUS ----------------

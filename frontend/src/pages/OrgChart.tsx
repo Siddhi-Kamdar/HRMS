@@ -1,10 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { getHierarchy } from "../services/hierarchyService";
-import { useNavigate } from "react-router-dom";
 
 const OrgChart: React.FC = () => {
-  const navigate = useNavigate();
   const { empId } = useParams();
 
   const [managerData, setManagerData] = useState<any[]>([]);

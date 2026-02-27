@@ -43,6 +43,7 @@ export const AchievementsFeed: React.FC<Props> = ({
     const [searchKeyword, setSearchKeyword] = useState("");
     const [isSearching, setIsSearching] = useState(false);
     const [selectedAuthorId, setSelectedAuthorId] = useState<number | null>(null);
+    const [removeImage, setRemoveImage] = useState(false);
 
     const toggleComments = (postId: number) => {
         setExpandedComments((prev) => ({
@@ -103,24 +104,34 @@ export const AchievementsFeed: React.FC<Props> = ({
     };
     const handleEditPost = async (postId: number) => {
         // if (!editTitle.trim()) return alert("Title cannot be empty");
-        if (!editDescription.trim()) return alert("Description cannot be empty");
 
-        try {
-            const updatedPost = await editPost(postId, editTitle, editDescription, editImage);
+    if (!editDescription.trim()) return alert("Description cannot be empty");
 
-            onPostsChange(
-                posts.map((p) => (p.postId === postId ? updatedPost : p))
-            );
+    try {
+        const updatedPost = await editPost(
+            postId,
+            editTitle,
+            editDescription,
+            editImage,
+            removeImage
+        );
 
-            setEditingPostId(null);
-            setEditTitle("");
-            setEditDescription("");
-            setEditImage(null);
-        } catch (err) {
-            console.error(err);
-            alert("Failed to update post. Are you authorized?");
-        }
-    };
+        onPostsChange(
+            posts.map((p) => (p.postId === postId ? updatedPost : p))
+        );
+
+        setEditingPostId(null);
+        setEditTitle("");
+        setEditDescription("");
+        setEditImage(null);
+        setRemoveImage(false);
+    } catch (err) {
+        console.error(err);
+        alert("Failed to update post. Are you authorized?");
+    }
+};
+
+
     const handleComment = async (postId: number) => {
         const text = commentText[postId];
         if (!text?.trim()) return;
@@ -176,7 +187,6 @@ export const AchievementsFeed: React.FC<Props> = ({
                 await likeComment(comment.commentId);
             }
 
-            // Optimistic UI update
             onPostsChange(
                 posts.map((p) =>
                     p.postId === postId
@@ -351,6 +361,22 @@ export const AchievementsFeed: React.FC<Props> = ({
                                         onChange={(e) => setEditDescription(e.target.value)}
                                         placeholder="Post description"
                                     />
+                                    {post.postImageUrl && !editImage && (
+                                        <div className="mb-2">
+                                            <img
+                                                src={post.postImageUrl}
+                                                alt="Current"
+                                                className="img-fluid rounded"
+                                                style={{ maxHeight: 200 }}
+                                            />
+                                            <button
+                                                className="btn btn-sm btn-outline-danger mt-2"
+                                                onClick={() => setRemoveImage(true)}
+                                            >
+                                                Remove Image
+                                            </button>
+                                        </div>
+                                    )}
                                     <input
                                         type="file"
                                         className="form-control mb-1"

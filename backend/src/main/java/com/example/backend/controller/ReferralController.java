@@ -1,8 +1,10 @@
 package com.example.backend.controller;
 
+import com.example.backend.dto.response.ReferralDashboardDTO;
 import com.example.backend.dto.response.ReferralResponseDTO;
 import com.example.backend.service.ReferralService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -32,5 +34,24 @@ public class ReferralController {
                 cvFile,
                 authentication.getName()
         );
+    }
+
+    @PutMapping("/{referralId}/status")
+    @PreAuthorize("hasRole('HR')")
+    public void updateReferralStatus(
+            @PathVariable Long referralId,
+            @RequestParam Long statusId,
+            Authentication authentication
+    ) {
+        referralService.updateStatus(
+                referralId,
+                statusId,
+                authentication.getName()
+        );
+    }
+
+    @GetMapping
+    public List<ReferralDashboardDTO> getAllReferrals() {
+        return referralService.getAllReferrals();
     }
 }

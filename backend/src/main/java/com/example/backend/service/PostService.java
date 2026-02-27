@@ -174,7 +174,7 @@ public class PostService {
     }
 
     @Transactional
-    public PostResponseDTO updatePost(Integer postId, String title, String description, MultipartFile image, Employee currentUser) {
+    public PostResponseDTO updatePost(Integer postId, String title, String description, MultipartFile image, Employee currentUser, boolean removeImage) {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new RuntimeException("Post not found"));
 
@@ -184,7 +184,10 @@ public class PostService {
         post.setTitle(title);
         post.setDescription(description);
 
-        if (image != null && !image.isEmpty()) {
+        if (removeImage) {
+            post.setPostImageUrl(null);
+        }
+        else if (image != null && !image.isEmpty()) {
             validateImage(image);
             String imageUrl = imageStorageService.uploadImage(image);
             post.setPostImageUrl(imageUrl);

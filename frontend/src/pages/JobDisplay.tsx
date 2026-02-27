@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Container, Row, Col, Card } from 'react-bootstrap';
-import { NavLink, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Modal, Button, Form } from "react-bootstrap";
 
 import {
@@ -8,7 +8,7 @@ import {
     type Job,
     shareJob
 } from "../services/jobService";
-import { referFriend } from "../services/referralService";
+import { referFriend, updateReferralStatus } from "../services/referralService";
 
 const JobDisplay: React.FC = () => {
     const navigate = useNavigate();
@@ -74,48 +74,26 @@ const JobDisplay: React.FC = () => {
         }
     };
 
-    const handleRefer = async (jobId: number) => {
-        const candidateName = prompt("Candidate name");
-        const candidateEmail = prompt("Candidate email");
-
-        if (!candidateName || !candidateEmail) {
-            alert("Name and Email required");
-            return;
-        }
-
-        const fileInput = document.createElement("input");
-        fileInput.type = "file";
-
-        fileInput.onchange = async () => {
-            const file = fileInput.files?.[0];
-            if (!file) return;
-
-            const formData = new FormData();
-            formData.append("candidateName", candidateName);
-            formData.append("candidateEmail", candidateEmail);
-            formData.append("shortNote", "");
-            formData.append("cvFile", file);
-
-            try {
-                await referFriend(jobId, formData);
-                alert("Referral submitted!");
-            } catch (error) {
-                alert("Referral failed");
-            }
-        };
-
-        fileInput.click();
-    };
+    
     return (
         <Container fluid style={{ marginTop: "20px" }}>
             {user.role === "HR" && (
-                <div className="d-flex justify-content-end mb-3">
+                <div className="d-flex justify-content-between mb-3">
+
                     <button
-                        className="btn btn-success"
-                        onClick={() => navigate("")}
+                        className="btn btn-outline-success"
+                        onClick={() => navigate("/app/jobs/create")}
                     >
                         + Create New Job
                     </button>
+
+                    <button
+                        className="btn btn-outline-dark"
+                        onClick={() => navigate("/app/hr/referrals")}
+                    >
+                        View Referrals
+                    </button>
+
                 </div>
             )}
             <Row className="gy-3">
@@ -128,22 +106,28 @@ const JobDisplay: React.FC = () => {
                                     <Card.Text>Job Title : {job.jobTitle}</Card.Text>
                                     <Card.Text>Job Summary: {job.jobSummary}</Card.Text>
                                     <Card.Text>Job Status: {job.jobStatus}</Card.Text>
+                                    <a
+                                        href={`http://localhost:8080/${job.jobDescriptionUrl}`}
+                                        target="_blank"
+                                    >
+                                        Job Description
+                                    </a>
                                     <Card.Footer className="bg-white text-center">
-                                        <Card.Footer className="bg-white text-center">
-                                            <button
-                                                className="btn btn-primary me-2"
-                                                onClick={() => handleShare(job.jobId)}
-                                            >
-                                                Share Job
-                                            </button>
+                                        <button
+                                            className="btn  border-0 me-2"
+                                            onClick={() => handleShare(job.jobId)}
+                                        >
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-share" viewBox="0 0 16 16">
+                                                <path d="M13.5 1a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3M11 2.5a2.5 2.5 0 1 1 .603 1.628l-6.718 3.12a2.5 2.5 0 0 1 0 1.504l6.718 3.12a2.5 2.5 0 1 1-.488.876l-6.718-3.12a2.5 2.5 0 1 1 0-3.256l6.718-3.12A2.5 2.5 0 0 1 11 2.5m-8.5 4a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3m11 5.5a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3" />
+                                            </svg>
+                                        </button>
 
-                                            <button
-                                                className="btn btn-warning"
-                                                onClick={() => handleOpenModal(job.jobId)}
-                                            >
-                                                Refer Friend
-                                            </button>
-                                        </Card.Footer>
+                                        <button
+                                            className="btn btn-outline-warning"
+                                            onClick={() => handleOpenModal(job.jobId)}
+                                        >
+                                            Refer Friend
+                                        </button>
                                     </Card.Footer>
                                 </Card.Body>
                             </Card>
@@ -209,6 +193,7 @@ const JobDisplay: React.FC = () => {
                     </Button>
                 </Modal.Footer>
             </Modal>
+
         </Container>
     );
 }

@@ -5,7 +5,7 @@ import AppLayout from "./pages/AppLayout";
 import BookingForm from "./pages/BookingForm";
 import TravelDisplay from "./pages/TravelDisplay";
 import JobDisplay from "./pages/JobDisplay";
-import TravelCreate from "./pages/TravelCreate";
+import TravelCreate from "./pages/CreateTravel";
 import TravelDetail from "./pages/TravelDetail";
 import ExpenseCreate from "./pages/ExpenseCreate";
 import ExpenseDashboard from "./pages/ExpenseDashboard";
@@ -13,6 +13,8 @@ import OrgChart from "./pages/OrgChart";
 import SlotDetailPage from "./pages/SlotDetailPage";
 import ExpenseSection from "./pages/ExpenseSection";
 import { AchievementsPage } from "./pages/AchievementsPage";
+import ReferralDashboard from "./components/ReferralDashboard";
+import CreateJob from "./components/CreateJob";
 
 
 function App() {
@@ -44,6 +46,8 @@ function App() {
             element={<SlotDetailPage />}
           />
           <Route path = "travel/personal-expenses" element={<ExpenseSection/>} />
+          <Route path="hr/referrals" element={<ReferralDashboard />} />
+          <Route path="jobs/create" element={<CreateJob />} />
         </Route>
 
       </Routes>

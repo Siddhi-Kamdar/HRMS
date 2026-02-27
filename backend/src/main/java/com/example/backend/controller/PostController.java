@@ -126,13 +126,14 @@ public class PostController {
     @PutMapping(value = "/{postId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public PostResponseDTO editPost(
             @PathVariable Integer postId,
-            @RequestParam(required = false)  String title,
+            @RequestParam String title,
             @RequestParam String description,
             @RequestParam(required = false) MultipartFile image,
+            @RequestParam(defaultValue = "false") boolean removeImage,
             Principal principal) {
 
         Employee currentUser = getCurrentUser(principal);
-        return postService.updatePost(postId, title, description, image, currentUser);
+        return postService.updatePost(postId, title, description, image, currentUser, removeImage);
     }
 
     @PostMapping("/comments/{commentId}/like")

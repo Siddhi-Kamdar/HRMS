@@ -9,7 +9,6 @@ import {
 export const AchievementsPage: React.FC = () => {
   const [posts, setPosts] = useState<PostResponse[]>([]);
   const [loading, setLoading] = useState(false);
-  const [page, setPage] = useState(0);
 
   const userString = localStorage.getItem("user");
   const currentUser = userString ? JSON.parse(userString) : null;
