@@ -7,10 +7,7 @@ import com.example.backend.entity.*;
 import com.example.backend.repository.*;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -45,7 +42,7 @@ public class PostService {
     @Autowired
     private EmailService emailService;
 
-    public PostResponseDTO createPost(String title, String description, MultipartFile image, Employee userPrincipal) {
+    public PostResponseDTO createPost(String title, String description, MultipartFile image, String visibility,Employee userPrincipal) {
         if (userPrincipal == null) throw new RuntimeException("User cannot be null");
 
         Employee author = employeeRepository.findById((long)userPrincipal.getEmployeeId())
@@ -58,6 +55,9 @@ public class PostService {
         post.setSystemGenerated(false);
         post.setDeleted(false);
         post.setComments(new ArrayList<>());
+        post.setVisibility(
+                visibility != null ? visibility : "ALL"
+        );
         post.setLikes(new ArrayList<>());
 
         if (image != null && !image.isEmpty()) {
@@ -71,9 +71,21 @@ public class PostService {
     }
 
     public Page<PostResponseDTO> getFeed(int page, int size, Employee currentUser) {
+
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdDate"));
+
         Page<Post> posts = postRepository.findByIsDeletedFalse(pageable);
-        return posts.map(post -> mapToResponse(post, currentUser));
+
+        List<PostResponseDTO> filtered = posts.getContent().stream()
+                .filter(post -> canView(post, currentUser))
+                .map(post -> mapToResponse(post, currentUser))
+                .toList();
+
+        return new PageImpl<>(
+                filtered,
+                pageable,
+                filtered.size()
+        );
     }
 
     @Transactional
@@ -280,6 +292,7 @@ public class PostService {
                 .likeCount(likeCount)
                 .commentCount(commentDTOS.size())
                 .likedByCurrentUser(likedByUser)
+                .visibility(post.getVisibility())
                 .comments(commentDTOS)
                 .build();
     }
@@ -317,6 +330,7 @@ public class PostService {
 
         return posts.stream()
                 .filter(post -> !post.isDeleted())
+                .filter(post -> canView(post, currentUser))
                 .sorted((a, b) -> b.getCreatedDate().compareTo(a.getCreatedDate()))
                 .map(post -> mapToResponse(post, currentUser))
                 .toList();

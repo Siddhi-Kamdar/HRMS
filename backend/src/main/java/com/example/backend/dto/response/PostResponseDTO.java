@@ -30,4 +30,5 @@ public class PostResponseDTO {
     private boolean likedByCurrentUser;
 
     private List<CommentResponseDTO> comments;
+    private String visibility;
 }

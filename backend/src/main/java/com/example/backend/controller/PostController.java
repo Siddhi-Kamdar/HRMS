@@ -40,10 +40,11 @@ public class PostController {
             @RequestParam(required = false)  String title,
             @RequestParam String description,
             @RequestParam(required = false) MultipartFile image,
+            @RequestParam(defaultValue = "ALL") String visibility,
             Principal principal) {
 
         Employee user = getCurrentUser(principal);
-        return postService.createPost(title, description, image, user);
+        return postService.createPost(title, description, image, visibility, user);
     }
 
     @GetMapping

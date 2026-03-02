@@ -4,6 +4,7 @@ export interface PostRequest {
   title: string;
   description: string;
   image?: File | null;
+  visibility: "ALL" | "DEPARTMENT";
 }
 
 export interface CommentRequest {
@@ -33,6 +34,7 @@ export interface PostResponse {
   commentCount: number;
   likedByCurrentUser: boolean;
   comments: CommentResponse[];
+  visibility: "ALL" | "DEPARTMENT";
 }
 export interface LikeUser {
   employeeId: number;
@@ -44,6 +46,8 @@ export const createPost = async (post: PostRequest): Promise<PostResponse> => {
   const formData = new FormData();
   formData.append("title", post.title);
   formData.append("description", post.description);
+  formData.append("visibility", post.visibility);
+
   if (post.image) formData.append("image", post.image);
 
   const response = await axiosInstance.post<PostResponse>(

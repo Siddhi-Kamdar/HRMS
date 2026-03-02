@@ -10,16 +10,18 @@ export const CreatePost: React.FC<Props> = ({ onPostCreated }) => {
   const [description, setDescription] = useState("");
   const [image, setImage] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
+  const [visibility, setVisibility] = useState<"ALL" | "DEPARTMENT">("ALL");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     try {
-      const post = await createPost({ title, description, image });
+      const post = await createPost({ title, description, image, visibility });
       onPostCreated(post);
       setTitle("");
       setDescription("");
       setImage(null);
+      setVisibility("ALL");
     } catch (err) {
       console.error(err);
       alert("Failed to create post");
@@ -60,6 +62,14 @@ export const CreatePost: React.FC<Props> = ({ onPostCreated }) => {
               className="form-control"
             />
           </div>
+          <select
+            className="form-select mt-2 mb-3"
+            value={visibility}
+            onChange={(e) => setVisibility(e.target.value as "ALL" | "DEPARTMENT")}
+          >
+            <option value="ALL">All Employees</option>
+            <option value="DEPARTMENT">My Department</option>
+          </select>
           <button
             type="submit"
             disabled={loading}

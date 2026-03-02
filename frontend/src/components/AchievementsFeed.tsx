@@ -105,31 +105,31 @@ export const AchievementsFeed: React.FC<Props> = ({
     const handleEditPost = async (postId: number) => {
         // if (!editTitle.trim()) return alert("Title cannot be empty");
 
-    if (!editDescription.trim()) return alert("Description cannot be empty");
+        if (!editDescription.trim()) return alert("Description cannot be empty");
 
-    try {
-        const updatedPost = await editPost(
-            postId,
-            editTitle,
-            editDescription,
-            editImage,
-            removeImage
-        );
+        try {
+            const updatedPost = await editPost(
+                postId,
+                editTitle,
+                editDescription,
+                editImage,
+                removeImage
+            );
 
-        onPostsChange(
-            posts.map((p) => (p.postId === postId ? updatedPost : p))
-        );
+            onPostsChange(
+                posts.map((p) => (p.postId === postId ? updatedPost : p))
+            );
 
-        setEditingPostId(null);
-        setEditTitle("");
-        setEditDescription("");
-        setEditImage(null);
-        setRemoveImage(false);
-    } catch (err) {
-        console.error(err);
-        alert("Failed to update post. Are you authorized?");
-    }
-};
+            setEditingPostId(null);
+            setEditTitle("");
+            setEditDescription("");
+            setEditImage(null);
+            setRemoveImage(false);
+        } catch (err) {
+            console.error(err);
+            alert("Failed to update post. Are you authorized?");
+        }
+    };
 
 
     const handleComment = async (postId: number) => {
@@ -311,6 +311,9 @@ export const AchievementsFeed: React.FC<Props> = ({
                                     <strong>{post.authorName}</strong>{" "}
                                     {post.systemGenerated && (
                                         <span className="badge bg-secondary">System</span>
+                                    )}
+                                    {post.visibility === "DEPARTMENT" && (
+                                        <span className="badge bg-info ms-2">Department</span>
                                     )}
                                     <div className="text-muted" style={{ fontSize: "0.8rem" }}>
                                         {timeAgo(post.createdDate)}

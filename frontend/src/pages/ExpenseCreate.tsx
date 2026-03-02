@@ -1,7 +1,7 @@
 
 import React, { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { createExpense, uploadExpenseProof } from "../services/expenseService";
+import { createExpense } from "../services/expenseService";
 
 
 const ExpenseCreate: React.FC = () => {
@@ -11,7 +11,6 @@ const ExpenseCreate: React.FC = () => {
 
     const [amount, setAmount] = useState("");
     const [comment, setComment] = useState("");
-    const [proofUrl, setProofUrl] = useState("");
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [uploading, setUploading] = useState(false);
 

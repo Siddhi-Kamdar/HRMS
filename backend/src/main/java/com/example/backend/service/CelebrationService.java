@@ -125,6 +125,7 @@ public class CelebrationService {
         post.setSystemGenerated(true);
         post.setDeleted(false);
         post.setCreatedDate(LocalDateTime.now());
+        post.setVisibility("ALL");
 
         postRepository.save(post);
     }
