@@ -8,7 +8,7 @@ import {
     type Job,
     shareJob
 } from "../services/jobService";
-import { referFriend, updateReferralStatus } from "../services/referralService";
+import { referFriend } from "../services/referralService";
 
 const JobDisplay: React.FC = () => {
     const navigate = useNavigate();

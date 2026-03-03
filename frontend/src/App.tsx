@@ -15,11 +15,17 @@ import ExpenseSection from "./pages/ExpenseSection";
 import { AchievementsPage } from "./pages/AchievementsPage";
 import ReferralDashboard from "./components/ReferralDashboard";
 import CreateJob from "./components/CreateJob";
+import { useNavigate } from 'react-router-dom';
+import { navigationService } from './services/navigationService';
+import { useEffect } from "react";
 
 
 function App() {
+  const navigate = useNavigate();
+  useEffect(() => {
+    navigationService.setNavigateFunction(navigate);
+  }, [navigate]);
   return (
-    <BrowserRouter>
       <Routes>
 
         <Route path="/" element={<Login />} />
@@ -27,7 +33,7 @@ function App() {
         <Route path="/app" element={<AppLayout />}>
           <Route index element={<Navigate to="games" replace />} />
           <Route path="travel" element={<TravelDisplay />} />
-          <Route  path="games" element={<GameSchedule />} />
+          <Route path="games" element={<GameSchedule />} />
           <Route path="jobs" element={<JobDisplay />} />
           <Route path="games/slot/:slotId/book" element={<BookingForm />} />
           <Route path="travel/create" element={<TravelCreate />} />
@@ -36,7 +42,7 @@ function App() {
             path="expense/create/:travelId"
             element={<ExpenseCreate />}
           />
-          <Route path="achievements" element={<AchievementsPage />} /> 
+          <Route path="achievements" element={<AchievementsPage />} />
           <Route
             path="expenses"
             element={<ExpenseDashboard />}
@@ -46,13 +52,12 @@ function App() {
             path="games/slot/:slotId"
             element={<SlotDetailPage />}
           />
-          <Route path = "travel/personal-expenses" element={<ExpenseSection/>} />
+          <Route path="travel/personal-expenses" element={<ExpenseSection />} />
           <Route path="hr/referrals" element={<ReferralDashboard />} />
           <Route path="jobs/create" element={<CreateJob />} />
         </Route>
 
       </Routes>
-    </BrowserRouter>
   );
 }
 

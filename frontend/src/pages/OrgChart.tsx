@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { getHierarchy } from "../services/hierarchyService";
+import { navigationService } from "../services/navigationService";
 
 const OrgChart: React.FC = () => {
   const { empId } = useParams();
@@ -37,14 +38,18 @@ const OrgChart: React.FC = () => {
 
   if (lastRow?.supervisiorName) {
     managers.push({
+      id: lastRow.employeeId,
       name: lastRow.supervisiorName,
       position: lastRow.supervisiorPosition,
       picture: lastRow.supervisiorProfilePicture
     });
   }
 
+  
+
   managerData.forEach((row: any) => {
     managers.push({
+      id: row.employeeId,
       name: row.employeeName,
       position: row.employeePosition,
       picture: row.employeeProfilePicture
@@ -88,6 +93,7 @@ const OrgChart: React.FC = () => {
             <EmployeeCard
               key={i}
               emp={{
+                id: emp.employeeId,
                 name: emp.name,
                 position: emp.designation,
                 picture: emp.profilePicture
@@ -103,8 +109,9 @@ const OrgChart: React.FC = () => {
 
 
 const EmployeeCard = ({ emp, highlight = false }: any) => (
+  <button onClick={() => {navigationService.navigateToOrgChart(emp); console.log(emp.id)}} className="btn border-0">
   <div
-    className={`card text-center shadow-sm p-3 ${highlight ? "border-success border-2" : ""
+     className={`card text-center shadow-sm p-3 ${highlight ? "border-success border-2" : ""
       }`}
     style={{ width: "220px" }}
   >
@@ -117,6 +124,7 @@ const EmployeeCard = ({ emp, highlight = false }: any) => (
     <div className="fw-semibold mt-2">{emp.name}</div>
     <small>{emp.position}</small>
   </div>
+  </button>
 );
 
 const Connector = () => (

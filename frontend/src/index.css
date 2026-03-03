@@ -63,7 +63,7 @@ button:hover {
   color: red;
 }
 
-.badge {
+.not-badge {
   position: relative;
   top: -10px;
   left: -18px;
