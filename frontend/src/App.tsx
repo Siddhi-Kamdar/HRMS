@@ -1,13 +1,13 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import GameSchedule from "./pages/GameSchedule";
 import Login from "./components/Login";
 import AppLayout from "./pages/AppLayout";
 import BookingForm from "./pages/BookingForm";
 import TravelDisplay from "./pages/TravelDisplay";
 import JobDisplay from "./pages/JobDisplay";
-import TravelCreate from "./pages/CreateTravel";
+import TravelCreate from "./components/CreateTravel";
 import TravelDetail from "./pages/TravelDetail";
-import ExpenseCreate from "./pages/ExpenseCreate";
+import ExpenseCreate from "./components/CreateExpense";
 import ExpenseDashboard from "./pages/ExpenseDashboard";
 import OrgChart from "./pages/OrgChart";
 import SlotDetailPage from "./pages/SlotDetailPage";
@@ -25,6 +25,7 @@ function App() {
         <Route path="/" element={<Login />} />
 
         <Route path="/app" element={<AppLayout />}>
+          <Route index element={<Navigate to="games" replace />} />
           <Route path="travel" element={<TravelDisplay />} />
           <Route  path="games" element={<GameSchedule />} />
           <Route path="jobs" element={<JobDisplay />} />

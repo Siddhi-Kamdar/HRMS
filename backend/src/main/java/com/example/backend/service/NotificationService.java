@@ -52,7 +52,7 @@ public class NotificationService {
                         .orElseThrow();
 
         return notificationRepository
-                .findByEmployeeEmployeeIdOrderByCreatedAtDesc(
+                .findByEmployeeEmployeeIdAndIsReadFalseOrderByCreatedAtDesc(
                         employee.getEmployeeId());
     }
 

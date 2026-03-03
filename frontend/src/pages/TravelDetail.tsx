@@ -106,7 +106,7 @@ const TravelDetail: React.FC = () => {
       user.employeeId,
       user.role === "EMPLOYEE"
         ? user.employeeId
-        : undefined
+        : travel?.employeeIds[0]
     );
 
     setFile(null);
@@ -197,6 +197,20 @@ const TravelDetail: React.FC = () => {
 
         <div>
 
+          <input
+            type="file"
+            onChange={e =>
+              setFile(
+                e.target.files?.[0] || null
+              )}
+          />
+
+          <button
+            className="btn btn-success mt-2"
+            onClick={handleUpload}
+          >
+            Upload
+          </button>
           <ul>
             {documents.map(doc => (
               <li key={doc.id}>
@@ -213,20 +227,7 @@ const TravelDetail: React.FC = () => {
             ))}
           </ul>
 
-          <input
-            type="file"
-            onChange={e =>
-              setFile(
-                e.target.files?.[0] || null
-              )}
-          />
 
-          <button
-            className="btn btn-success mt-2"
-            onClick={handleUpload}
-          >
-            Upload
-          </button>
 
         </div>
 
@@ -246,35 +247,35 @@ const TravelDetail: React.FC = () => {
                   >
                     <Card className="shadow-sm h-100">
                       <Card.Body>
-                         <Card.Title className="mb-3">
-                                          Expense #{exp.expenseId}
-                          </Card.Title>
-                        
-                      <Card.Text>
-                        <strong>Amount:</strong> {exp.amount}
-                      </Card.Text>
-                      {/* <Card.Text>
+                        <Card.Title className="mb-3">
+                          Expense #{exp.expenseId}
+                        </Card.Title>
+
+                        <Card.Text>
+                          <strong>Amount:</strong> {exp.amount}
+                        </Card.Text>
+                        {/* <Card.Text>
                         <strong>Destination: </strong> {exp.destination}
                       </Card.Text>
                       <Card.Text>
                         <strong>Travel Id: </strong> {exp.travelId}
                       </Card.Text> */}
-                      <Card.Text>
-                        <strong>Status:</strong> {exp.status}
-                      </Card.Text>
-
-                      {exp.remark && (
                         <Card.Text>
-                          <strong>Remark:</strong> {exp.remark}
+                          <strong>Status:</strong> {exp.status}
                         </Card.Text>
-                      )}
-                      <NavLink
-                  to={`http://localhost:8080/${exp.proofUrl}`}
-                        target="_blank" className="text-success fw-semibold text-decoration-none"
-                      >
-                        View Proof
-                      </NavLink>
-                      
+
+                        {exp.remark && (
+                          <Card.Text>
+                            <strong>Remark:</strong> {exp.remark}
+                          </Card.Text>
+                        )}
+                        <NavLink
+                          to={`http://localhost:8080/${exp.proofUrl}`}
+                          target="_blank" className="text-success fw-semibold text-decoration-none"
+                        >
+                          View Proof
+                        </NavLink>
+
                       </Card.Body>
                     </Card>
                   </Col>

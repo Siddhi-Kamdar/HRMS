@@ -16,14 +16,19 @@ const BookingForm: React.FC = () => {
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [selectedMembers, setSelectedMembers] = useState<number[]>([]);
   const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState<string | null>(null);
 
   useEffect(() => {
     loadEmployees();
   }, []);
 
   const loadEmployees = async () => {
-    const data = await getEmployees();
-    setEmployees(data);
+    try {
+      const data = await getEmployees();
+      setEmployees(data);
+    } catch {
+      setErrors("Failed to load employees. Please refresh the page.");
+    }
   };
 
   const handleMemberToggle = (id: number) => {
@@ -34,7 +39,27 @@ const BookingForm: React.FC = () => {
     );
   };
 
+  const validateForm = () => {
+    if (!employeeId) {
+      setErrors("Invalid user session. Please login again.");
+      return false;
+    }
+
+    const totalMembers = [...new Set([employeeId, ...selectedMembers])];
+
+    if (totalMembers.length < 1) {
+      setErrors("At least one team member is required.");
+      return false;
+    }
+
+    return true;
+  };
+
   const handleSubmit = async () => {
+    setErrors(null);
+
+    if (!validateForm()) return;
+
     const members = [...new Set([employeeId, ...selectedMembers])];
 
     try {
@@ -49,9 +74,12 @@ const BookingForm: React.FC = () => {
       navigate("/app/games");
 
     } catch (err: any) {
-      const message = err.response?.data?.message|| err.response?.data || "Failed to apply"
-      
-      alert(message);
+      const message =
+        err.response?.data?.message ||
+        err.response?.data ||
+        "Failed to apply for slot. Please try again.";
+
+      setErrors(message);
     } finally {
       setLoading(false);
     }
@@ -60,7 +88,6 @@ const BookingForm: React.FC = () => {
   return (
     <div className="row justify-content-center">
       <div className="col-lg-6 col-md-8">
-
         <div className="card shadow-sm">
 
           <div className="card-header bg-white">
@@ -68,6 +95,18 @@ const BookingForm: React.FC = () => {
           </div>
 
           <div className="card-body">
+
+            {errors && (
+              <div className="alert alert-danger alert-dismissible fade show">
+                <div className="fw-semibold">Error</div>
+                <div>{errors}</div>
+                <button
+                  type="button"
+                  className="btn-close"
+                  onClick={() => setErrors(null)}
+                ></button>
+              </div>
+            )}
 
             <div className="mb-3">
               <label className="form-label fw-semibold">Leader</label>
@@ -113,6 +152,7 @@ const BookingForm: React.FC = () => {
               <button
                 className="btn btn-outline-secondary"
                 onClick={() => navigate("/app/games")}
+                disabled={loading}
               >
                 Cancel
               </button>
@@ -122,13 +162,22 @@ const BookingForm: React.FC = () => {
                 onClick={handleSubmit}
                 disabled={loading}
               >
-                {loading ? "Applying..." : "Apply"}
+                {loading ? (
+                  <>
+                    <span
+                      className="spinner-border spinner-border-sm me-2"
+                      role="status"
+                    ></span>
+                    Applying...
+                  </>
+                ) : (
+                  "Apply"
+                )}
               </button>
             </div>
 
           </div>
         </div>
-
       </div>
     </div>
   );

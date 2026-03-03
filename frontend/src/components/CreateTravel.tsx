@@ -13,6 +13,8 @@ const TravelCreate: React.FC = () => {
   const [departDate, setDepartDate] = useState("");
   const [returnDate, setReturnDate] = useState("");
 
+  const [errors, setErrors] = useState<Record<string, string>>({});
+
   useEffect(() => {
     loadEmployees();
   }, []);
@@ -30,64 +32,115 @@ const TravelCreate: React.FC = () => {
     );
   };
 
+  const validateForm = () => {
+    const newErrors: Record<string, string> = {};
+
+    if (!destination.trim()) {
+      newErrors.destination = "Destination is required";
+    } else if (destination.length < 3) {
+      newErrors.destination = "Destination must be at least 3 characters";
+    }
+
+    if (!departDate) {
+      newErrors.departDate = "Departure date is required";
+    }
+
+    if (!returnDate) {
+      newErrors.returnDate = "Return date is required";
+    }
+
+    if (departDate && returnDate && returnDate < departDate) {
+      newErrors.returnDate = "Return date cannot be before departure date";
+    }
+
+    if (selectedEmployees.length === 0) {
+      newErrors.employees = "Please select at least one employee";
+    }
+
+    setErrors(newErrors);
+
+    return Object.keys(newErrors).length === 0;
+  };
+
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
 
-    await createTravel({
-      schedulerId: user.employeeId,
-      employeeIds: selectedEmployees,
-      destination,
-      departDate,
-      returnDate
-    });
+    if (!validateForm()) return;
 
-    navigate("/app/travel");
+    try {
+      await createTravel({
+        schedulerId: user.employeeId,
+        employeeIds: selectedEmployees,
+        destination,
+        departDate,
+        returnDate
+      });
+
+      navigate("/app/travel");
+    } catch (error) {
+      setErrors({ api: "Failed to create travel. Please try again." });
+    }
   };
 
   return (
     <div className="card p-4 shadow-sm" style={{ maxWidth: "600px" }}>
       <h4 className="mb-4">Create Travel</h4>
 
-      <form onSubmit={handleSubmit}>
+      {errors.api && (
+        <div className="alert alert-danger">{errors.api}</div>
+      )}
+
+      <form onSubmit={handleSubmit} noValidate>
 
         <div className="mb-3">
           <label className="form-label">Destination</label>
           <input
             type="text"
-            className="form-control"
+            className={`form-control ${errors.destination ? "is-invalid" : ""}`}
             value={destination}
             onChange={(e) => setDestination(e.target.value)}
-            required
           />
+          {errors.destination && (
+            <div className="invalid-feedback">{errors.destination}</div>
+          )}
         </div>
 
         <div className="mb-3">
           <label className="form-label">Departure Date</label>
           <input
             type="date"
-            className="form-control"
+            className={`form-control ${errors.departDate ? "is-invalid" : ""}`}
             value={departDate}
+            min={new Date().toISOString().split("T")[0]}
             onChange={(e) => setDepartDate(e.target.value)}
-            min={new Date().toJSON().slice(0, 10)}
-            required
           />
+          {errors.departDate && (
+            <div className="invalid-feedback">{errors.departDate}</div>
+          )}
         </div>
 
         <div className="mb-3">
           <label className="form-label">Return Date</label>
           <input
             type="date"
-            className="form-control"
+            className={`form-control ${errors.returnDate ? "is-invalid" : ""}`}
             value={returnDate}
-            min={new Date().toJSON().slice(0, 10)}
+            min={departDate || new Date().toISOString().split("T")[0]}
             onChange={(e) => setReturnDate(e.target.value)}
-            required
           />
+          {errors.returnDate && (
+            <div className="invalid-feedback">{errors.returnDate}</div>
+          )}
         </div>
 
         <div className="mb-3">
           <label className="form-label">Select Employees</label>
-          <div className="border rounded p-2" style={{ maxHeight: "150px", overflowY: "auto" }}>
+          <div
+            className={`border rounded p-2 ${
+              errors.employees ? "border-danger" : ""
+            }`}
+            style={{ maxHeight: "150px", overflowY: "auto" }}
+          >
             {employees.map((emp) => (
               <div key={emp.employeeId} className="form-check">
                 <input
@@ -102,6 +155,9 @@ const TravelCreate: React.FC = () => {
               </div>
             ))}
           </div>
+          {errors.employees && (
+            <div className="text-danger mt-1">{errors.employees}</div>
+          )}
         </div>
 
         <button type="submit" className="btn btn-success w-100">

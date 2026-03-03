@@ -14,8 +14,7 @@ const ExpenseCreate: React.FC = () => {
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [uploading, setUploading] = useState(false);
 
-
-
+    
     const submitExpense = async (e:any) => {
         e.preventDefault();
         try{
@@ -59,7 +58,6 @@ const ExpenseCreate: React.FC = () => {
                 placeholder="Comment"
                 onChange={(e) => setComment(e.target.value)}
             />
-
 
             <input
                 type="file"

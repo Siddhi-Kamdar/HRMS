@@ -29,8 +29,15 @@ const GameSchedule: React.FC = () => {
   const loadGames = async () => {
     const data = await getGames();
     setGames(data);
+    if (data.length > 0) {
+      const firstGameId = data[0].gameId;
+      setSelectedGame(firstGameId);
+
+      const slotsData = await getSlots(firstGameId, user.employeeId);
+      setSlots(slotsData);
+    }
   };
-  const user = JSON.parse(localStorage.getItem("user")|| "{}");
+  const user = JSON.parse(localStorage.getItem("user") || "{}");
   const handleGameSelect = async (gameId: number) => {
     setSelectedGame(gameId);
     const data = await getSlots(gameId, user.employeeId);
@@ -52,11 +59,11 @@ const GameSchedule: React.FC = () => {
     const slotEndTime = new Date(end);
     const isExpired = slot.status === "COMPLETED" || slot.status === "BOOKED" ? false : slotStartTime.getTime() < new Date().getTime();
 
-    if(slot.status === "BOOKED" && slotEndTime.getTime() < new Date().getTime()){
+    if (slot.status === "BOOKED" && slotEndTime.getTime() < new Date().getTime()) {
       completeSlot(slot.slotId);
     }
     const getColor = () => {
-      if(isExpired){
+      if (isExpired) {
         return "#6c757d"
       }
       if (slot.isMySlot) {
@@ -83,19 +90,19 @@ const GameSchedule: React.FC = () => {
 
     var title;
     title =
-    isExpired ? "Expired" :
-      slot.status === "OPEN"
-        ? "Available"
-        : slot.isMySlot
-          ? `Your Slot`
-          : `Booked By: ${slot.bookedBy ?? "Employee"} (Join Queue)`;
+      isExpired ? "Expired" :
+        slot.status === "OPEN"
+          ? "Available"
+          : slot.isMySlot
+            ? `Your Slot`
+            : `Booked By: ${slot.bookedBy ?? "Employee"} (Join Queue)`;
 
-      if(slot.status == "COMPLETED"){  
-          title =  "Completed Slot";
-      }
-    
+    if (slot.status == "COMPLETED") {
+      title = "Completed Slot";
+    }
 
-    console.log(slot);
+
+    // console.log(slot);
     return {
       id: slot.slotId.toString(),
       title,
@@ -113,64 +120,64 @@ const GameSchedule: React.FC = () => {
     };
   });
 
-//  const handleEventClick = (info: any) => {
+  //  const handleEventClick = (info: any) => {
 
-//   const slotId = Number(info.event.id);
+  //   const slotId = Number(info.event.id);
 
-//   const {
-//     status,
-//     isMySlot
-//   } = info.event.extendedProps;
+  //   const {
+  //     status,
+  //     isMySlot
+  //   } = info.event.extendedProps;
 
-//   if (status === "COMPLETED") return;
+  //   if (status === "COMPLETED") return;
 
-//   if (isMySlot && status === "BOOKED") {
+  //   if (isMySlot && status === "BOOKED") {
 
-//     const confirmCancel =
-//       window.confirm(
-//         "Cancel your booked slot?"
-//       );
+  //     const confirmCancel =
+  //       window.confirm(
+  //         "Cancel your booked slot?"
+  //       );
 
-//     if (!confirmCancel) return;
+  //     if (!confirmCancel) return;
 
-//     cancelBooking({
-//       slotId,
-//       cancelledByEmpId: user.employeeId
-//     })
-//     .then(async () => {
+  //     cancelBooking({
+  //       slotId,
+  //       cancelledByEmpId: user.employeeId
+  //     })
+  //     .then(async () => {
 
-//       alert("Slot cancelled");
+  //       alert("Slot cancelled");
 
-//       if (selectedGame) {
-//         const data =
-//           await getSlots(
-//             selectedGame,
-//             user.employeeId
-//           );
-//         setSlots(data);
-//       }
+  //       if (selectedGame) {
+  //         const data =
+  //           await getSlots(
+  //             selectedGame,
+  //             user.employeeId
+  //           );
+  //         setSlots(data);
+  //       }
 
-//     })
-//     .catch(() =>
-//       alert("Cancel failed")
-//     );
+  //     })
+  //     .catch(() =>
+  //       alert("Cancel failed")
+  //     );
 
-//     return;
-//   }
+  //     return;
+  //   }
 
-//   navigate(`/app/games/slot/${slotId}/book`);
-// };
+  //   navigate(`/app/games/slot/${slotId}/book`);
+  // };
 
-const handleEventClick = (info: any) => {
+  const handleEventClick = (info: any) => {
 
-  const {isExpired} = info.event.extendedProps;
-  const slotId = Number(info.event.id);
-  const { status } = info.event.extendedProps;
+    const { isExpired } = info.event.extendedProps;
+    const slotId = Number(info.event.id);
+    const { status } = info.event.extendedProps;
 
-  if (status === "COMPLETED" || isExpired ) return;
+    if (status === "COMPLETED" || isExpired) return;
 
-  navigate(`/app/games/slot/${slotId}`);
-};
+    navigate(`/app/games/slot/${slotId}`);
+  };
   return (
     <div className="container mt-4">
 
@@ -180,9 +187,9 @@ const handleEventClick = (info: any) => {
         <label className="form-label">Select Game</label>
         <select
           className="form-select"
+          value={selectedGame ?? ""}
           onChange={(e) => handleGameSelect(Number(e.target.value))}
         >
-          <option>Select Game</option>
           {games.map(game => (
             <option key={game.gameId} value={game.gameId}>
               {game.gameName}
@@ -202,8 +209,8 @@ const handleEventClick = (info: any) => {
           }}
           allDaySlot={false}
           slotDuration="00:10:00"
-          slotMinTime="00:00:00"
-          slotMaxTime="24:00:00"
+          slotMinTime="10:00:00"
+          slotMaxTime="22:00:00"
           height="90vh"
           slotLabelInterval="01:00"
           events={calendarEvents}

@@ -11,6 +11,10 @@ public interface NotificationRepository
     findByEmployeeEmployeeIdOrderByCreatedAtDesc(
             Integer employeeId);
 
+    List<Notification>
+    findByEmployeeEmployeeIdAndIsReadFalseOrderByCreatedAtDesc(
+            Integer employeeId);
+
     long countByEmployeeEmployeeIdAndIsReadFalse(
             Integer employeeId);
 }

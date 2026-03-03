@@ -39,13 +39,12 @@ public class GameSchedulingController {
             return ResponseEntity.ok("Applied successfully");
         }
         catch(Exception e){
-            Throwable root = e.getCause();
-            while (root != null && root.getCause() != null){
-                root = root.getCause();
-            }
-            String message = root != null ? root.getMessage() : e.getMessage();
-
-            return ResponseEntity.badRequest().body(message);
+//            Throwable root = e.getCause();
+//            while (root != null && root.getCause() != null){
+//                root = root.getCause();
+//            }
+//            String message = root != null ? root.getMessage() : e.getMessage();
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
 
     }
