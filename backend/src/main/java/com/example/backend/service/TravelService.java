@@ -8,7 +8,7 @@ import com.example.backend.entity.Travel;
 import com.example.backend.entity.TravelEmployee;
 import com.example.backend.repository.EmployeeRepository;
 import com.example.backend.repository.TravelEmployeeRepository;
-import com.example.backend.repository.TravelModuleRepository;
+import com.example.backend.repository.TravelRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -17,10 +17,10 @@ import org.springframework.security.core.Authentication;
 import java.util.List;
 
 @Service
-public class TravelModuleService {
+public class TravelService {
 
     @Autowired
-    private TravelModuleRepository travelRepository;
+    private TravelRepository travelRepository;
 
     @Autowired
     private TravelEmployeeRepository travelEmployeeRepository;

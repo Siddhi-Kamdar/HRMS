@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { NavLink, useNavigate, useParams } from "react-router-dom";
-import { Container, Row, Col, Card } from "react-bootstrap";
+import { Container, Row, Col, Card, Button, Form } from "react-bootstrap";
+
 import {
   getTravelById,
-  type Travel
+  type Travel,
+  type DropdownOption
 } from "../services/travelService";
 
 import {
@@ -16,32 +18,25 @@ import {
   getMyExpenses,
   type Expense
 } from "../services/expenseService";
+
 const TravelDetail: React.FC = () => {
 
   const { travelId } = useParams();
   const navigate = useNavigate();
 
-  const user =
-    JSON.parse(localStorage.getItem("user") || "{}");
+  const user = JSON.parse(localStorage.getItem("user") || "{}");
 
-  const [travel, setTravel] =
-    useState<Travel | null>(null);
-
-  const [documents, setDocuments] =
-    useState<TravelDocument[]>([]);
-
-  const [file, setFile] =
-    useState<File | null>(null);
+  const [travel, setTravel] = useState<Travel | null>(null);
+  const [documents, setDocuments] = useState<TravelDocument[]>([]);
+  const [file, setFile] = useState<File | null>(null);
 
   const [activeTab, setActiveTab] =
-    useState<"documents" | "expenses">
-      ("documents");
+    useState<"documents" | "expenses">("documents");
 
-  const [canSubmitExpense,
-    setCanSubmitExpense] =
-    useState(false);
-
+  const [canSubmitExpense, setCanSubmitExpense] = useState(false);
   const [expenses, setExpenses] = useState<Expense[]>([]);
+  const [dropDownOptions, setDropDownOptions] = useState<DropdownOption[]>([]);
+  const [selectedEmployeeId, setSelectedEmployeeId] = useState<string>("");
 
   useEffect(() => {
     loadExpenses();
@@ -50,9 +45,7 @@ const TravelDetail: React.FC = () => {
   const loadExpenses = async () => {
     const data = await getMyExpenses();
     setExpenses(data);
-    console.log(expenses);
   };
-
 
   useEffect(() => {
     if (travelId) {
@@ -61,233 +54,228 @@ const TravelDetail: React.FC = () => {
     }
   }, []);
 
-
-
   const loadTravel = async () => {
-
-    const data =
-      await getTravelById(travelId!);
+    const data = await getTravelById(travelId!);
 
     setTravel(data);
 
+    const combined: DropdownOption[] = data.employeeIds.map((id, index) => ({
+      id,
+      name: data.employeeNames[index]
+    }));
+
+    setDropDownOptions(combined);
+
     const loggedUserId = Number(user.employeeId);
+
     const assigned = data.employeeIds?.some(
       (id: number) => Number(id) === loggedUserId
-    )
+    );
+
     if (assigned || user.role === "HR") {
       setCanSubmitExpense(true);
     } else {
       setCanSubmitExpense(false);
     }
-    console.log("Travel Employees:", data.employeeIds);
-    console.log("Logged User:", user.employeeId);
-    console.log("Role:", user.role);
   };
 
-
-
   const loadDocuments = async () => {
-
-    const data =
-      await getDocumentsByTravel(travelId!);
-
+    const data = await getDocumentsByTravel(travelId!);
     setDocuments(data);
   };
 
-
-
   const handleUpload = async () => {
-
     if (!file) return;
 
     await uploadDocument(
       travelId!,
       file,
       user.employeeId,
-      user.role === "EMPLOYEE"
-        ? user.employeeId
-        : travel?.employeeIds[0]
+      selectedEmployeeId
     );
 
     setFile(null);
-
     loadDocuments();
   };
 
-
-
-  if (!travel)
-    return <div>Loading...</div>;
-
-
+  if (!travel) return <div className="p-4">Loading...</div>;
 
   return (
+    <Container className="mt-4">
 
-    <div className="card p-4 shadow-sm">
+      <Card className="shadow-sm border-0 mb-4">
+        <Card.Body>
 
-      <h4>Travel Detail</h4>
+          <div className="d-flex justify-content-between align-items-center mb-3">
+            <div>
+              <h4 className="mb-0">{travel.destination}</h4>
+              <small className="text-muted">
+                Travel #{travel.travelId}
+              </small>
+            </div>
 
-      <p>
-        <strong>Destination:</strong>
-        {travel.destination}
-      </p>
+            {canSubmitExpense && (
+              <Button
+                variant="success"
+                onClick={() =>
+                  navigate(`/app/expense/create/${travel.travelId}`)
+                }
+              >
+                + Add Expense
+              </Button>
+            )}
+          </div>
 
-      <p>
-        <strong>Employees:</strong>
-        {travel.employeeNames?.join(", ")}
-      </p>
+          <Row className="g-3 mt-2">
 
-      <p>
-        <strong>Departure:</strong>
-        {new Date(
-          travel.departDate
-        ).toLocaleDateString()}
-      </p>
+            <Col md={4}>
+              <div className="text-muted small">Employees</div>
+              <div>{travel.employeeNames?.join(", ")}</div>
+            </Col>
 
-      <p>
-        <strong>Return:</strong>
-        {new Date(
-          travel.returnDate
-        ).toLocaleDateString()}
-      </p>
+            <Col md={4}>
+              <div className="text-muted small">Departure</div>
+              <div>
+                {new Date(travel.departDate).toLocaleDateString()}
+              </div>
+            </Col>
 
-      <hr />
+            <Col md={4}>
+              <div className="text-muted small">Return</div>
+              <div>
+                {new Date(travel.returnDate).toLocaleDateString()}
+              </div>
+            </Col>
 
-      <div className="mb-3">
+          </Row>
 
-        <button
-          className={`btn me-2 ${activeTab === "documents"
-            ? "btn-success"
-            : "btn-outline-success"
-            }`}
-          onClick={() =>
-            setActiveTab("documents")}
+        </Card.Body>
+      </Card>
+
+      <div className="d-flex gap-2 mb-4">
+        <Button
+          variant={activeTab === "documents" ? "success" : "outline-success"}
+          onClick={() => setActiveTab("documents")}
         >
           Documents
-        </button>
+        </Button>
 
-        <button
-          className={`btn me-2 ${activeTab === "expenses"
-            ? "btn-success"
-            : "btn-outline-success"
-            }`}
-          onClick={() =>
-            setActiveTab("expenses")}
+        <Button
+          variant={activeTab === "expenses" ? "success" : "outline-success"}
+          onClick={() => setActiveTab("expenses")}
         >
           Expenses
-        </button>
-
-        {canSubmitExpense && (
-          <button
-            className="btn btn-primary mt-3"
-            onClick={() =>
-              navigate(`/app/expense/create/${travel.travelId}`)
-            }
-          >
-            + Add Expense
-          </button>
-        )}
-
-
+        </Button>
       </div>
 
-
-
       {activeTab === "documents" && (
+        <Card className="shadow-sm border-0 mb-4">
+          <Card.Body>
 
-        <div>
+            <Row className="g-3 mb-3">
 
-          <input
-            type="file"
-            onChange={e =>
-              setFile(
-                e.target.files?.[0] || null
-              )}
-          />
+              <Col md={4}>
+                <Form.Control
+                  type="file"
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                    setFile(e.target.files?.[0] || null)
+                  }
+                />
+              </Col>
 
-          <button
-            className="btn btn-success mt-2"
-            onClick={handleUpload}
-          >
-            Upload
-          </button>
-          <ul>
-            {documents.map(doc => (
-              <li key={doc.id}>
-                <a
-                  href={`http://localhost:8080/${doc.documentUrl}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
+              <Col md={4}>
+                <Form.Select
+                  value={selectedEmployeeId}
+                  onChange={(e) =>
+                    setSelectedEmployeeId(e.target.value)
+                  }
                 >
-                  {doc.documentUrl
-                    .split(/[/\\]/)
-                    .pop()}
-                </a>
-              </li>
-            ))}
-          </ul>
+                  <option value="">Select Employee</option>
+                  {dropDownOptions.map(opt => (
+                    <option key={opt.id} value={opt.id}>
+                      {opt.name}
+                    </option>
+                  ))}
+                </Form.Select>
+              </Col>
 
+              <Col md={4}>
+                <Button
+                  variant="success"
+                  onClick={handleUpload}
+                >
+                  Upload Document
+                </Button>
+              </Col>
 
+            </Row>
 
-        </div>
+            <ul className="list-unstyled">
+              {documents.map(doc => (
+                <li key={doc.id} className="mb-2">
+                  <a
+                    href={`http://localhost:8080/${doc.documentUrl}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-decoration-none"
+                  >
+                    {doc.documentUrl.split(/[/\\]/).pop()}
+                  </a>
+                </li>
+              ))}
+            </ul>
 
+          </Card.Body>
+        </Card>
       )}
 
+      {activeTab === "expenses" && (
+        <Row className="g-4">
 
+          {expenses
+            .filter(exp => exp.travelId.toString() === travelId)
+            .map(exp => (
+              <Col key={exp.expenseId} md={6} lg={4}>
+                <Card className="shadow-sm border-0 h-100">
 
-      {activeTab === "expenses"
-        && (
-          <Container fluid style={{ marginTop: "20px" }}>
-            <Row className="gy-4">
-              {expenses.map(exp => {
-                if (exp.travelId.toString() === travelId) {
-                  return <Col
-                    key={exp.expenseId}
-                    sm={12} md={6} lg={4}
-                  >
-                    <Card className="shadow-sm h-100">
-                      <Card.Body>
-                        <Card.Title className="mb-3">
-                          Expense #{exp.expenseId}
-                        </Card.Title>
+                  <Card.Body>
 
-                        <Card.Text>
-                          <strong>Amount:</strong> {exp.amount}
-                        </Card.Text>
-                        {/* <Card.Text>
-                        <strong>Destination: </strong> {exp.destination}
-                      </Card.Text>
+                    <Card.Title className="mb-3">
+                      Expense #{exp.expenseId}
+                    </Card.Title>
+
+                    <Card.Text>
+                      <strong>Amount:</strong> {exp.amount}
+                    </Card.Text>
+
+                    <Card.Text>
+                      <strong>Status:</strong> {exp.status}
+                    </Card.Text>
+
+                    {exp.remark && (
                       <Card.Text>
-                        <strong>Travel Id: </strong> {exp.travelId}
-                      </Card.Text> */}
-                        <Card.Text>
-                          <strong>Status:</strong> {exp.status}
-                        </Card.Text>
+                        <strong>Remark:</strong> {exp.remark}
+                      </Card.Text>
+                    )}
 
-                        {exp.remark && (
-                          <Card.Text>
-                            <strong>Remark:</strong> {exp.remark}
-                          </Card.Text>
-                        )}
-                        <NavLink
-                          to={`http://localhost:8080/${exp.proofUrl}`}
-                          target="_blank" className="text-success fw-semibold text-decoration-none"
-                        >
-                          View Proof
-                        </NavLink>
+                    <NavLink
+                      to={`http://localhost:8080/${exp.proofUrl}`}
+                      target="_blank"
+                      className="btn btn-outline-success btn-sm"
+                    >
+                      View Proof
+                    </NavLink>
 
-                      </Card.Body>
-                    </Card>
-                  </Col>
-                }
-              })}
-            </Row>
-          </Container>
-        )}
+                  </Card.Body>
 
+                </Card>
+              </Col>
+            ))}
 
+        </Row>
+      )}
 
-    </div>
+    </Container>
   );
 };
 

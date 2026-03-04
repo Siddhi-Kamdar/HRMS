@@ -51,3 +51,8 @@ export const updateJob = async (
 
   return response.data;
 };
+
+export const getJobById = async (jobId: number): Promise<Job> => {
+  const response = await axiosInstance.get(`/api/jobs/${jobId}`);
+  return response.data;
+};

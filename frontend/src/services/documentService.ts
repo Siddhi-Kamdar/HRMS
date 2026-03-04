@@ -20,7 +20,7 @@ export const uploadDocument = async (
   travelId: string,
   file: File,
   uploadedById: number,
-  employeeId: number
+  employeeId: string
 ): Promise<void> => {
 
   const formData = new FormData();
@@ -28,7 +28,7 @@ export const uploadDocument = async (
   formData.append("travelId", travelId);
   formData.append("uploadedById", uploadedById.toString());
   formData.append("documentTypeId", "1");
-  formData.append("employeeId", employeeId.toString());
+  formData.append("employeeId", employeeId);
   
   formData.forEach((value, key) => {
    console.log(`${key}: ${value}`);

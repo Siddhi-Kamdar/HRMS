@@ -27,7 +27,6 @@ function App() {
   }, [navigate]);
   return (
       <Routes>
-
         <Route path="/" element={<Login />} />
 
         <Route path="/app" element={<AppLayout />}>
@@ -55,6 +54,7 @@ function App() {
           <Route path="travel/personal-expenses" element={<ExpenseSection />} />
           <Route path="hr/referrals" element={<ReferralDashboard />} />
           <Route path="jobs/create" element={<CreateJob />} />
+          <Route path="jobs/edit/:jobId" element={<CreateJob />} />
         </Route>
 
       </Routes>

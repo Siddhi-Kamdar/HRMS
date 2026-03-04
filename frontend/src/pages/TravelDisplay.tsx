@@ -1,6 +1,5 @@
-
 import React, { useEffect, useState } from "react";
-import { Container, Row, Col, Card } from "react-bootstrap";
+import { Container, Row, Col, Card, Button } from "react-bootstrap";
 import { NavLink, useNavigate } from "react-router-dom";
 import { getTravels, type Travel } from "../services/travelService";
 
@@ -20,70 +19,87 @@ const TravelDisplay: React.FC = () => {
   };
 
   return (
-    <Container fluid style={{ marginTop: "20px" }}>
+    <Container className="mt-4">
 
-      <div className="d-flex justify-content-end mb-3">
-        <button
-          className="btn border-bottom border-success"
-          onClick={() => navigate("/app/travel/personal-expenses")}
-        >
-          My Expenses & Status 
-        </button>
-      </div>
-      {user.role === "HR" && (
-        <div className="d-flex justify-content-end mb-3">
-          <button
-            className="btn btn-success"
-            onClick={() => navigate("/app/travel/create")}
-          >
-            + Create Travel
-          </button>
+      <div className="d-flex justify-content-between align-items-center mb-4">
+        <div>
+          <h3 className="mb-0">Travel Plans</h3>
+          <small className="text-muted">
+            Manage and view company travel schedules
+          </small>
         </div>
-      )}
 
-      <Row className="gy-4">
+        <div className="d-flex gap-2">
+          <Button
+            variant="outline-success"
+            onClick={() => navigate("/app/travel/personal-expenses")}
+          >
+            My Expenses & Status
+          </Button>
+
+          {user.role === "HR" && (
+            <Button
+              variant="success"
+              onClick={() => navigate("/app/travel/create")}
+            >
+              + Create Travel
+            </Button>
+          )}
+        </div>
+      </div>
+
+      <Row className="g-4">
         {travels.map((travel) => (
-          <Col key={travel.travelId} sm={12} md={6} lg={4}>
-            <Card className="shadow-sm h-100">
+          <Col key={travel.travelId} xs={12} md={6} lg={4}>
+            <Card className="h-100 shadow-sm border-0">
 
-              <Card.Body>
-                <Card.Title className="mb-3">
+              <Card.Body className="d-flex flex-column">
+
+                <div className="text-muted small mb-2">
                   Travel #{travel.travelId}
-                </Card.Title>
+                </div>
 
-                <Card.Text>
-                  <strong>Employees:</strong>{" "}
-                  {travel.employeeNames?.join(", ")}
-                </Card.Text>
+                <h5 className="mb-3">{travel.destination}</h5>
 
-                <Card.Text>
-                  <strong>Destination:</strong> {travel.destination}
-                </Card.Text>
+                <div className="mb-2">
+                  <span className="fw-semibold">Employees:</span>
+                  <div className="text-muted small">
+                    {travel.employeeNames?.join(", ")}
+                  </div>
+                </div>
 
-                <Card.Text>
-                  <strong>Departure:</strong>{" "}
-                  {new Date(travel.departDate).toLocaleDateString()}
-                </Card.Text>
+                <div className="d-flex justify-content-between mb-3 mt-2">
+                  <div>
+                    <small className="text-muted">Departure</small>
+                    <div>
+                      {new Date(travel.departDate).toLocaleDateString()}
+                    </div>
+                  </div>
 
-                <Card.Text>
-                  <strong>Return:</strong>{" "}
-                  {new Date(travel.returnDate).toLocaleDateString()}
-                </Card.Text>
+                  <div>
+                    <small className="text-muted">Return</small>
+                    <div>
+                      {new Date(travel.returnDate).toLocaleDateString()}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="mt-auto">
+                  <NavLink
+                    to={`/app/travel/${travel.travelId}`}
+                    className="btn btn-outline-success w-100"
+                  >
+                    View Details
+                  </NavLink>
+                </div>
+
               </Card.Body>
-
-              <Card.Footer className="bg-white text-center">
-                <NavLink
-                  to={`/app/travel/${travel.travelId}`}
-                  className="text-success fw-semibold text-decoration-none"
-                >
-                  View Details →
-                </NavLink>
-              </Card.Footer>
 
             </Card>
           </Col>
         ))}
       </Row>
+
     </Container>
   );
 };

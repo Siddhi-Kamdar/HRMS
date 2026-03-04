@@ -28,7 +28,7 @@ public class TravelDocumentService {
     private TravelDocumentRepository travelDocumentRepository;
 
     @Autowired
-    private TravelModuleRepository travelRepository;
+    private TravelRepository travelRepository;
 
     @Autowired
     private EmployeeRepository employeeRepository;
@@ -198,6 +198,8 @@ public class TravelDocumentService {
                                 doc.getUploadedBy() != null
                                         ? doc.getUploadedBy().getFullName()
                                         : "System"
+//                                ,doc.getEmployee().getEmployeeId(),
+//                                doc.getUploadedBy().getEmployeeId()
                         ))
                 .toList();
     }

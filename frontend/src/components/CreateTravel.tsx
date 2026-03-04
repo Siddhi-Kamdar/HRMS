@@ -1,9 +1,12 @@
 import React, { useEffect, useState, type FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
+import { Container, Card, Row, Col, Form, Button } from "react-bootstrap";
+
 import { createTravel } from "../services/travelService";
 import { getEmployees, type Employee } from "../services/employeeService";
 
 const TravelCreate: React.FC = () => {
+
   const navigate = useNavigate();
   const user = JSON.parse(localStorage.getItem("user") || "{}");
 
@@ -33,6 +36,7 @@ const TravelCreate: React.FC = () => {
   };
 
   const validateForm = () => {
+
     const newErrors: Record<string, string> = {};
 
     if (!destination.trim()) {
@@ -63,11 +67,13 @@ const TravelCreate: React.FC = () => {
   };
 
   const handleSubmit = async (e: FormEvent) => {
+
     e.preventDefault();
 
     if (!validateForm()) return;
 
     try {
+
       await createTravel({
         schedulerId: user.employeeId,
         employeeIds: selectedEmployees,
@@ -77,94 +83,166 @@ const TravelCreate: React.FC = () => {
       });
 
       navigate("/app/travel");
+
     } catch (error) {
-      setErrors({ api: "Failed to create travel. Please try again." });
+      setErrors({
+        api: "Failed to create travel. Please try again."
+      });
     }
   };
 
   return (
-    <div className="card p-4 shadow-sm" style={{ maxWidth: "600px" }}>
-      <h4 className="mb-4">Create Travel</h4>
 
-      {errors.api && (
-        <div className="alert alert-danger">{errors.api}</div>
-      )}
+    <Container className="mt-4">
 
-      <form onSubmit={handleSubmit} noValidate>
+      <Row className="justify-content-center">
 
-        <div className="mb-3">
-          <label className="form-label">Destination</label>
-          <input
-            type="text"
-            className={`form-control ${errors.destination ? "is-invalid" : ""}`}
-            value={destination}
-            onChange={(e) => setDestination(e.target.value)}
-          />
-          {errors.destination && (
-            <div className="invalid-feedback">{errors.destination}</div>
-          )}
-        </div>
+        <Col md={8} lg={6}>
 
-        <div className="mb-3">
-          <label className="form-label">Departure Date</label>
-          <input
-            type="date"
-            className={`form-control ${errors.departDate ? "is-invalid" : ""}`}
-            value={departDate}
-            min={new Date().toISOString().split("T")[0]}
-            onChange={(e) => setDepartDate(e.target.value)}
-          />
-          {errors.departDate && (
-            <div className="invalid-feedback">{errors.departDate}</div>
-          )}
-        </div>
+          <Card className="shadow-sm border-0">
 
-        <div className="mb-3">
-          <label className="form-label">Return Date</label>
-          <input
-            type="date"
-            className={`form-control ${errors.returnDate ? "is-invalid" : ""}`}
-            value={returnDate}
-            min={departDate || new Date().toISOString().split("T")[0]}
-            onChange={(e) => setReturnDate(e.target.value)}
-          />
-          {errors.returnDate && (
-            <div className="invalid-feedback">{errors.returnDate}</div>
-          )}
-        </div>
+            <Card.Body>
 
-        <div className="mb-3">
-          <label className="form-label">Select Employees</label>
-          <div
-            className={`border rounded p-2 ${
-              errors.employees ? "border-danger" : ""
-            }`}
-            style={{ maxHeight: "150px", overflowY: "auto" }}
-          >
-            {employees.map((emp) => (
-              <div key={emp.employeeId} className="form-check">
-                <input
-                  type="checkbox"
-                  className="form-check-input"
-                  checked={selectedEmployees.includes(emp.employeeId)}
-                  onChange={() => handleEmployeeChange(emp.employeeId)}
-                />
-                <label className="form-check-label">
-                  {emp.fullName}
-                </label>
+              <div className="mb-4">
+                <h4 className="mb-1">Create Travel</h4>
+                <small className="text-muted">
+                  Schedule a travel plan for employees
+                </small>
               </div>
-            ))}
-          </div>
-          {errors.employees && (
-            <div className="text-danger mt-1">{errors.employees}</div>
-          )}
-        </div>
 
-        <button type="submit" className="btn btn-success w-100">
-          Create Travel
-        </button>
-      </form>
-    </div>
+              {errors.api && (
+                <div className="alert alert-danger">
+                  {errors.api}
+                </div>
+              )}
+
+              <Form onSubmit={handleSubmit} noValidate>
+
+                <Form.Group className="mb-3">
+                  <Form.Label>Destination</Form.Label>
+
+                  <Form.Control
+                    type="text"
+                    value={destination}
+                    isInvalid={!!errors.destination}
+                    onChange={(e) =>
+                      setDestination(e.target.value)
+                    }
+                  />
+
+                  <Form.Control.Feedback type="invalid">
+                    {errors.destination}
+                  </Form.Control.Feedback>
+                </Form.Group>
+
+                <Row>
+
+                  <Col md={6}>
+                    <Form.Group className="mb-3">
+
+                      <Form.Label>Departure Date</Form.Label>
+
+                      <Form.Control
+                        type="date"
+                        value={departDate}
+                        min={new Date().toISOString().split("T")[0]}
+                        isInvalid={!!errors.departDate}
+                        onChange={(e) =>
+                          setDepartDate(e.target.value)
+                        }
+                      />
+
+                      <Form.Control.Feedback type="invalid">
+                        {errors.departDate}
+                      </Form.Control.Feedback>
+
+                    </Form.Group>
+                  </Col>
+
+                  <Col md={6}>
+                    <Form.Group className="mb-3">
+
+                      <Form.Label>Return Date</Form.Label>
+
+                      <Form.Control
+                        type="date"
+                        value={returnDate}
+                        min={
+                          departDate ||
+                          new Date().toISOString().split("T")[0]
+                        }
+                        isInvalid={!!errors.returnDate}
+                        onChange={(e) =>
+                          setReturnDate(e.target.value)
+                        }
+                      />
+
+                      <Form.Control.Feedback type="invalid">
+                        {errors.returnDate}
+                      </Form.Control.Feedback>
+
+                    </Form.Group>
+                  </Col>
+
+                </Row>
+
+                <Form.Group className="mb-3">
+
+                  <Form.Label>Select Employees</Form.Label>
+
+                  <div
+                    className={`border rounded p-3 ${
+                      errors.employees ? "border-danger" : ""
+                    }`}
+                    style={{
+                      maxHeight: "160px",
+                      overflowY: "auto"
+                    }}
+                  >
+
+                    {employees.map((emp) => (
+
+                      <Form.Check
+                        key={emp.employeeId}
+                        type="checkbox"
+                        label={emp.fullName}
+                        checked={selectedEmployees.includes(emp.employeeId)}
+                        onChange={() =>
+                          handleEmployeeChange(emp.employeeId)
+                        }
+                      />
+
+                    ))}
+
+                  </div>
+
+                  {errors.employees && (
+                    <div className="text-danger mt-1">
+                      {errors.employees}
+                    </div>
+                  )}
+
+                </Form.Group>
+
+                <Button
+                  type="submit"
+                  variant="success"
+                  className="w-100"
+                >
+                  Create Travel
+                </Button>
+
+              </Form>
+
+            </Card.Body>
+
+          </Card>
+
+        </Col>
+
+      </Row>
+
+    </Container>
   );
 };
 

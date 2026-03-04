@@ -19,7 +19,7 @@ public class ExpenseService {
     private ExpensesRepository expenseRepo;
 
     @Autowired
-    private TravelModuleRepository travelRepo;
+    private TravelRepository travelRepo;
 
     @Autowired
     private EmployeeRepository employeeRepository;

@@ -1,5 +1,6 @@
-
 import React, { useEffect, useState } from "react";
+import { Container, Card, Table, Button } from "react-bootstrap";
+
 import {
   getMyExpenses,
   getAllExpenses,
@@ -8,24 +9,23 @@ import {
   rejectExpense
 } from "../services/expenseService";
 
-const ExpenseDashboard:React.FC = () => {
+const ExpenseDashboard: React.FC = () => {
 
-  const user =
-    JSON.parse(localStorage.getItem("user")||"{}");
+  const user = JSON.parse(localStorage.getItem("user") || "{}");
 
-  const [expenses,setExpenses] = useState<any[]>([]);
+  const [expenses, setExpenses] = useState<any[]>([]);
 
-  useEffect(()=>{
+  useEffect(() => {
     loadExpenses();
-  },[]);
+  }, []);
 
   const loadExpenses = async () => {
 
     let data;
 
-    if(user.role==="HR")
+    if (user.role === "HR")
       data = await getAllExpenses();
-    else if(user.role==="MANAGER")
+    else if (user.role === "MANAGER")
       data = await getTeamExpenses();
     else
       data = await getMyExpenses();
@@ -33,93 +33,119 @@ const ExpenseDashboard:React.FC = () => {
     setExpenses(data);
   };
 
-  const approve = async(id:number)=>{
+  const approve = async (id: number) => {
     await approveExpense(id, user.employeeId);
     loadExpenses();
   };
 
-  const reject = async(id:number)=>{
-    const remark =
-      prompt("Reject reason") || "";
-
-    await rejectExpense(id,user.employeeId,remark);
+  const reject = async (id: number) => {
+    const remark = prompt("Reject reason") || "";
+    await rejectExpense(id, user.employeeId, remark);
     loadExpenses();
   };
 
   return (
 
-    <div className="card p-4">
+    <Container className="mt-4">
 
-      <h4>Expense Dashboard</h4>
+      <Card className="shadow-sm border-0">
+        <Card.Body>
 
-      <table className="table">
+          <div className="d-flex justify-content-between align-items-center mb-3">
+            <div>
+              <h4 className="mb-0">Expense Dashboard</h4>
+              <small className="text-muted">
+                View and manage travel expenses
+              </small>
+            </div>
+          </div>
 
-        <thead>
-          <tr>
-            <th>Employee</th>
-            <th>Travel</th>
-            <th>Amount</th>
-            <th>Status</th>
-            <th>Proof</th>
-            {user.role==="HR" && <th>Action</th>}
-          </tr>
-        </thead>
+          <Table hover responsive className="align-middle">
 
-        <tbody>
+            <thead className="table-light">
+              <tr>
+                <th>Employee</th>
+                <th>Travel</th>
+                <th>Amount</th>
+                <th>Status</th>
+                <th>Proof</th>
+                {user.role === "HR" && <th>Action</th>}
+              </tr>
+            </thead>
 
-        {expenses.map(exp=>(
-          <tr key={exp.expenseId}>
+            <tbody>
 
-            <td>{exp.employeeName}</td>
-            <td>{exp.destination}</td>
-            <td>₹{exp.amount}</td>
+              {expenses.map(exp => (
+                <tr key={exp.expenseId}>
 
-            <td>
-              <span className={
-                exp.status==="APPROVED"
-                ?"badge bg-success":
-                exp.status==="REJECTED"
-                ?"badge bg-danger":
-                "badge bg-warning"
-              }>
-                {exp.status}
-              </span>
-            </td>
+                  <td>{exp.employeeName}</td>
 
-            <td>
-              <a
-                href={`http://localhost:8080/${exp.proofUrl}`}
-                target="_blank"
-              >
-                View
-              </a>
-            </td>
+                  <td>{exp.destination}</td>
 
-            {user.role==="HR" && (
-              <td>
-                <button
-                  className="btn btn-success btn-sm me-2"
-                  onClick={()=>approve(exp.expenseId)}
-                >
-                  Approve
-                </button>
+                  <td>₹{exp.amount}</td>
 
-                <button
-                  className="btn btn-danger btn-sm"
-                  onClick={()=>reject(exp.expenseId)}
-                >
-                  Reject
-                </button>
-              </td>
-            )}
+                  <td>
+                    <span
+                      className={
+                        exp.status === "APPROVED"
+                          ? "badge bg-success"
+                          : exp.status === "REJECTED"
+                          ? "badge bg-danger"
+                          : "badge bg-warning text-dark"
+                      }
+                    >
+                      {exp.status}
+                    </span>
+                  </td>
 
-          </tr>
-        ))}
+                  <td>
+                    <a
+                      href={`http://localhost:8080/${exp.proofUrl}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="btn btn-sm btn-outline-secondary"
+                    >
+                      View
+                    </a>
+                  </td>
 
-        </tbody>
-      </table>
+                  {user.role === "HR" && (
+                    <td>
 
-    </div>
+                      <div className="d-flex gap-2">
+
+                        <Button
+                          size="sm"
+                          variant="outline-success"
+                          onClick={() => approve(exp.expenseId)}
+                        >
+                          Approve
+                        </Button>
+
+                        <Button
+                          size="sm"
+                          variant="outline-danger"
+                          onClick={() => reject(exp.expenseId)}
+                        >
+                          Reject
+                        </Button>
+
+                      </div>
+
+                    </td>
+                  )}
+
+                </tr>
+              ))}
+
+            </tbody>
+
+          </Table>
+
+        </Card.Body>
+      </Card>
+
+    </Container>
   );
 };
 

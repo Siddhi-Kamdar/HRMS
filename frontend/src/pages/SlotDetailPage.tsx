@@ -3,7 +3,6 @@ import { useParams, useNavigate } from "react-router-dom";
 
 import {
   getSlotDetail,
-  applyForSlot,
   cancelBooking,
   type SlotDetail
 } from "../services/gameService";
@@ -33,29 +32,6 @@ const SlotDetailPage: React.FC = () => {
   useEffect(() => {
     loadSlot();
   }, []);
-
-
-  const handleApply = async () => {
-
-    try {
-
-      await applyForSlot({
-        slotId: Number(slotId),
-        leaderEmpId: user.employeeId,
-        members: [user.employeeId]
-      });
-
-      alert("Applied successfully");
-
-      loadSlot();
-
-    } catch (err: any) {
-      alert(
-        err.response?.data ||
-        "Application failed"
-      );
-    }
-  };
 
   const handleCancel = async () => {
 

@@ -19,6 +19,7 @@ public class OrganizationalHierarchyController {
     public OrganizationalHierarchyController(OrganizationalHierarchyService service){
         this.service = service;
     }
+
     @GetMapping("/{empId}/hierarchy")
     public OrgChartResponseDTO getHierarchy(@PathVariable int empId) {
         return service.getHierarchy(empId);

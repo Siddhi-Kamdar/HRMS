@@ -111,7 +111,7 @@ public class JobService {
                 throw new RuntimeException("File upload failed");
             }
 
-            existingJob.setJob_description_url(fileName);
+            existingJob.setJob_description_url(uploadDir + fileName);
         }
 
         Job saved = jobRepository.save(existingJob);

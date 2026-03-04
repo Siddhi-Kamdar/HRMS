@@ -3,24 +3,26 @@ import FullCalendar from "@fullcalendar/react";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
 
+import { Container, Card, Row, Col, Form } from "react-bootstrap";
+
 import {
   getGames,
   getSlots,
-  cancelBooking,
+  completeSlot,
   type Game,
-  type Slot,
-  getSlotDetail,
-  completeSlot
+  type Slot
 } from "../services/gameService";
+
 import { useNavigate } from "react-router-dom";
 
 const GameSchedule: React.FC = () => {
 
+  const navigate = useNavigate();
+  const user = JSON.parse(localStorage.getItem("user") || "{}");
+
   const [games, setGames] = useState<Game[]>([]);
   const [selectedGame, setSelectedGame] = useState<number | null>(null);
   const [slots, setSlots] = useState<Slot[]>([]);
-  const navigate = useNavigate();
-
 
   useEffect(() => {
     loadGames();
@@ -29,6 +31,7 @@ const GameSchedule: React.FC = () => {
   const loadGames = async () => {
     const data = await getGames();
     setGames(data);
+
     if (data.length > 0) {
       const firstGameId = data[0].gameId;
       setSelectedGame(firstGameId);
@@ -37,19 +40,13 @@ const GameSchedule: React.FC = () => {
       setSlots(slotsData);
     }
   };
-  const user = JSON.parse(localStorage.getItem("user") || "{}");
+
   const handleGameSelect = async (gameId: number) => {
     setSelectedGame(gameId);
     const data = await getSlots(gameId, user.employeeId);
     setSlots(data);
   };
 
-  // const refreshSlots = async () => {
-  //   if (selectedGame) {
-  //     const data = await getSlots(selectedGame);
-  //     setSlots(data);
-  //   }
-  // };
   const calendarEvents = slots.map((slot) => {
 
     const start = `${slot.slotDate}T${slot.startTime}`;
@@ -57,52 +54,49 @@ const GameSchedule: React.FC = () => {
 
     const slotStartTime = new Date(start);
     const slotEndTime = new Date(end);
-    const isExpired = slot.status === "COMPLETED" || slot.status === "BOOKED" ? false : slotStartTime.getTime() < new Date().getTime();
+
+    const isExpired =
+      slot.status === "COMPLETED" || slot.status === "BOOKED"
+        ? false
+        : slotStartTime.getTime() < new Date().getTime();
 
     if (slot.status === "BOOKED" && slotEndTime.getTime() < new Date().getTime()) {
       completeSlot(slot.slotId);
     }
+
     const getColor = () => {
-      if (isExpired) {
-        return "#6c757d"
-      }
-      if (slot.isMySlot) {
-        return "#b6d722";
-      }
+
+      if (isExpired) return "#6c757d";
+
+      if (slot.isMySlot) return "#b6d722";
 
       switch (slot.status) {
         case "OPEN":
           return "#63ec83";
-
         case "BOOKED":
           return "#c05c66";
-
         case "COMPLETED":
           return "#3fb1d1";
-
         case "CANCLED":
           return "#ec9e5f";
-
         default:
           return "#0d6efd";
       }
     };
 
-    var title;
-    title =
-      isExpired ? "Expired" :
-        slot.status === "OPEN"
-          ? "Available"
-          : slot.isMySlot
-            ? `Your Slot`
-            : `Booked By: ${slot.bookedBy ?? "Employee"} (Join Queue)`;
+    let title =
+      isExpired
+        ? "Expired"
+        : slot.status === "OPEN"
+        ? "Available"
+        : slot.isMySlot
+        ? "Your Slot"
+        : `Booked By: ${slot.bookedBy ?? "Employee"} (Join Queue)`;
 
-    if (slot.status == "COMPLETED") {
+    if (slot.status === "COMPLETED") {
       title = "Completed Slot";
     }
 
-
-    // console.log(slot);
     return {
       id: slot.slotId.toString(),
       title,
@@ -110,7 +104,6 @@ const GameSchedule: React.FC = () => {
       end,
       backgroundColor: getColor(),
       borderColor: getColor(),
-
       extendedProps: {
         status: slot.status,
         bookedBy: slot.bookedBy,
@@ -120,112 +113,87 @@ const GameSchedule: React.FC = () => {
     };
   });
 
-  //  const handleEventClick = (info: any) => {
-
-  //   const slotId = Number(info.event.id);
-
-  //   const {
-  //     status,
-  //     isMySlot
-  //   } = info.event.extendedProps;
-
-  //   if (status === "COMPLETED") return;
-
-  //   if (isMySlot && status === "BOOKED") {
-
-  //     const confirmCancel =
-  //       window.confirm(
-  //         "Cancel your booked slot?"
-  //       );
-
-  //     if (!confirmCancel) return;
-
-  //     cancelBooking({
-  //       slotId,
-  //       cancelledByEmpId: user.employeeId
-  //     })
-  //     .then(async () => {
-
-  //       alert("Slot cancelled");
-
-  //       if (selectedGame) {
-  //         const data =
-  //           await getSlots(
-  //             selectedGame,
-  //             user.employeeId
-  //           );
-  //         setSlots(data);
-  //       }
-
-  //     })
-  //     .catch(() =>
-  //       alert("Cancel failed")
-  //     );
-
-  //     return;
-  //   }
-
-  //   navigate(`/app/games/slot/${slotId}/book`);
-  // };
-
   const handleEventClick = (info: any) => {
 
     const { isExpired } = info.event.extendedProps;
-    const slotId = Number(info.event.id);
     const { status } = info.event.extendedProps;
+    const slotId = Number(info.event.id);
 
     if (status === "COMPLETED" || isExpired) return;
 
     navigate(`/app/games/slot/${slotId}`);
   };
+
   return (
-    <div className="container mt-4">
 
-      {/* <h3 className="mb-4">Game Scheduling</h3> */}
+    <Container className="mt-4">
 
-      <div className="mb-4">
-        <label className="form-label">Select Game</label>
-        <select
-          className="form-select"
-          value={selectedGame ?? ""}
-          onChange={(e) => handleGameSelect(Number(e.target.value))}
-        >
-          {games.map(game => (
-            <option key={game.gameId} value={game.gameId}>
-              {game.gameName}
-            </option>
-          ))}
-        </select>
-      </div>
+      <Card className="shadow-sm border-0 mb-4">
+        <Card.Body>
+
+          <Row className="align-items-center">
+
+            <Col md={6}>
+              <h4 className="mb-0">Game Schedule</h4>
+              <small className="text-muted">
+                Book and manage game slots
+              </small>
+            </Col>
+
+            <Col md={4}>
+              <Form.Select
+                value={selectedGame ?? ""}
+                onChange={(e) =>
+                  handleGameSelect(Number(e.target.value))
+                }
+              >
+                {games.map(game => (
+                  <option key={game.gameId} value={game.gameId}>
+                    {game.gameName}
+                  </option>
+                ))}
+              </Form.Select>
+            </Col>
+
+          </Row>
+
+        </Card.Body>
+      </Card>
 
       {selectedGame && (
-        <FullCalendar
-          plugins={[timeGridPlugin, interactionPlugin]}
-          initialView="timeGridWeek"
-          headerToolbar={{
-            left: "prev,next today",
-            center: "title",
-            right: ""
-          }}
-          allDaySlot={false}
-          slotDuration="00:10:00"
-          slotMinTime="10:00:00"
-          slotMaxTime="22:00:00"
-          height="90vh"
-          slotLabelInterval="01:00"
-          events={calendarEvents}
-          eventClick={handleEventClick}
-          eventDidMount={(info) => {
-            const bookedBy = info.event.extendedProps.bookedBy;
+        <Card className="shadow-sm border-0">
+          <Card.Body>
 
-            if (bookedBy) {
-              info.el.title = `Booked by: ${bookedBy}`;
-            }
-          }}
-          expandRows={true}
-        />
+            <FullCalendar
+              plugins={[timeGridPlugin, interactionPlugin]}
+              initialView="timeGridWeek"
+              headerToolbar={{
+                left: "prev,next today",
+                center: "title",
+                right: "timeGridWeek,timeGridDay"
+              }}
+              allDaySlot={false}
+              slotDuration="00:10:00"
+              slotMinTime="10:00:00"
+              slotMaxTime="22:00:00"
+              height="85vh"
+              slotLabelInterval="01:00"
+              events={calendarEvents}
+              eventClick={handleEventClick}
+              expandRows={true}
+              eventDidMount={(info) => {
+                const bookedBy = info.event.extendedProps.bookedBy;
+                if (bookedBy) {
+                  info.el.title = `Booked by: ${bookedBy}`;
+                }
+              }}
+            />
+
+          </Card.Body>
+        </Card>
       )}
-    </div>
+
+    </Container>
   );
 };
 

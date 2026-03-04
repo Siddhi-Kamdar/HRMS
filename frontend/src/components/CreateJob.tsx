@@ -1,40 +1,76 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Container, Form, Button } from "react-bootstrap";
-import { useNavigate } from "react-router-dom";
-import { createJob } from "../services/jobService";
+import { useNavigate, useParams } from "react-router-dom";
+import { createJob, updateJob, getJobById } from "../services/jobService";
 
 const CreateJob = () => {
   const navigate = useNavigate();
 
+  const { jobId } = useParams();
+  const isEditMode = !!jobId;
   const [jobTitle, setJobTitle] = useState("");
   const [jobSummary, setJobSummary] = useState("");
   const [jobStatus, setJobStatus] = useState("OPEN");
   const [file, setFile] = useState<File | null>(null);
 
+  useEffect(() => {
+    if (isEditMode) {
+      loadJob();
+    }
+  }, []);
+
+  const loadJob = async () => {
+    try {
+      const job = await getJobById(Number(jobId));
+
+      setJobTitle(job.jobTitle);
+      setJobSummary(job.jobSummary);
+      setJobStatus(job.jobStatus);
+    } catch {
+      alert("Failed to load job");
+    }
+  };
   const handleSubmit = async () => {
-  if (!jobTitle || !jobSummary || !file) {
-    alert("Fill all required fields");
-    return;
-  }
 
-  const formData = new FormData();
-  formData.append("jobTitle", jobTitle);
-  formData.append("jobSummary", jobSummary);
-  formData.append("jobStatus", jobStatus);
-  formData.append("jobDescriptionFile", file);
+    if (!jobTitle || !jobSummary) {
+      alert("Fill all required fields");
+      return;
+    }
 
-  try {
-    await createJob(formData);
-    alert("Job created!");
-    navigate("/app/jobs");
-  } catch (error) {
-    alert("Failed to create job");
-  }
-};
+    const formData = new FormData();
+    formData.append("jobTitle", jobTitle);
+    formData.append("jobSummary", jobSummary);
+    formData.append("jobStatus", jobStatus);
+
+    if (file) {
+      formData.append("jobDescriptionFile", file);
+    }
+
+    try {
+
+      if (isEditMode) {
+        await updateJob(Number(jobId), formData);
+        alert("Job updated!");
+      } else {
+        if (!file) {
+          alert("Upload job description");
+          return;
+        }
+
+        await createJob(formData);
+        alert("Job created!");
+      }
+
+      navigate("/app/jobs");
+
+    } catch (error) {
+      alert("Operation failed");
+    }
+  };
 
   return (
     <Container className="mt-4">
-      <h3>Create Job</h3>
+      <h3>{isEditMode ? "Edit Job" : "Create Job"}</h3>
 
       <Form>
         <Form.Group className="mb-3">
@@ -79,7 +115,9 @@ const CreateJob = () => {
           />
         </Form.Group>
 
-        <Button onClick={handleSubmit}>Create Job</Button>
+        <Button onClick={handleSubmit}>
+          {isEditMode ? "Update Job" : "Create Job"}
+        </Button>
       </Form>
     </Container>
   );

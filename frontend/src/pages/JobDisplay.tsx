@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Container, Row, Col, Card } from 'react-bootstrap';
 import { useNavigate } from "react-router-dom";
 import { Modal, Button, Form } from "react-bootstrap";
+import validator from "validator";
 
 import {
     getJobs,
@@ -65,16 +66,23 @@ const JobDisplay: React.FC = () => {
     const handleShare = async (jobId: number) => {
         const email = prompt("Enter email address");
         if (!email) return;
-
-        try {
-            await shareJob(jobId, [email]);
-            alert("Job shared successfully!");
-        } catch (error) {
-            alert("Failed to share job");
+        if (validator.isEmail(email)) {
+            try {
+                await shareJob(jobId, [email]);
+                alert("Job shared successfully!");
+            } catch (error) {
+                alert("Failed to share job");
+            }
         }
+        else {
+            alert("Enter valid Email")
+
+        }
+
+
     };
 
-    
+
     return (
         <Container fluid style={{ marginTop: "20px" }}>
             {user.role === "HR" && (
@@ -96,39 +104,70 @@ const JobDisplay: React.FC = () => {
 
                 </div>
             )}
-            <Row className="gy-3">
+            <Row className="g-4">
                 {
                     jobs.map(job => (
                         <Col key={job.jobId} sm={12} md={6} lg={4}>
-                            <Card style={{ width: '22rem' }}>
-                                <Card.Body>
-                                    <Card.Header>{job.jobId}</Card.Header>
-                                    <Card.Text>Job Title : {job.jobTitle}</Card.Text>
-                                    <Card.Text>Job Summary: {job.jobSummary}</Card.Text>
-                                    <Card.Text>Job Status: {job.jobStatus}</Card.Text>
+                            <Card className="h-100 shadow-sm">
+                                <Card.Body className="d-flex flex-column">
+
+                                    <div className="mb-2 text-muted small">
+                                        Job ID: {job.jobId}
+                                    </div>
+
+                                    <h5 className="mb-2">{job.jobTitle}</h5>
+
+                                    <p className="text-muted small mb-3">
+                                        {job.jobSummary}
+                                    </p>
+
+                                    <div className="mb-3">
+                                        <span className="me-2">Status:</span>
+                                        <span
+                                            className={`badge ${job.jobStatus === "OPEN" ? "bg-success" : "bg-secondary"
+                                                }`}
+                                        >
+                                            {job.jobStatus}
+                                        </span>
+                                    </div>
+
                                     <a
                                         href={`http://localhost:8080/${job.jobDescriptionUrl}`}
                                         target="_blank"
+                                        className="mb-3 text-decoration-none"
                                     >
-                                        Job Description
+                                        View Job Description
                                     </a>
-                                    <Card.Footer className="bg-white text-center">
-                                        <button
-                                            className="btn  border-0 me-2"
-                                            onClick={() => handleShare(job.jobId)}
-                                        >
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-share" viewBox="0 0 16 16">
-                                                <path d="M13.5 1a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3M11 2.5a2.5 2.5 0 1 1 .603 1.628l-6.718 3.12a2.5 2.5 0 0 1 0 1.504l6.718 3.12a2.5 2.5 0 1 1-.488.876l-6.718-3.12a2.5 2.5 0 1 1 0-3.256l6.718-3.12A2.5 2.5 0 0 1 11 2.5m-8.5 4a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3m11 5.5a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3" />
-                                            </svg>
-                                        </button>
 
-                                        <button
-                                            className="btn btn-outline-warning"
-                                            onClick={() => handleOpenModal(job.jobId)}
-                                        >
-                                            Refer Friend
-                                        </button>
-                                    </Card.Footer>
+                                    <div className="mt-auto d-flex justify-content-between align-items-center">
+
+                                        <div className="d-flex gap-2">
+                                            <button
+                                                className="btn btn-sm btn-outline-primary"
+                                                onClick={() => handleShare(job.jobId)}
+                                            >
+                                                Share
+                                            </button>
+
+                                            <button
+                                                className="btn btn-sm btn-outline-warning"
+                                                onClick={() => handleOpenModal(job.jobId)}
+                                            >
+                                                Refer
+                                            </button>
+                                        </div>
+
+                                        {user.role === "HR" && (
+                                            <button
+                                                className="btn btn-sm btn-outline-secondary"
+                                                onClick={() => navigate(`/app/jobs/edit/${job.jobId}`)}
+                                            >
+                                                Edit
+                                            </button>
+                                        )}
+
+                                    </div>
+
                                 </Card.Body>
                             </Card>
                         </Col>

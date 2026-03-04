@@ -10,6 +10,11 @@ export interface Travel {
   employeeIds: number[];
 }
 
+export interface DropdownOption {
+  id: number;
+  name: string;
+}
+
 export interface CreateTravelRequest {
   schedulerId: number;
   employeeIds: number[];
