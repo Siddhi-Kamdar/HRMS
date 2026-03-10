@@ -1,10 +1,15 @@
 package com.example.backend.entity;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.Date;
 
 @Entity
 @Table(name = "travel_documents")
+@Getter
+@Setter
 public class TravelDocument {
 
     @Id
@@ -37,28 +42,4 @@ public class TravelDocument {
     @Column(name = "is_deleted", nullable = false)
     private boolean isDeleted;
 
-
-    public int getId() { return id; }
-    public void setId(int id) { this.id = id; }
-
-    public DocumentType getDocumentType() { return documentType; }
-    public void setDocumentType(DocumentType documentType) { this.documentType = documentType; }
-
-    public String getDocumentUrl() { return documentUrl; }
-    public void setDocumentUrl(String documentUrl) { this.documentUrl = documentUrl; }
-
-    public Employee getUploadedBy() { return uploadedBy; }
-    public void setUploadedBy(Employee uploadedBy) { this.uploadedBy = uploadedBy; }
-
-    public Travel getTravel() { return travel; }
-    public void setTravel(Travel travel) { this.travel = travel; }
-
-    public Employee getEmployee() { return employee; }
-    public void setEmployee(Employee employee) { this.employee = employee; }
-
-    public Date getUploadedDate() { return uploadedDate; }
-    public void setUploadedDate(Date uploadedDate) { this.uploadedDate = uploadedDate; }
-
-    public boolean isDeleted() { return isDeleted; }
-    public void setDeleted(boolean deleted) { isDeleted = deleted; }
 }

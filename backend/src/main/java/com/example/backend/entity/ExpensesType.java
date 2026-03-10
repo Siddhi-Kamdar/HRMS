@@ -1,9 +1,13 @@
 package com.example.backend.entity;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 @Table(name = "expenses_type")
+@Getter
+@Setter
 public class ExpensesType {
 
     @Id
@@ -12,20 +16,4 @@ public class ExpensesType {
 
     @Column(name = "expence_type_name", nullable = false, length = 50)
     private String expenceTypeName;
-
-    public int getExpenseId() {
-        return expenseId;
-    }
-
-    public void setExpenseId(int expenseId) {
-        this.expenseId = expenseId;
-    }
-
-    public String getExpenceTypeName() {
-        return expenceTypeName;
-    }
-
-    public void setExpenceTypeName(String expenceTypeName) {
-        this.expenceTypeName = expenceTypeName;
-    }
 }

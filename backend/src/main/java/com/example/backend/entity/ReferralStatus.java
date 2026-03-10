@@ -1,9 +1,13 @@
 package com.example.backend.entity;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 @Table(name = "referral_statuses")
+@Getter
+@Setter
 public class ReferralStatus {
 
     @Id
@@ -14,19 +18,4 @@ public class ReferralStatus {
     @Column(name = "referral_status_name")
     private String referralStatusName;
 
-    public Long getReferralStatusId() {
-        return referralStatusId;
-    }
-
-    public void setReferralStatusId(Long referralStatusId) {
-        this.referralStatusId = referralStatusId;
-    }
-
-    public String getReferralStatusName() {
-        return referralStatusName;
-    }
-
-    public void setReferralStatusName(String referralStatusName) {
-        this.referralStatusName = referralStatusName;
-    }
 }

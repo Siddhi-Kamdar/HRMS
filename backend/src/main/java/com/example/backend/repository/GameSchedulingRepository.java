@@ -23,8 +23,6 @@ public class GameSchedulingRepository {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    // ---------------- read ----------------
-
     public List<GameResponseDTO> getGames() {
         return jdbcTemplate.query(
                 "EXEC pr_gamemod_get_games",
@@ -36,7 +34,6 @@ public class GameSchedulingRepository {
         );
     }
 
-    //--------------- get available slots -----------
     public List<SlotResponseDTO> getAvailableSlots(int gameId, int empId) {
         return jdbcTemplate.query(
                 "EXEC pr_gamemod_get_available_slots ?,?",
@@ -53,8 +50,6 @@ public class GameSchedulingRepository {
                         )
         );
     }
-
-    // ---------------- apply ----------------
 
     public void applyForSlot(ApplySlotRequestDTO request) {
 
@@ -84,8 +79,6 @@ public class GameSchedulingRepository {
         });
     }
 
-    // ---------------- cancel ----------------
-
     public void cancelBooking(int slotId, int cancelledByEmpId) {
         jdbcTemplate.update(
                 "EXEC pr_gamemod_cancel_booking @slot_id = ?, @cancelled_by_emp_id = ?",
@@ -93,8 +86,6 @@ public class GameSchedulingRepository {
                 cancelledByEmpId
         );
     }
-
-    // ---------------- complete ----------------
 
     public void completeSlot(int slotId) {
         jdbcTemplate.update(
@@ -119,6 +110,24 @@ public class GameSchedulingRepository {
                         rs.getString("my_status")
                 )
         );
+    }
+
+    public void enableSlot(int slotId){
+        jdbcTemplate.update(
+                "EXEC pr_gamemod_enable_slot @slot_id = ?",
+                slotId
+        );
+    }
+
+    public void disableSlot(int slotId){
+        jdbcTemplate.update(
+                "EXEC pr_gamemod_disable_slot @slot_id = ?",
+                slotId
+        );
+    }
+
+    public void generateSlots() {
+        jdbcTemplate.update("EXEC pr_gamemod_generate_slots");
     }
 
 }

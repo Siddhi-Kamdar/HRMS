@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { Container, Row, Col, Card } from 'react-bootstrap';
+import { Container, Row, Col, Card, Modal, Button, Form } from 'react-bootstrap';
 import { useNavigate } from "react-router-dom";
-import { Modal, Button, Form } from "react-bootstrap";
 import validator from "validator";
 
 import {
@@ -142,25 +141,33 @@ const JobDisplay: React.FC = () => {
                                     <div className="mt-auto d-flex justify-content-between align-items-center">
 
                                         <div className="d-flex gap-2">
-                                            <button
-                                                className="btn btn-sm btn-outline-primary"
-                                                onClick={() => handleShare(job.jobId)}
-                                            >
-                                                Share
-                                            </button>
+                                            {
+                                                job.jobStatus === "OPEN" && (
+                                                    <button
+                                                        className="btn btn-sm btn-outline-primary"
+                                                        onClick={() => handleShare(job.jobId)}
+                                                    >
+                                                        Share
+                                                    </button>
+                                                )
+                                            }
 
-                                            <button
-                                                className="btn btn-sm btn-outline-warning"
-                                                onClick={() => handleOpenModal(job.jobId)}
-                                            >
-                                                Refer
-                                            </button>
+                                            {
+                                                job.jobStatus === "OPEN" && (
+                                                    <button
+                                                        className="btn btn-sm btn-outline-warning"
+                                                        onClick={() => handleOpenModal(job.jobId)}
+                                                    >
+                                                        Refer
+                                                    </button>
+                                                )
+                                            }
                                         </div>
 
                                         {user.role === "HR" && (
                                             <button
                                                 className="btn btn-sm btn-outline-secondary"
-                                                onClick={() => navigate(`/app/jobs/edit/${job.jobId}`)}
+                                                onClick={() => navigate(`${job.jobId}/edit`)}
                                             >
                                                 Edit
                                             </button>
@@ -176,7 +183,7 @@ const JobDisplay: React.FC = () => {
             </Row>
             <Modal show={showModal} onHide={handleCloseModal} centered>
                 <Modal.Header closeButton>
-                    <Modal.Title>Refer a Friend</Modal.Title>
+                    <Modal.Title>Refer Someone</Modal.Title>
                 </Modal.Header>
 
                 <Modal.Body>

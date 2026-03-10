@@ -118,7 +118,7 @@ const TravelDetail: React.FC = () => {
               <Button
                 variant="success"
                 onClick={() =>
-                  navigate(`/app/expense/create/${travel.travelId}`)
+                  navigate(`/app/expenses/create/${travel.travelId}`)
                 }
               >
                 + Add Expense
@@ -249,7 +249,17 @@ const TravelDetail: React.FC = () => {
                     </Card.Text>
 
                     <Card.Text>
-                      <strong>Status:</strong> {exp.status}
+                      <strong>Status:</strong> <span
+                      className={
+                        exp.status === "APPROVED"
+                          ? "badge bg-success"
+                          : exp.status === "REJECTED"
+                          ? "badge bg-danger"
+                          : "badge bg-warning text-dark"
+                      }
+                    >
+                      {exp.status}
+                    </span>
                     </Card.Text>
 
                     {exp.remark && (

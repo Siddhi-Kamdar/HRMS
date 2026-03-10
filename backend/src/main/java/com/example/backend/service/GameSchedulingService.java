@@ -44,7 +44,7 @@ public class GameSchedulingService {
         }
     }
 
-//    @PreAuthorize("hasAnyRole('HR','Employee','Manager')")
+//    @PreAuthorize("hasAnyAuthority('ROLE_HR','ROLE_MANAGER','ROLE_EMPLOYEE')")
     public void cancelBooking(CancelBookingRequestDTO request) {
         repository.cancelBooking(
                 request.getSlotId(),
@@ -52,7 +52,7 @@ public class GameSchedulingService {
         );
     }
 
-//    @PreAuthorize("hasAnyRole('HR','Employee','Manager')")
+//    @PreAuthorize("hasAnyAuthority('ROLE_HR','ROLE_MANAGER','ROLE_EMPLOYEE')")
     public void completeSlot(int slotId) {
         repository.completeSlot(slotId);
     }
@@ -65,4 +65,17 @@ public class GameSchedulingService {
         return repository.getSlotDetail(slotId, empId);
     }
 
+    @PreAuthorize("hasAnyAuthority('ROLE_HR')")
+    public void enableSlot(int slotId){
+        repository.enableSlot(slotId);
+    }
+
+    @PreAuthorize("hasAnyAuthority('ROLE_HR')")
+    public void disableSlot(int slotId){
+        repository.disableSlot(slotId);
+    }
+
+    public void generateSlots() {
+        repository.generateSlots();
+    }
 }

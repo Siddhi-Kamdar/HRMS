@@ -2,9 +2,13 @@
 package com.example.backend.entity;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 @Table(name = "travel_employees")
+@Getter
+@Setter
 public class TravelEmployee {
 
     @Id
@@ -19,13 +23,4 @@ public class TravelEmployee {
     @ManyToOne
     @JoinColumn(name = "employee_id", nullable = false)
     private Employee employee;
-
-    public int getId() { return id; }
-    public void setId(int id) { this.id = id; }
-
-    public Travel getTravel() { return travel; }
-    public void setTravel(Travel travel) { this.travel = travel; }
-
-    public Employee getEmployee() { return employee; }
-    public void setEmployee(Employee employee) { this.employee = employee; }
 }

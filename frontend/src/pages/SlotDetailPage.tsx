@@ -66,81 +66,101 @@ const SlotDetailPage: React.FC = () => {
 
 
   return (
+  <div className="container mt-4">
 
-    <div className="container mt-4">
+    <div className="card shadow-sm border-0">
+      <div className="card-body">
 
-      <h3>{slot.gameName}</h3>
+        <div className="d-flex justify-content-between align-items-center mb-3">
+          <h4 className="mb-0">{slot.gameName}</h4>
 
-      <div className="card p-4">
-
-        <h5>Date</h5>
-        <p>{slot.slotDate}</p>
-
-        <h5>Time</h5>
-        <p>
-          {slot.startTime}
-          {" - "}
-          {slot.endTime}
-        </p>
-
-        <h5>Slot Status</h5>
-        <span className="badge bg-info">
-          {slot.status}
-        </span>
+          <span className="badge bg-info fs-6">
+            {slot.status}
+          </span>
+        </div>
 
         <hr />
 
-        <h5>Your Status</h5>
+        <div className="row mb-3">
+          <div className="col-md-6">
+            <h6 className="text-muted mb-1">Date</h6>
+            <p className="mb-0">{slot.slotDate}</p>
+          </div>
 
-        {slot.myStatus === "CONFIRMED" &&
-          <span className="badge bg-success">
-            Confirmed
-          </span>}
-
-        {slot.myStatus === "WAITING" &&
-          <span className="badge bg-warning">
-            In Queue
-          </span>}
-
-          {slot.myStatus === "PREEMPTED" &&
-          <span className="badge bg-danger">
-            Someone with higher priority then you joined. You are kicked out 🦵
-          </span>}
-
-        {slot.myStatus === "NONE" &&
-          <span className="badge bg-secondary">
-            Not Joined
-          </span>}
+          <div className="col-md-6">
+            <h6 className="text-muted mb-1">Time</h6>
+            <p className="mb-0">
+              {slot.startTime} - {slot.endTime}
+            </p>
+          </div>
+        </div>
 
         <hr />
 
-        {slot.myStatus === "NONE"
-          && slot.status !== "COMPLETED" && (
-
-          <button
-            className="btn btn-primary"
-            onClick={() =>
-                navigate(`/app/games/slot/${slotId}/book`)
-            }
-          >
-            Join Slot / Queue
-          </button>
-        )}
+        <h6 className="text-muted mb-2">Your Status</h6>
 
         {slot.myStatus === "CONFIRMED" && (
-
-          <button
-            className="btn btn-danger"
-            onClick={handleCancel}
-          >
-            Cancel Booking
-          </button>
+          <span className="badge bg-success fs-6">
+            Confirmed
+          </span>
         )}
 
-      </div>
+        {slot.myStatus === "WAITING" && (
+          <span className="badge bg-warning text-dark fs-6">
+            In Queue
+          </span>
+        )}
 
+        {slot.myStatus === "PREEMPTED" && (
+          <span className="badge bg-danger fs-6">
+            Higher priority player joined
+          </span>
+        )}
+
+        {slot.myStatus === "NONE" && (
+          <span className="badge bg-secondary fs-6">
+            Not Joined
+          </span>
+        )}
+
+        <hr />
+
+        <div className="d-flex gap-2">
+
+          {slot.myStatus === "NONE" && slot.status !== "COMPLETED" && (
+            <button
+              className="btn btn-success"
+              onClick={() =>
+                navigate(`/app/games/${slotId}/book`)
+              }
+            >
+              Join Slot / Queue
+            </button>
+          )}
+
+          {slot.myStatus === "CONFIRMED" && (
+            <button
+              className="btn btn-outline-danger"
+              onClick={handleCancel}
+            >
+              Cancel Booking
+            </button>
+          )}
+
+          <button
+            className="btn btn-outline-secondary"
+            onClick={() => navigate("/app/games")}
+          >
+            Back
+          </button>
+
+        </div>
+
+      </div>
     </div>
-  );
+
+  </div>
+);
 };
 
 export default SlotDetailPage;

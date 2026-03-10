@@ -32,7 +32,7 @@ const TravelDisplay: React.FC = () => {
         <div className="d-flex gap-2">
           <Button
             variant="outline-success"
-            onClick={() => navigate("/app/travel/personal-expenses")}
+            onClick={() => navigate("/app/expenses/personal")}
           >
             My Expenses & Status
           </Button>

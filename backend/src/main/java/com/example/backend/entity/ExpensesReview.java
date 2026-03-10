@@ -2,10 +2,15 @@
 package com.example.backend.entity;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.Date;
 
 @Entity
 @Table(name="expenses_review")
+@Getter
+@Setter
 public class ExpensesReview {
 
     @Id
@@ -33,59 +38,4 @@ public class ExpensesReview {
     @Column(name="is_deleted")
     private Boolean isDeleted=false;
 
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public ExpensesDetail getExpense() {
-        return expense;
-    }
-
-    public void setExpense(ExpensesDetail expense) {
-        this.expense = expense;
-    }
-
-    public Employee getReviewedBy() {
-        return reviewedBy;
-    }
-
-    public void setReviewedBy(Employee reviewedBy) {
-        this.reviewedBy = reviewedBy;
-    }
-
-    public ApprovalStatus getStatus() {
-        return status;
-    }
-
-    public void setStatus(ApprovalStatus status) {
-        this.status = status;
-    }
-
-    public String getComment() {
-        return comment;
-    }
-
-    public void setComment(String comment) {
-        this.comment = comment;
-    }
-
-    public Date getTimestamp() {
-        return timestamp;
-    }
-
-    public void setTimestamp(Date timestamp) {
-        this.timestamp = timestamp;
-    }
-
-    public Boolean getDeleted() {
-        return isDeleted;
-    }
-
-    public void setDeleted(Boolean deleted) {
-        isDeleted = deleted;
-    }
 }

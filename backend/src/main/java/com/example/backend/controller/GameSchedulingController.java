@@ -69,4 +69,13 @@ public class GameSchedulingController {
         return service.getSlotDetail(slotId, empId);
     }
 
+    @PostMapping("/slot/enable-slot")
+    public void enableSlot(@RequestParam int slotId){
+        service.enableSlot(slotId);
+    }
+
+    @PostMapping("/slot/disable-slot")
+    public void disableSlot(@RequestParam int slotId){
+        service.disableSlot(slotId);
+    }
 }

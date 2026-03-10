@@ -84,18 +84,22 @@ const GameSchedule: React.FC = () => {
       }
     };
 
-    let title =
-      isExpired
-        ? "Expired"
-        : slot.status === "OPEN"
-        ? "Available"
-        : slot.isMySlot
-        ? "Your Slot"
-        : `Booked By: ${slot.bookedBy ?? "Employee"} (Join Queue)`;
+    let title;
 
-    if (slot.status === "COMPLETED") {
+    if (isExpired) {
+      title = "Expired";
+    } else if (slot.status === "OPEN") {
+      title = "Available";
+    } else if (slot.status === "CANCLED") {
+      title = "Cancelled";
+    } else if (slot.status === "COMPLETED") {
       title = "Completed Slot";
+    } else if (slot.isMySlot) {
+      title = "Your Slot";
+    } else {
+      title = `Booked By: ${slot.bookedBy ?? "Employee"} (Join Queue)`;
     }
+
 
     return {
       id: slot.slotId.toString(),
@@ -119,9 +123,13 @@ const GameSchedule: React.FC = () => {
     const { status } = info.event.extendedProps;
     const slotId = Number(info.event.id);
 
-    if (status === "COMPLETED" || isExpired) return;
+    if (
+      status === "COMPLETED" ||
+      status === "CANCLED" ||
+      isExpired
+    ) return;
 
-    navigate(`/app/games/slot/${slotId}`);
+    navigate(`/app/games/${slotId}`);
   };
 
   return (

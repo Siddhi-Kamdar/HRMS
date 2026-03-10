@@ -103,7 +103,8 @@ const CreateJob = () => {
         </Form.Group>
 
         <Form.Group className="mb-3">
-          <Form.Label>Upload Job Description *</Form.Label>
+          
+          <Form.Label>{isEditMode ? "Upload Updated Job Description" : "Upload Job Description *" }</Form.Label>
           <Form.Control
             type="file"
             accept=".pdf,.doc,.docx"

@@ -49,7 +49,18 @@ const ExpenseSection: React.FC = () => {
                   <strong>Travel Id: </strong> {exp.travelId}
                 </Card.Text>
                 <Card.Text>
-                  <strong>Status:</strong> {exp.status}
+                  <strong>Status:</strong>
+                  <span
+                      className={
+                        exp.status === "APPROVED"
+                          ? "badge bg-success"
+                          : exp.status === "REJECTED"
+                          ? "badge bg-danger"
+                          : "badge bg-warning text-dark"
+                      }
+                    >
+                      {exp.status}
+                    </span>
                 </Card.Text>
 
                 {exp.remark && (
@@ -57,12 +68,12 @@ const ExpenseSection: React.FC = () => {
                     <strong>Remark:</strong> {exp.remark}
                   </Card.Text>
                 )}
-                  <NavLink
-                    to={`http://localhost:8080/${exp.proofUrl}`}
-                    target="_blank" className="text-success fw-semibold text-decoration-none"
-                  >
-                    View Proof
-                  </NavLink>
+                <NavLink
+                  to={`http://localhost:8080/${exp.proofUrl}`}
+                  target="_blank" className="text-success fw-semibold text-decoration-none"
+                >
+                  View Proof
+                </NavLink>
               </Card.Body>
             </Card>
           </Col>

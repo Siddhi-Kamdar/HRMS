@@ -28,7 +28,6 @@ public class TravelService {
     @Autowired
     private EmployeeRepository employeeRepository;
 
-    // GET ALL
     public List<TravelResponseDTO> getAllTravels() {
 
         Authentication authentication =
@@ -83,7 +82,6 @@ public class TravelService {
                 .toList();
     }
 
-    // GET BY ID
     public TravelResponseDTO getTravelById(Long id) {
 
         Travel travel = travelRepository.findById(id)
@@ -92,7 +90,6 @@ public class TravelService {
         return mapToDTO(travel);
     }
 
-    // CREATE
     public TravelResponseDTO createTravel(TravelRequestDTO request) {
 
         Employee scheduler = employeeRepository.findById(request.getSchedulerId())
@@ -121,7 +118,6 @@ public class TravelService {
         return mapToDTO(savedTravel);
     }
 
-    // DELETE
     public void deleteTravel(Long id) {
 
         Travel travel = travelRepository.findById(id)
@@ -130,7 +126,6 @@ public class TravelService {
         travelRepository.delete(travel);
     }
 
-    // MAPPER
     private TravelResponseDTO mapToDTO(Travel travel) {
 
         List<String> employeeNames =

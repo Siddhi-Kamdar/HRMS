@@ -1,8 +1,12 @@
 package com.example.backend.entity;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 @Table(name = "referrals")
+@Getter
+@Setter
 public class Referral {
 
     @Id
@@ -29,60 +33,4 @@ public class Referral {
 
     @Column(name = "short_note")
     private String shortNote;
-
-    public Long getReferralId() {
-        return referralId;
-    }
-
-    public void setReferralId(Long referralId) {
-        this.referralId = referralId;
-    }
-
-    public Employee getReferredBy() {
-        return referredBy;
-    }
-
-    public void setReferredBy(Employee referredBy) {
-        this.referredBy = referredBy;
-    }
-
-    public Job getJob() {
-        return job;
-    }
-
-    public void setJob(Job job) {
-        this.job = job;
-    }
-
-    public String getCandidateName() {
-        return candidateName;
-    }
-
-    public void setCandidateName(String candidateName) {
-        this.candidateName = candidateName;
-    }
-
-    public String getCandidateEmail() {
-        return candidateEmail;
-    }
-
-    public void setCandidateEmail(String candidateEmail) {
-        this.candidateEmail = candidateEmail;
-    }
-
-    public String getCvUrl() {
-        return cvUrl;
-    }
-
-    public void setCvUrl(String cvUrl) {
-        this.cvUrl = cvUrl;
-    }
-
-    public String getShortNote() {
-        return shortNote;
-    }
-
-    public void setShortNote(String shortNote) {
-        this.shortNote = shortNote;
-    }
 }

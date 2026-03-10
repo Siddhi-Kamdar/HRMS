@@ -1,10 +1,15 @@
 package com.example.backend.entity;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.Date;
 
 @Entity
 @Table(name = "travel_details")
+@Getter
+@Setter
 public class Travel {
 
     @Id
@@ -25,18 +30,4 @@ public class Travel {
     @JoinColumn(name = "scheduler_id")
     private Employee scheduler;
 
-    public int getTravelId() { return travelId; }
-    public void setTravelId(int travelId) { this.travelId = travelId; }
-
-    public String getDestination() { return destination; }
-    public void setDestination(String destination) { this.destination = destination; }
-
-    public Date getDepartDate() { return departDate; }
-    public void setDepartDate(Date departDate) { this.departDate = departDate; }
-
-    public Date getReturnDate() { return returnDate; }
-    public void setReturnDate(Date returnDate) { this.returnDate = returnDate; }
-
-    public Employee getScheduler() { return scheduler; }
-    public void setScheduler(Employee scheduler) { this.scheduler = scheduler; }
 }

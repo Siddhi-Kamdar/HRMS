@@ -1,9 +1,13 @@
 package com.example.backend.entity;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 @Table(name = "approval_statuses")
+@Getter
+@Setter
 public class ApprovalStatus {
 
     @Id
@@ -14,19 +18,4 @@ public class ApprovalStatus {
     @Column(name = "approval_status_name")
     private String approvalStatusName;
 
-    public Integer getApprovalStatusId() {
-        return approvalStatusId;
-    }
-
-    public void setApprovalStatusId(Integer approvalStatusId) {
-        this.approvalStatusId = approvalStatusId;
-    }
-
-    public String getApprovalStatusName() {
-        return approvalStatusName;
-    }
-
-    public void setApprovalStatusName(String approvalStatusName) {
-        this.approvalStatusName = approvalStatusName;
-    }
 }

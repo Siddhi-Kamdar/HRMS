@@ -1,9 +1,13 @@
 package com.example.backend.entity;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 @Table(name = "positions")
+@Getter
+@Setter
 public class Position {
 
     @Id
@@ -13,20 +17,4 @@ public class Position {
 
     @Column(name = "position_name")
     private String positionName;
-
-    public int getPositionId() {
-        return positionId;
-    }
-
-    public void setPositionId(int positionId) {
-        this.positionId = positionId;
-    }
-
-    public String getPositionName() {
-        return positionName;
-    }
-
-    public void setPositionName(String positionName) {
-        this.positionName = positionName;
-    }
 }

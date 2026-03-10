@@ -71,3 +71,19 @@ export const getSlotDetail = async (
   );
   return res.data;
 }
+
+export const disableSlot = async (slotId: number) => {
+  return axiosInstance.post(
+    `/api/games/slot/disable-slot`,
+    null,
+    { params: { slotId } }
+  );
+};
+
+export const enableSlot = async (slotId: number) => {
+  return axiosInstance.post(
+    `/api/games/slot/enable-slot`,
+    null,
+    { params: { slotId } }
+  );
+};

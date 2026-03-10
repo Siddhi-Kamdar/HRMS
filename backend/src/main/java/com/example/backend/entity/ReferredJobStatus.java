@@ -1,6 +1,8 @@
 package com.example.backend.entity;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -8,6 +10,8 @@ import java.util.Date;
 
 @Entity
 @Table(name = "referred_job_status")
+@Getter
+@Setter
 public class ReferredJobStatus {
 
     @Id
@@ -29,44 +33,4 @@ public class ReferredJobStatus {
 
     @Column(name = "timestamp")
     private java.util.Date timeStamp;
-
-    public Long getReferredJobStatusId() {
-        return referredJobStatusId;
-    }
-
-    public void setReferredJobStatusId(Long referredJobStatusId) {
-        this.referredJobStatusId = referredJobStatusId;
-    }
-
-    public Referral getReferral() {
-        return referral;
-    }
-
-    public void setReferral(Referral referral) {
-        this.referral = referral;
-    }
-
-    public ReferralStatus getReferralStatus() {
-        return referralStatus;
-    }
-
-    public void setReferralStatus(ReferralStatus referralStatus) {
-        this.referralStatus = referralStatus;
-    }
-
-    public Employee getReviewedBy() {
-        return reviewedBy;
-    }
-
-    public void setReviewedBy(Employee reviewedBy) {
-        this.reviewedBy = reviewedBy;
-    }
-
-    public java.util.Date getTimeStamp() {
-        return timeStamp;
-    }
-
-    public void setTimeStamp(java.util.Date timeStamp) {
-        this.timeStamp = timeStamp;
-    }
 }

@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import { NotificationDialog } from "../components/NotificationDialog";
 import '../index.css'
 import { getNotificationCount } from "../services/notificationService";
+import NavigationSetter from "../components/NavigationSetter";
 
 const AppLayout: React.FC = () => {
   const navigate = useNavigate();
@@ -21,19 +22,24 @@ const AppLayout: React.FC = () => {
     console.log(count);
     setNotificationCount(count);
   }
-
-  getUnreadNotificationCount()
+useEffect(() => {
+  getUnreadNotificationCount();
+}, []);
   const modules = [
     { label: "Travel", route: "travel" },
     { label: "Achievements", route: "achievements" },
     { label: "Games", route: "games" },
     { label: "Jobs", route: "jobs" },
     ...(user.role === "HR" ? [{ label: "Expenses", route: "expenses" }] : []),
+    ...(user.role === "HR"
+      ? [{ label: "Slot Manager", route: "games/manage-slots" }]
+      : []),
   ];
 
 
   return (
     <div style={{ minHeight: "100vh", backgroundColor: "#f4f6f9" }}>
+      <NavigationSetter />
 
       <nav className="navbar navbar-expand bg-white shadow-sm px-4">
         <span className="navbar-brand fw-bold">HRMS</span>
