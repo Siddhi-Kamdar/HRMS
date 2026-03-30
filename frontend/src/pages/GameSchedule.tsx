@@ -1,3 +1,5 @@
+/* eslint-disable react-hooks/set-state-in-effect */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useEffect, useState } from "react";
 import FullCalendar from "@fullcalendar/react";
 import timeGridPlugin from "@fullcalendar/timegrid";
@@ -24,10 +26,7 @@ const GameSchedule: React.FC = () => {
   const [selectedGame, setSelectedGame] = useState<number | null>(null);
   const [slots, setSlots] = useState<Slot[]>([]);
 
-  useEffect(() => {
-    loadGames();
-  }, []);
-
+  
   const loadGames = async () => {
     const data = await getGames();
     setGames(data);
@@ -40,6 +39,11 @@ const GameSchedule: React.FC = () => {
       setSlots(slotsData);
     }
   };
+  
+  useEffect(() => {
+    loadGames();
+  }, []);
+
 
   const handleGameSelect = async (gameId: number) => {
     setSelectedGame(gameId);
@@ -136,21 +140,22 @@ const GameSchedule: React.FC = () => {
 
     <Container className="mt-4">
 
-      <Card className="shadow-sm border-0 mb-4">
+      <Card className="shadow-sm edge border-0 mb-4">
         <Card.Body>
 
           <Row className="align-items-center">
 
-            <Col md={6}>
+            <Col md={8}>
               <h4 className="mb-0">Game Schedule</h4>
-              <small className="text-muted">
+              {/* <small className="text-muted">
                 Book and manage game slots
-              </small>
+              </small> */}
             </Col>
 
             <Col md={4}>
               <Form.Select
                 value={selectedGame ?? ""}
+                className="edge"
                 onChange={(e) =>
                   handleGameSelect(Number(e.target.value))
                 }

@@ -1,7 +1,6 @@
 package com.example.backend.controller;
 
 import com.example.backend.dto.response.TravelDocumentResponseDTO;
-import com.example.backend.entity.TravelDocument;
 import com.example.backend.service.TravelDocumentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -11,12 +10,11 @@ import org.springframework.web.multipart.MultipartFile;
 
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/travel-documents")
+    @RequestMapping("/api/travel-documents")
 public class TravelDocumentController {
 
     @Autowired

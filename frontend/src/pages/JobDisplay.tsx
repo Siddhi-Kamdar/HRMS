@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/set-state-in-effect */
 import React, { useEffect, useState } from "react";
 import { Container, Row, Col, Card, Modal, Button, Form } from 'react-bootstrap';
 import { useNavigate } from "react-router-dom";
@@ -20,8 +21,16 @@ const JobDisplay: React.FC = () => {
     const [candidateEmail, setCandidateEmail] = useState("");
     const [shortNote, setShortNote] = useState("");
     const [cvFile, setCvFile] = useState<File | null>(null);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [search, setSearch] = useState("");
 
     const user = JSON.parse(localStorage.getItem("user") || "{}");
+
+    const loadJobs = async () => {
+        const data = await getJobs();
+        setJobs(data);
+    }
+
     useEffect(() => {
         loadJobs();
     }, []);
@@ -41,7 +50,8 @@ const JobDisplay: React.FC = () => {
             alert("Please fill all required fields");
             return;
         }
-
+        if (isSubmitting) return;
+        setIsSubmitting(true);
         const formData = new FormData();
         formData.append("candidateName", candidateName);
         formData.append("candidateEmail", candidateEmail);
@@ -53,14 +63,10 @@ const JobDisplay: React.FC = () => {
             alert("Referral submitted successfully!");
             handleCloseModal();
         } catch (error) {
+            console.log(error);
             alert("Referral failed");
         }
     };
-
-    const loadJobs = async () => {
-        const data = await getJobs();
-        setJobs(data);
-    }
 
     const handleShare = async (jobId: number) => {
         const email = prompt("Enter email address");
@@ -70,44 +76,61 @@ const JobDisplay: React.FC = () => {
                 await shareJob(jobId, [email]);
                 alert("Job shared successfully!");
             } catch (error) {
+                console.log(error);
                 alert("Failed to share job");
             }
         }
         else {
             alert("Enter valid Email")
-
         }
-
-
     };
 
+    const filteredJobs = jobs.filter((job) => {
+        const term = search.toLowerCase();
 
+        return (
+            job.jobTitle.toLowerCase().includes(term) ||
+            job.jobSummary.toLowerCase().includes(term) ||
+            job.jobStatus.toLowerCase().includes(term)
+        );
+    });
     return (
         <Container fluid style={{ marginTop: "20px" }}>
-            {user.role === "HR" && (
-                <div className="d-flex justify-content-between mb-3">
+            <div className="d-flex justify-content-between align-items-center mb-3">
 
-                    <button
-                        className="btn btn-outline-success"
-                        onClick={() => navigate("/app/jobs/create")}
-                    >
-                        + Create New Job
-                    </button>
+                {user.role === "HR" && (
+                    <div className="d-flex gap-2">
+                        <button
+                            className="btn btn-outline-success edge"
+                            onClick={() => navigate("/app/jobs/create")}
+                        >
+                            + Create New Job
+                        </button>
 
-                    <button
-                        className="btn btn-outline-dark"
-                        onClick={() => navigate("/app/hr/referrals")}
-                    >
-                        View Referrals
-                    </button>
+                        <button
+                            className="btn btn-outline-dark edge"
+                            onClick={() => navigate("/app/hr/referrals")}
+                        >
+                            View Referrals
+                        </button>
+                    </div>
+                )}
 
-                </div>
-            )}
+                <input
+                    type="text"
+                    placeholder="Search jobs..."
+                    className="form-control edge"
+                    style={{ maxWidth: "300px" }}
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                />
+
+            </div>
             <Row className="g-4">
                 {
-                    jobs.map(job => (
+                    filteredJobs.map(job => (
                         <Col key={job.jobId} sm={12} md={6} lg={4}>
-                            <Card className="h-100 shadow-sm">
+                            <Card className="h-100 edge shadow-sm">
                                 <Card.Body className="d-flex flex-column">
 
                                     <div className="mb-2 text-muted small">
@@ -123,7 +146,7 @@ const JobDisplay: React.FC = () => {
                                     <div className="mb-3">
                                         <span className="me-2">Status:</span>
                                         <span
-                                            className={`badge ${job.jobStatus === "OPEN" ? "bg-success" : "bg-secondary"
+                                            className={`badge edge ${job.jobStatus === "OPEN" ? "bg-success" : "bg-secondary"
                                                 }`}
                                         >
                                             {job.jobStatus}
@@ -144,7 +167,7 @@ const JobDisplay: React.FC = () => {
                                             {
                                                 job.jobStatus === "OPEN" && (
                                                     <button
-                                                        className="btn btn-sm btn-outline-primary"
+                                                        className="btn btn-sm btn-outline-primary edge"
                                                         onClick={() => handleShare(job.jobId)}
                                                     >
                                                         Share
@@ -155,7 +178,7 @@ const JobDisplay: React.FC = () => {
                                             {
                                                 job.jobStatus === "OPEN" && (
                                                     <button
-                                                        className="btn btn-sm btn-outline-warning"
+                                                        className="btn btn-sm btn-outline-warning edge"
                                                         onClick={() => handleOpenModal(job.jobId)}
                                                     >
                                                         Refer
@@ -166,13 +189,12 @@ const JobDisplay: React.FC = () => {
 
                                         {user.role === "HR" && (
                                             <button
-                                                className="btn btn-sm btn-outline-secondary"
+                                                className="btn btn-sm btn-outline-secondary edge"
                                                 onClick={() => navigate(`${job.jobId}/edit`)}
                                             >
                                                 Edit
                                             </button>
                                         )}
-
                                     </div>
 
                                 </Card.Body>
@@ -194,6 +216,7 @@ const JobDisplay: React.FC = () => {
                                 type="text"
                                 value={candidateName}
                                 onChange={(e) => setCandidateName(e.target.value)}
+                                className="edge"
                             />
                         </Form.Group>
 
@@ -203,6 +226,7 @@ const JobDisplay: React.FC = () => {
                                 type="email"
                                 value={candidateEmail}
                                 onChange={(e) => setCandidateEmail(e.target.value)}
+                                className="edge"
                             />
                         </Form.Group>
 
@@ -213,6 +237,7 @@ const JobDisplay: React.FC = () => {
                                 rows={3}
                                 value={shortNote}
                                 onChange={(e) => setShortNote(e.target.value)}
+                                className="edge"
                             />
                         </Form.Group>
 
@@ -225,17 +250,23 @@ const JobDisplay: React.FC = () => {
                                         setCvFile(e.target.files[0]);
                                     }
                                 }}
+                                className="edge"
                             />
                         </Form.Group>
                     </Form>
                 </Modal.Body>
 
                 <Modal.Footer>
-                    <Button variant="secondary" onClick={handleCloseModal}>
+                    <Button variant="secondary" className="edge" onClick={handleCloseModal}>
                         Cancel
                     </Button>
-                    <Button variant="primary" onClick={handleSubmitReferral}>
-                        Submit Referral
+                    <Button
+                        variant="primary"
+                        className="edge"
+                        onClick={handleSubmitReferral}
+                        disabled={isSubmitting}
+                    >
+                        {isSubmitting ? "Submitting..." : "Submit Referral"}
                     </Button>
                 </Modal.Footer>
             </Modal>

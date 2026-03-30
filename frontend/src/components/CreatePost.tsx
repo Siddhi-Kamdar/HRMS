@@ -31,7 +31,7 @@ export const CreatePost: React.FC<Props> = ({ onPostCreated }) => {
   };
 
   return (
-    <div className="card mb-4 shadow-sm">
+    <div className="card edge mb-4 shadow-sm">
       <div className="card-body">
         <h5 className="card-title">Create Post</h5>
         <form onSubmit={handleSubmit}>
@@ -41,7 +41,7 @@ export const CreatePost: React.FC<Props> = ({ onPostCreated }) => {
               placeholder="Title"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              className="form-control"
+              className="form-control edge"
             />
           </div>
           <div className="mb-3">
@@ -50,7 +50,7 @@ export const CreatePost: React.FC<Props> = ({ onPostCreated }) => {
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               required
-              className="form-control"
+              className="form-control edge"
               rows={3}
             />
           </div>
@@ -59,11 +59,11 @@ export const CreatePost: React.FC<Props> = ({ onPostCreated }) => {
               type="file"
               accept="image/png, image/jpeg"
               onChange={(e) => setImage(e.target.files?.[0] || null)}
-              className="form-control"
+              className="form-control edge"
             />
           </div>
           <select
-            className="form-select mt-2 mb-3"
+            className="form-select mt-2 mb-3 edge"
             value={visibility}
             onChange={(e) => setVisibility(e.target.value as "ALL" | "DEPARTMENT")}
           >
@@ -73,7 +73,7 @@ export const CreatePost: React.FC<Props> = ({ onPostCreated }) => {
           <button
             type="submit"
             disabled={loading}
-            className="btn btn-outline-success"
+            className="btn btn-outline-success edge"
           >
             {loading ? "Posting..." : "Post Achievement"}
           </button>

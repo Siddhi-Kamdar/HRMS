@@ -9,14 +9,14 @@ const TravelDisplay: React.FC = () => {
 
   const [travels, setTravels] = useState<Travel[]>([]);
 
-  useEffect(() => {
-    loadTravels();
-  }, []);
-
   const loadTravels = async () => {
     const data = await getTravels();
     setTravels(data);
   };
+  useEffect(() => {
+    loadTravels();
+  }, []);
+
 
   return (
     <Container className="mt-4">
@@ -24,14 +24,15 @@ const TravelDisplay: React.FC = () => {
       <div className="d-flex justify-content-between align-items-center mb-4">
         <div>
           <h3 className="mb-0">Travel Plans</h3>
-          <small className="text-muted">
+          {/* <small className="text-muted">
             Manage and view company travel schedules
-          </small>
+          </small> */}
         </div>
 
         <div className="d-flex gap-2">
           <Button
             variant="outline-success"
+            className="edge"
             onClick={() => navigate("/app/expenses/personal")}
           >
             My Expenses & Status
@@ -39,6 +40,7 @@ const TravelDisplay: React.FC = () => {
 
           {user.role === "HR" && (
             <Button
+              className="edge"
               variant="success"
               onClick={() => navigate("/app/travel/create")}
             >
@@ -51,7 +53,7 @@ const TravelDisplay: React.FC = () => {
       <Row className="g-4">
         {travels.map((travel) => (
           <Col key={travel.travelId} xs={12} md={6} lg={4}>
-            <Card className="h-100 shadow-sm border-0">
+            <Card className="h-100 edge shadow-sm border-0">
 
               <Card.Body className="d-flex flex-column">
 
@@ -87,7 +89,7 @@ const TravelDisplay: React.FC = () => {
                 <div className="mt-auto">
                   <NavLink
                     to={`/app/travel/${travel.travelId}`}
-                    className="btn btn-outline-success w-100"
+                    className="btn btn-outline-success edge w-100"
                   >
                     View Details
                   </NavLink>

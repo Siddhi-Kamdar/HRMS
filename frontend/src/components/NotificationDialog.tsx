@@ -40,16 +40,16 @@ export const NotificationDialog = ({ onClose }: any) => {
   }
 
   return (
-    <div className="modal show fade d-block" tabIndex={-1}>
-      <div className="modal-dialog modal-dialog-centered">
-        <div className="modal-content shadow border-0 rounded-4">
+    <div className="modal show fade d-block edge" tabIndex={-1}>
+      <div className="modal-dialog modal-dialog-centered edge">
+        <div className="modal-content shadow border-0 edge">
 
           <div className="modal-header d-flex">
             <h5 className="modal-title fw-semibold mr-auto p-2">Notifications</h5>
-            <button type="button" className="btn btn-outline-danger p-2 border-0" onClick={handleReadAllNotification}>Clear All Notifications</button>
+            <button type="button" className="btn btn-default btn-outline-default p-2 edge" onClick={handleReadAllNotification}>Clear All</button>
             <button
               type="button"
-              className="btn-close p-2"
+              className="btn-close p-2 edge"
               onClick={onClose}
             ></button>
           </div>
@@ -81,7 +81,7 @@ export const NotificationDialog = ({ onClose }: any) => {
                     {notification.message}
                   </div>
                   <button
-                    className="btn btn-sm border-0 bg-transparent d-flex align-items-center gap-1"
+                    className="btn btn-sm border-0 bg-transparent d-flex align-items-center gap-1 edge"
                     onClick={() => handleReadNotification(notification)}
                   >
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-x" viewBox="0 0 16 16">

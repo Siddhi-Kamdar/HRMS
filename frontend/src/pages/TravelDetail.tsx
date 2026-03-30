@@ -103,7 +103,7 @@ const TravelDetail: React.FC = () => {
   return (
     <Container className="mt-4">
 
-      <Card className="shadow-sm border-0 mb-4">
+      <Card className="shadow-sm edge border-0 mb-4">
         <Card.Body>
 
           <div className="d-flex justify-content-between align-items-center mb-3">
@@ -117,6 +117,7 @@ const TravelDetail: React.FC = () => {
             {canSubmitExpense && (
               <Button
                 variant="success"
+                className="edge"
                 onClick={() =>
                   navigate(`/app/expenses/create/${travel.travelId}`)
                 }
@@ -154,6 +155,7 @@ const TravelDetail: React.FC = () => {
 
       <div className="d-flex gap-2 mb-4">
         <Button
+          className="edge"
           variant={activeTab === "documents" ? "success" : "outline-success"}
           onClick={() => setActiveTab("documents")}
         >
@@ -161,6 +163,7 @@ const TravelDetail: React.FC = () => {
         </Button>
 
         <Button
+          className="edge"
           variant={activeTab === "expenses" ? "success" : "outline-success"}
           onClick={() => setActiveTab("expenses")}
         >
@@ -169,7 +172,7 @@ const TravelDetail: React.FC = () => {
       </div>
 
       {activeTab === "documents" && (
-        <Card className="shadow-sm border-0 mb-4">
+        <Card className="shadow-sm edge border-0 mb-4">
           <Card.Body>
 
             <Row className="g-3 mb-3">
@@ -180,6 +183,7 @@ const TravelDetail: React.FC = () => {
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                     setFile(e.target.files?.[0] || null)
                   }
+                  className="edge"
                 />
               </Col>
 
@@ -189,6 +193,7 @@ const TravelDetail: React.FC = () => {
                   onChange={(e) =>
                     setSelectedEmployeeId(e.target.value)
                   }
+                  className="edge"
                 >
                   <option value="">Select Employee</option>
                   {dropDownOptions.map(opt => (
@@ -203,25 +208,50 @@ const TravelDetail: React.FC = () => {
                 <Button
                   variant="success"
                   onClick={handleUpload}
+                  className="edge"
                 >
                   Upload Document
                 </Button>
               </Col>
 
             </Row>
+            <ul className="list-unstyled">
+              <p>Your Uploads</p>
+
+              {documents.map(doc => (
+                doc.uploadedById === user.employeeId && doc.employeeId == user.employeeId && (
+                  <li key={doc.id} className="mb-2">
+                    <p>{doc.employeeId} - {doc.uploadedById}</p>
+                    <a
+                      href={`http://localhost:8080/${doc.documentUrl}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-decoration-none"
+                    >
+                      {doc.documentUrl.split(/[/\\]/).pop()}
+                    </a>
+                  </li>
+                )
+              ))}
+
+            </ul>
 
             <ul className="list-unstyled">
+              <p>Company Uploads</p>
               {documents.map(doc => (
-                <li key={doc.id} className="mb-2">
-                  <a
-                    href={`http://localhost:8080/${doc.documentUrl}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-decoration-none"
-                  >
-                    {doc.documentUrl.split(/[/\\]/).pop()}
-                  </a>
-                </li>
+                doc.uploadedById != user.employeeId && doc.employeeId == user.employeeId && (
+                  <li key={doc.id} className="mb-2">
+                    <p>{doc.employeeId} - {doc.uploadedById}</p>
+                    <a
+                      href={`http://localhost:8080/${doc.documentUrl}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-decoration-none"
+                    >
+                      {doc.documentUrl.split(/[/\\]/).pop()}
+                    </a>
+                  </li>
+                )
               ))}
             </ul>
 
@@ -236,7 +266,7 @@ const TravelDetail: React.FC = () => {
             .filter(exp => exp.travelId.toString() === travelId)
             .map(exp => (
               <Col key={exp.expenseId} md={6} lg={4}>
-                <Card className="shadow-sm border-0 h-100">
+                <Card className="shadow-sm edge border-0 h-100">
 
                   <Card.Body>
 
@@ -250,16 +280,16 @@ const TravelDetail: React.FC = () => {
 
                     <Card.Text>
                       <strong>Status:</strong> <span
-                      className={
-                        exp.status === "APPROVED"
-                          ? "badge bg-success"
-                          : exp.status === "REJECTED"
-                          ? "badge bg-danger"
-                          : "badge bg-warning text-dark"
-                      }
-                    >
-                      {exp.status}
-                    </span>
+                        className={
+                          exp.status === "APPROVED"
+                            ? "badge bg-success"
+                            : exp.status === "REJECTED"
+                              ? "badge bg-danger"
+                              : "badge bg-warning text-dark"
+                        }
+                      >
+                        {exp.status}
+                      </span>
                     </Card.Text>
 
                     {exp.remark && (

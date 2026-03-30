@@ -24,6 +24,7 @@ import ReferralDashboard from "../components/ReferralDashboard";
 
 import RoleGuard from "../components/RoleGuard";
 import HrSlotManager from "../pages/HrSlotManager";
+import Dashboard from "../pages/Dashboard";
 
 function NotFoundPage() {
   return <h1>404 - Page Not Found</h1>;
@@ -41,7 +42,7 @@ export const router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: <Navigate to="games" replace />,
+        element: <Navigate to="dashboard" replace />,
       },
 
       {
@@ -117,6 +118,10 @@ export const router = createBrowserRouter([
             <HrSlotManager />
           </RoleGuard>
         ),
+      },
+      {
+        path:"dashboard",
+        element: <Dashboard/>
       }
     ],
   },

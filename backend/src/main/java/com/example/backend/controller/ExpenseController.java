@@ -1,8 +1,5 @@
-
 package com.example.backend.controller;
-
 import com.example.backend.dto.response.ExpenseResponseDTO;
-import com.example.backend.entity.ExpensesDetail;
 import com.example.backend.service.ExpenseProofService;
 import com.example.backend.service.ExpenseService;
 
@@ -42,14 +39,12 @@ public class ExpenseController {
     )
     @PreAuthorize("hasAnyRole('EMPLOYEE','HR','MANAGER')")
     public ResponseEntity<String> createExpense(
-
             @RequestParam Integer travelId,
             @RequestParam Integer expenseTypeId,
             @RequestParam BigDecimal amount,
             @RequestParam(required = false) String comment,
             @RequestParam("file") MultipartFile file
     ) {
-
         String proofUrl =
                 expenseProofService.uploadProof(file);
 
@@ -71,8 +66,6 @@ public class ExpenseController {
         return ResponseEntity.ok("expense added successfully");
     }
 
-
-
     @GetMapping("/my")
     @PreAuthorize(
             "hasAnyRole('EMPLOYEE','HR','MANAGER')")
@@ -82,8 +75,6 @@ public class ExpenseController {
         return ResponseEntity.ok(
                 expenseService.getMyExpenses());
     }
-
-
 
     @GetMapping
     @PreAuthorize("hasRole('HR')")
@@ -102,6 +93,7 @@ public class ExpenseController {
         return ResponseEntity.ok(
                 expenseService.getTeamExpenses());
     }
+
     @PutMapping("/{id}/approve")
     @PreAuthorize("hasRole('HR')")
     public void approve(
@@ -110,8 +102,6 @@ public class ExpenseController {
 
         expenseService.approveExpense(id,hrId);
     }
-
-
 
     @PutMapping("/{id}/reject")
     @PreAuthorize("hasRole('HR')")

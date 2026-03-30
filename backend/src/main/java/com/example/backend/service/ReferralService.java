@@ -1,7 +1,6 @@
 package com.example.backend.service;
 
 import com.example.backend.dto.response.ReferralDashboardDTO;
-import com.example.backend.dto.response.ReferralResponseDTO;
 import com.example.backend.entity.*;
 import com.example.backend.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;

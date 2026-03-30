@@ -26,7 +26,7 @@ const SlotDetailPage: React.FC = () => {
     );
 
     setSlot(data);
-  
+
   };
 
   useEffect(() => {
@@ -66,101 +66,101 @@ const SlotDetailPage: React.FC = () => {
 
 
   return (
-  <div className="container mt-4">
+    <div className="container">
 
-    <div className="card shadow-sm border-0">
-      <div className="card-body">
+      <div className="card edge shadow-sm border-0">
+        <div className="card-body">
 
-        <div className="d-flex justify-content-between align-items-center mb-3">
-          <h4 className="mb-0">{slot.gameName}</h4>
+          <div className="d-flex justify-content-between align-items-center mb-3">
+            <h4 className="mb-0">{slot.gameName}</h4>
 
-          <span className="badge bg-info fs-6">
-            {slot.status}
-          </span>
-        </div>
-
-        <hr />
-
-        <div className="row mb-3">
-          <div className="col-md-6">
-            <h6 className="text-muted mb-1">Date</h6>
-            <p className="mb-0">{slot.slotDate}</p>
+            <span className="badge bg-info fs-6 edge">
+              {slot.status}
+            </span>
           </div>
 
-          <div className="col-md-6">
-            <h6 className="text-muted mb-1">Time</h6>
-            <p className="mb-0">
-              {slot.startTime} - {slot.endTime}
-            </p>
+          <hr />
+
+          <div className="row mb-3">
+            <div className="col-md-6">
+              <h6 className="text-muted mb-1">Date</h6>
+              <p className="mb-0">{slot.slotDate}</p>
+            </div>
+
+            <div className="col-md-6">
+              <h6 className="text-muted mb-1">Time</h6>
+              <p className="mb-0">
+                {slot.startTime.slice(0, 5)} - {slot.endTime.slice(0, 5)}
+              </p>
+            </div>
           </div>
-        </div>
 
-        <hr />
+          <hr />
 
-        <h6 className="text-muted mb-2">Your Status</h6>
-
-        {slot.myStatus === "CONFIRMED" && (
-          <span className="badge bg-success fs-6">
-            Confirmed
-          </span>
-        )}
-
-        {slot.myStatus === "WAITING" && (
-          <span className="badge bg-warning text-dark fs-6">
-            In Queue
-          </span>
-        )}
-
-        {slot.myStatus === "PREEMPTED" && (
-          <span className="badge bg-danger fs-6">
-            Higher priority player joined
-          </span>
-        )}
-
-        {slot.myStatus === "NONE" && (
-          <span className="badge bg-secondary fs-6">
-            Not Joined
-          </span>
-        )}
-
-        <hr />
-
-        <div className="d-flex gap-2">
-
-          {slot.myStatus === "NONE" && slot.status !== "COMPLETED" && (
-            <button
-              className="btn btn-success"
-              onClick={() =>
-                navigate(`/app/games/${slotId}/book`)
-              }
-            >
-              Join Slot / Queue
-            </button>
-          )}
+          <h6 className="text-muted mb-2">Your Status</h6>
 
           {slot.myStatus === "CONFIRMED" && (
-            <button
-              className="btn btn-outline-danger"
-              onClick={handleCancel}
-            >
-              Cancel Booking
-            </button>
+            <span className="badge bg-success fs-6 edge">
+              Confirmed
+            </span>
           )}
 
-          <button
-            className="btn btn-outline-secondary"
-            onClick={() => navigate("/app/games")}
-          >
-            Back
-          </button>
+          {slot.myStatus === "WAITING" && (
+            <span className="badge bg-warning text-dark fs-6 edge">
+              In Queue
+            </span>
+          )}
+
+          {slot.myStatus === "PREEMPTED" && (
+            <span className="badge bg-danger fs-6 edge">
+              Higher priority player joined, You are in Queue now.
+            </span>
+          )}
+
+          {slot.myStatus === "NONE" && (
+            <span className="badge bg-secondary fs-6 edge">
+              Not Joined
+            </span>
+          )}
+
+          <hr />
+
+          <div className="d-flex gap-2">
+
+            {slot.myStatus === "NONE" && slot.status !== "COMPLETED" && (
+              <button
+                className="btn btn-success edge"
+                onClick={() =>
+                  navigate(`/app/games/${slotId}/book`)
+                }
+              >
+                Join Slot / Queue
+              </button>
+            )}
+
+            {slot.myStatus === "CONFIRMED" && (
+              <button
+                className="btn btn-outline-danger edge"
+                onClick={handleCancel}
+              >
+                Cancel Booking
+              </button>
+            )}
+
+            <button
+              className="btn btn-outline-secondary edge"
+              onClick={() => navigate("/app/games")}
+            >
+              Back
+            </button>
+
+          </div>
 
         </div>
-
       </div>
-    </div>
 
-  </div>
-);
+    </div>
+  );
 };
 
 export default SlotDetailPage;

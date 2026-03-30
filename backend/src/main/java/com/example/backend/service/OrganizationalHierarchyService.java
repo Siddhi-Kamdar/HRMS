@@ -1,12 +1,9 @@
 package com.example.backend.service;
 
 import com.example.backend.dto.response.OrgChartResponseDTO;
-import com.example.backend.dto.response.OrganizationalHierarchyDTO;
 import com.example.backend.repository.OrganizationalHierarchyRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
-import java.util.List;
 
 @Service
 public class OrganizationalHierarchyService {

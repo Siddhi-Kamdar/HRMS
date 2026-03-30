@@ -42,33 +42,33 @@ const ExpenseCreate: React.FC = () => {
     };
 
     return (
-        <div className="card p-4 shadow-sm">
+        <div className="card edge p-4 shadow-sm">
 
             <h4>Add Expense</h4>
 
             <input
-                className="form-control mb-2"
+                className="form-control edge mb-2"
                 placeholder="Amount"
                 type="number"
                 onChange={(e) => setAmount(e.target.value)}
             />
 
             <textarea
-                className="form-control mb-2"
+                className="form-control edge mb-2"
                 placeholder="Comment"
                 onChange={(e) => setComment(e.target.value)}
             />
 
             <input
                 type="file"
-                className="form-control mb-2"
+                className="form-control edge mb-2"
                 onChange={(e) =>
                     setSelectedFile(e.target.files?.[0] || null)
                 }
             />
 
             <button
-                className="btn btn-success"
+                className="btn btn-success edge"
                 onClick={submitExpense}
                 disabled={uploading}
             >

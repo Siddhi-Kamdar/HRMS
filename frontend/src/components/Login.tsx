@@ -46,7 +46,7 @@ const Login: React.FC = () => {
   };
 
   return (
-    <div className="d-flex aligns-items-center justify-content-center card text-center w-30 position-absolute top-50 start-50 translate-middle card shadow-sm p-4" style={{ width: "380px" }}>
+    <div className="d-flex aligns-items-center justify-content-center card edge text-center w-30 position-absolute top-50 start-50 translate-middle shadow-sm p-4" style={{ width: "380px" }}>
       <h4 className="text-center mb-4">HRMS Login</h4>
 
       {error && (
@@ -64,7 +64,7 @@ const Login: React.FC = () => {
             type="email"
             id="email"
             name="email"
-            className="form-control"
+            className="form-control edge"
             value={formData.email}
             onChange={handleChange}
             required
@@ -79,7 +79,7 @@ const Login: React.FC = () => {
             type="password"
             id="password"
             name="password"
-            className="form-control"
+            className="form-control edge"
             value={formData.password}
             onChange={handleChange}
             required
@@ -88,7 +88,7 @@ const Login: React.FC = () => {
 
         <button
           type="submit"
-          className="btn btn-success w-100"
+          className="btn btn-success w-100 edge"
           disabled={loading}
         >
           {loading ? "Signing in..." : "Sign In"}

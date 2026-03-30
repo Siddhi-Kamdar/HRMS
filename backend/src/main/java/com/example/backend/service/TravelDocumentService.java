@@ -198,8 +198,8 @@ public class TravelDocumentService {
                                 doc.getUploadedBy() != null
                                         ? doc.getUploadedBy().getFullName()
                                         : "System"
-//                                ,doc.getEmployee().getEmployeeId(),
-//                                doc.getUploadedBy().getEmployeeId()
+                                ,doc.getEmployee().getEmployeeId(),
+                                doc.getUploadedBy().getEmployeeId()
                         ))
                 .toList();
     }

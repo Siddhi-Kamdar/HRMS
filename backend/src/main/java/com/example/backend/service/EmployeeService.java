@@ -3,6 +3,7 @@ package com.example.backend.service;
 import com.example.backend.dto.response.EmployeeSimpleDTO;
 import com.example.backend.repository.EmployeeRepository;
 import org.springframework.stereotype.Service;
+import java.sql.Date;
 
 import java.util.List;
 
@@ -20,7 +21,8 @@ public class EmployeeService {
                 .stream()
                 .map(emp -> new EmployeeSimpleDTO(
                         emp.getEmployeeId(),
-                        emp.getFullName()
+                        emp.getFullName(),
+                        emp.getDateOfBirth()
                 ))
                 .toList();
     }

@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/set-state-in-effect */
 import React, { useEffect, useState } from "react";
 import { Container, Row, Col, Card } from "react-bootstrap";
 import { NavLink } from "react-router-dom";
@@ -12,15 +13,17 @@ const ExpenseSection: React.FC = () => {
 
   const [expenses, setExpenses] = useState<Expense[]>([]);
 
-  useEffect(() => {
-    loadExpenses();
-  }, []);
-
+  
   const loadExpenses = async () => {
     const data = await getMyExpenses();
     setExpenses(data);
     console.log(expenses);
   };
+  
+  useEffect(() => {
+    loadExpenses();
+  }, []);
+
 
   return (
 
@@ -34,7 +37,7 @@ const ExpenseSection: React.FC = () => {
             key={exp.expenseId}
             sm={12} md={6} lg={4}
           >
-            <Card className="shadow-sm h-100">
+            <Card className="shadow-sm edge h-100">
               <Card.Body>
                 <Card.Title className="mb-3">
                   Expense #{exp.expenseId}

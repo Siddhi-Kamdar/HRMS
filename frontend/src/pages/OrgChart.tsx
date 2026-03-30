@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { getHierarchy } from "../services/hierarchyService";
@@ -109,9 +110,9 @@ const OrgChart: React.FC = () => {
 
 
 const EmployeeCard = ({ emp, highlight = false }: any) => (
-  <button onClick={() => {navigationService.navigateToOrgChart(emp); console.log(emp.id)}} className="btn border-0">
+  <button onClick={() => {navigationService.navigateToOrgChart(emp); console.log(emp.id)}} className="btn border-0 edge">
   <div
-     className={`card text-center shadow-sm p-3 ${highlight ? "border-success border-2" : ""
+     className={`card edge text-center edge shadow-sm p-3 ${highlight ? "border-success border-2" : ""
       }`}
     style={{ width: "220px" }}
   >

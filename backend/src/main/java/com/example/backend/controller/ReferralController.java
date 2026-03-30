@@ -1,7 +1,6 @@
 package com.example.backend.controller;
 
 import com.example.backend.dto.response.ReferralDashboardDTO;
-import com.example.backend.dto.response.ReferralResponseDTO;
 import com.example.backend.service.ReferralService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;

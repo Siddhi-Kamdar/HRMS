@@ -1,6 +1,5 @@
 package com.example.backend.dto.response;
 
-import jakarta.annotation.Nullable;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -11,11 +10,10 @@ import java.util.Date;
 @Setter
 @AllArgsConstructor
 public class TravelDocumentResponseDTO {
-
     private int id;
     private String documentUrl;
     private Date uploadedDate;
     private String uploadedByName;
-//    private int employeeId;
-//    private int uploadedById;
+    private int employeeId;
+    private int uploadedById;
 }

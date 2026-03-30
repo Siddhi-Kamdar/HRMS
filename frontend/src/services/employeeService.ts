@@ -3,6 +3,7 @@ import axiosInstance from "./axiosInstance";
 export interface Employee {
   employeeId: number;
   fullName: string;
+  dateOfBirth: string;
 }
 
 export const getEmployees = async (): Promise<Employee[]> => {

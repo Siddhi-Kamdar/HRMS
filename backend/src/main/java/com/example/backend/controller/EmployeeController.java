@@ -2,7 +2,6 @@ package com.example.backend.controller;
 
 import com.example.backend.dto.response.EmployeeSimpleDTO;
 import com.example.backend.service.EmployeeService;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;

@@ -5,6 +5,9 @@ export interface TravelDocument {
   id: number;
   documentUrl: string;
   uploadedDate: string;
+  uploadedByName: string,
+  employeeId: number,
+  uploadedById:number
 }
 
 export const getDocumentsByTravel = async (

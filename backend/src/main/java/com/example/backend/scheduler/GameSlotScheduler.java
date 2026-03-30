@@ -18,7 +18,7 @@ public class GameSlotScheduler {
         service.generateSlots();
     }
 
-    @Scheduled(cron = "0 0 2 * * *")
+    @Scheduled(cron = "0 0 0 * * ?")
     public void generateSlotsDaily() {
         service.generateSlots();
     }

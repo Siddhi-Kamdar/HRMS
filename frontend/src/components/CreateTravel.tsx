@@ -83,7 +83,6 @@ const TravelCreate: React.FC = () => {
       });
 
       navigate("/app/travel");
-
     } catch (error) {
       setErrors({
         api: "Failed to create travel. Please try again."
@@ -99,7 +98,7 @@ const TravelCreate: React.FC = () => {
 
         <Col md={8} lg={6}>
 
-          <Card className="shadow-sm border-0">
+          <Card className="shadow-sm border-0 edge">
 
             <Card.Body>
 
@@ -125,12 +124,13 @@ const TravelCreate: React.FC = () => {
                     type="text"
                     value={destination}
                     isInvalid={!!errors.destination}
+                    className="edge"
                     onChange={(e) =>
                       setDestination(e.target.value)
                     }
                   />
 
-                  <Form.Control.Feedback type="invalid">
+                  <Form.Control.Feedback className="edge" type="invalid">
                     {errors.destination}
                   </Form.Control.Feedback>
                 </Form.Group>
@@ -150,6 +150,7 @@ const TravelCreate: React.FC = () => {
                         onChange={(e) =>
                           setDepartDate(e.target.value)
                         }
+                        className="edge"
                       />
 
                       <Form.Control.Feedback type="invalid">
@@ -160,7 +161,7 @@ const TravelCreate: React.FC = () => {
                   </Col>
 
                   <Col md={6}>
-                    <Form.Group className="mb-3">
+                    <Form.Group className="mb-3 edge">
 
                       <Form.Label>Return Date</Form.Label>
 
@@ -175,6 +176,7 @@ const TravelCreate: React.FC = () => {
                         onChange={(e) =>
                           setReturnDate(e.target.value)
                         }
+                        className="edge"
                       />
 
                       <Form.Control.Feedback type="invalid">
@@ -186,12 +188,12 @@ const TravelCreate: React.FC = () => {
 
                 </Row>
 
-                <Form.Group className="mb-3">
+                <Form.Group className="mb-3 edge">
 
                   <Form.Label>Select Employees</Form.Label>
 
                   <div
-                    className={`border rounded p-3 ${
+                    className={`border rounded p-3 edge ${
                       errors.employees ? "border-danger" : ""
                     }`}
                     style={{
@@ -227,7 +229,7 @@ const TravelCreate: React.FC = () => {
                 <Button
                   type="submit"
                   variant="success"
-                  className="w-100"
+                  className="w-100 edge"
                 >
                   Create Travel
                 </Button>

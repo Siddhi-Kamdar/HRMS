@@ -35,7 +35,6 @@ public class OrganizationalHierarchyRepository {
                 (List<Map<String, Object>>) result.get("#result-set-2");
         System.out.println(reportRows);
 
-
         List<OrganizationalHierarchyDTO> managerChain = new ArrayList<>();
 
         if (managerRows != null) {
@@ -43,7 +42,7 @@ public class OrganizationalHierarchyRepository {
 
                 managerChain.add(
                         new OrganizationalHierarchyDTO(
-                                (Integer) row.get("employee_id"),
+                                (Integer)row.get("employee_id"),
                                 (String) row.get("employee_name"),
                                 (String) row.get("supervision_name"),
                                 (String) row.get("employee_position"),

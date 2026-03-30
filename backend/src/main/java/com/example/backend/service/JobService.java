@@ -6,14 +6,11 @@ import com.example.backend.entity.Job;
 import com.example.backend.repository.EmployeeRepository;
 import com.example.backend.repository.JobModuleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.actuate.endpoint.SecurityContext;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.net.Authenticator;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;

@@ -69,7 +69,7 @@ const CreateJob = () => {
   };
 
   return (
-    <Container className="mt-4">
+    <Container className="mt-4 edge">
       <h3>{isEditMode ? "Edit Job" : "Create Job"}</h3>
 
       <Form>
@@ -78,6 +78,7 @@ const CreateJob = () => {
           <Form.Control
             value={jobTitle}
             onChange={(e) => setJobTitle(e.target.value)}
+            className="edge"
           />
         </Form.Group>
 
@@ -88,6 +89,7 @@ const CreateJob = () => {
             rows={3}
             value={jobSummary}
             onChange={(e) => setJobSummary(e.target.value)}
+            className="edge"
           />
         </Form.Group>
 
@@ -96,6 +98,7 @@ const CreateJob = () => {
           <Form.Select
             value={jobStatus}
             onChange={(e) => setJobStatus(e.target.value)}
+            className="edge"
           >
             <option value="OPEN">OPEN</option>
             <option value="CLOSED">CLOSED</option>
@@ -108,6 +111,7 @@ const CreateJob = () => {
           <Form.Control
             type="file"
             accept=".pdf,.doc,.docx"
+            className="edge"
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
               if (e.target.files && e.target.files.length > 0) {
                 setFile(e.target.files[0]);
@@ -116,7 +120,7 @@ const CreateJob = () => {
           />
         </Form.Group>
 
-        <Button onClick={handleSubmit}>
+        <Button className="edge" onClick={handleSubmit}>
           {isEditMode ? "Update Job" : "Create Job"}
         </Button>
       </Form>

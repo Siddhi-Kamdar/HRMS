@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import {
@@ -88,7 +89,7 @@ const BookingForm: React.FC = () => {
   return (
     <div className="row justify-content-center">
       <div className="col-lg-6 col-md-8">
-        <div className="card shadow-sm">
+        <div className="card edge shadow-sm">
 
           <div className="card-header bg-white">
             <h5 className="mb-0">Book Slot #{slotId}</h5>
@@ -102,7 +103,7 @@ const BookingForm: React.FC = () => {
                 <div>{errors}</div>
                 <button
                   type="button"
-                  className="btn-close"
+                  className="btn-close edge"
                   onClick={() => setErrors(null)}
                 ></button>
               </div>
@@ -112,7 +113,7 @@ const BookingForm: React.FC = () => {
               <label className="form-label fw-semibold">Leader</label>
               <input
                 type="text"
-                className="form-control"
+                className="form-control edge"
                 value={user?.fullName || "You"}
                 disabled
               />
@@ -124,13 +125,13 @@ const BookingForm: React.FC = () => {
               </label>
 
               <div
-                className="border rounded p-3"
+                className="border edge p-3"
                 style={{ maxHeight: "250px", overflowY: "auto" }}
               >
                 {employees.map(emp => (
                   <div className="form-check" key={emp.employeeId}>
                     <input
-                      className="form-check-input"
+                      className="form-check-input edge"
                       type="checkbox"
                       id={`emp-${emp.employeeId}`}
                       checked={selectedMembers.includes(emp.employeeId)}
@@ -150,7 +151,7 @@ const BookingForm: React.FC = () => {
 
             <div className="d-flex justify-content-end gap-2">
               <button
-                className="btn btn-outline-secondary"
+                className="btn btn-outline-secondary edge"
                 onClick={() => navigate("/app/games")}
                 disabled={loading}
               >
@@ -158,7 +159,7 @@ const BookingForm: React.FC = () => {
               </button>
 
               <button
-                className="btn btn-success"
+                className="btn btn-success edge"
                 onClick={handleSubmit}
                 disabled={loading}
               >

@@ -130,8 +130,6 @@ export const AchievementsFeed: React.FC<Props> = ({
             alert("Failed to update post. Are you authorized?");
         }
     };
-
-
     const handleComment = async (postId: number) => {
         const text = commentText[postId];
         if (!text?.trim()) return;
@@ -222,7 +220,6 @@ export const AchievementsFeed: React.FC<Props> = ({
             alert("Failed to delete post. Are you authorized?");
         }
     };
-
     const timeAgo = (dateString: string) => {
         const diff = Date.now() - new Date(dateString).getTime();
         const seconds = Math.floor(diff / 1000);
@@ -237,13 +234,13 @@ export const AchievementsFeed: React.FC<Props> = ({
 
     return (
         <>
-            <div className="card shadow-sm p-3 mb-3">
+            <div className="card edge shadow-sm p-3 mb-3">
                 <div className="row g-2">
 
                     <div className="col-md-5">
                         <input
                             type="text"
-                            className="form-control"
+                            className="form-control edge"
                             placeholder="Search keyword..."
                             value={searchKeyword}
                             onChange={(e) => setSearchKeyword(e.target.value)}
@@ -252,7 +249,7 @@ export const AchievementsFeed: React.FC<Props> = ({
 
                     <div className="col-md-4">
                         <select
-                            className="form-select"
+                            className="form-select edge"
                             value={selectedAuthorId ?? ""}
                             onChange={(e) =>
                                 setSelectedAuthorId(
@@ -280,7 +277,7 @@ export const AchievementsFeed: React.FC<Props> = ({
 
                     <div className="col-md-3 d-grid">
                         <button
-                            className="btn btn-primary"
+                            className="btn btn-primary edge"
                             onClick={handleSearch}
                             disabled={isSearching}
                         >
@@ -288,7 +285,7 @@ export const AchievementsFeed: React.FC<Props> = ({
                         </button>
                     </div>
                     <button
-                        className="btn btn-outline-secondary"
+                        className="btn btn-outline-secondary edge"
                         onClick={() => window.location.reload()}
                     >
                         Reset
@@ -298,7 +295,7 @@ export const AchievementsFeed: React.FC<Props> = ({
             </div>
             <div className="d-flex flex-column gap-3">
                 {posts.map((post) => (
-                    <div key={post.postId} className="card shadow-sm">
+                    <div key={post.postId} className="card edge shadow-sm">
                         <div className="card-body">
                             <div className="d-flex align-items-center mb-2">
                                 <div
@@ -310,19 +307,19 @@ export const AchievementsFeed: React.FC<Props> = ({
                                 <div>
                                     <strong>{post.authorName}</strong>{" "}
                                     {post.systemGenerated && (
-                                        <span className="badge bg-secondary">System</span>
+                                        <span className="badge bg-secondary edge">System</span>
                                     )}
                                     {post.visibility === "DEPARTMENT" && (
-                                        <span className="badge bg-info ms-2">Department</span>
+                                        <span className="badge bg-info ms-2 edge">Department</span>
                                     )}
                                     <div className="text-muted" style={{ fontSize: "0.8rem" }}>
                                         {timeAgo(post.createdDate)}
                                     </div>
                                 </div>
 
-                                {(post.authorId === currentUserId || currentUserRole === "HR") && (
+                                {((post.authorId === currentUserId || currentUserRole === "HR" )&& post.systemGenerated == false) && (
                                     <button
-                                        className="btn btn-sm border-0 btn-outline-danger ms-auto"
+                                        className="btn btn-sm edge border-0 btn-outline-danger ms-auto"
                                         onClick={() => handleDelete(post.postId)}
                                     >
                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-trash" viewBox="0 0 16 16">
@@ -333,7 +330,7 @@ export const AchievementsFeed: React.FC<Props> = ({
                                 )}
                                 {post.authorId === currentUserId && (
                                     <button
-                                        className="btn btn-sm btn-outline-primary border-0 ms-2"
+                                        className="btn btn-sm edge btn-outline-primary border-0 ms-2"
                                         onClick={() => {
                                             setEditingPostId(post.postId);
                                             setEditTitle(post.title);
@@ -353,13 +350,13 @@ export const AchievementsFeed: React.FC<Props> = ({
                                 <div className="mb-2">
                                     <input
                                         type="text"
-                                        className="form-control mb-1"
+                                        className="form-control mb-1 edge"
                                         value={editTitle}
                                         onChange={(e) => setEditTitle(e.target.value)}
                                         placeholder="Post title"
                                     />
                                     <textarea
-                                        className="form-control mb-1"
+                                        className="form-control mb-1 edge"
                                         value={editDescription}
                                         onChange={(e) => setEditDescription(e.target.value)}
                                         placeholder="Post description"
@@ -369,11 +366,11 @@ export const AchievementsFeed: React.FC<Props> = ({
                                             <img
                                                 src={post.postImageUrl}
                                                 alt="Current"
-                                                className="img-fluid rounded"
+                                                className="img-fluid rounded edge"
                                                 style={{ maxHeight: 200 }}
                                             />
                                             <button
-                                                className="btn btn-sm btn-outline-danger mt-2"
+                                                className="btn btn-sm edge btn-outline-danger mt-2"
                                                 onClick={() => setRemoveImage(true)}
                                             >
                                                 Remove Image
@@ -382,18 +379,18 @@ export const AchievementsFeed: React.FC<Props> = ({
                                     )}
                                     <input
                                         type="file"
-                                        className="form-control mb-1"
+                                        className="form-control mb-1 edge"
                                         onChange={(e) => setEditImage(e.target.files ? e.target.files[0] : null)}
                                     />
                                     <div className="d-flex gap-2">
                                         <button
-                                            className="btn btn-sm btn-success"
+                                            className="btn btn-sm edge btn-success"
                                             onClick={() => handleEditPost(post.postId)}
                                         >
                                             Save
                                         </button>
                                         <button
-                                            className="btn btn-sm btn-secondary"
+                                            className="btn btn-sm btn-secondary edge"
                                             onClick={() => setEditingPostId(null)}
                                         >
                                             Cancel
@@ -417,7 +414,7 @@ export const AchievementsFeed: React.FC<Props> = ({
 
                             <div className="d-flex gap-3 mb-2">
                                 <button
-                                    className="btn btn-sm border-0 bg-transparent d-flex align-items-center gap-1"
+                                    className="btn btn-sm border-0 edge bg-transparent d-flex align-items-center gap-1"
                                     onClick={() => handleLike(post)}
                                 >
                                     {post.likedByCurrentUser ? (
@@ -456,7 +453,7 @@ export const AchievementsFeed: React.FC<Props> = ({
                                     </span>
                                 </button>
                                 <button
-                                    className="btn btn-sm border-0 bg-transparent text-muted d-flex align-items-center gap-1"
+                                    className="btn btn-sm border-0 edge bg-transparent text-muted d-flex align-items-center gap-1"
                                     onClick={() => toggleComments(post.postId)}
                                 >
                                     <svg
@@ -475,7 +472,7 @@ export const AchievementsFeed: React.FC<Props> = ({
                             <div className="input-group mt-2">
                                 <input
                                     type="text"
-                                    className="form-control form-control-sm"
+                                    className="form-control edge form-control-sm"
                                     placeholder="Add a comment..."
                                     value={commentText[post.postId] || ""}
                                     onChange={(e) =>
@@ -486,7 +483,7 @@ export const AchievementsFeed: React.FC<Props> = ({
                                     }
                                 />
                                 <button
-                                    className="btn btn-sm btn-outline-secondary"
+                                    className="btn btn-sm edge btn-outline-secondary"
                                     onClick={() => handleComment(post.postId)}
                                 >
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-send" viewBox="0 0 16 16">
@@ -516,7 +513,7 @@ export const AchievementsFeed: React.FC<Props> = ({
                                                             <div>{c.commentDescription}</div>
                                                             <div className="d-flex align-items-center gap-2 mt-1">
                                                                 <button
-                                                                    className="btn btn-sm border-0 bg-transparent p-0"
+                                                                    className="btn btn-sm border-0 edge bg-transparent p-0"
                                                                     onClick={() => handleCommentLike(post.postId, c)}
                                                                 >
                                                                     {c.likedByCurrentUser ? (
@@ -566,7 +563,7 @@ export const AchievementsFeed: React.FC<Props> = ({
                                                         </div>
                                                         {(c.authorId === currentUserId || currentUserRole === "HR") && (
                                                             <button
-                                                                className="btn btn-sm border-0 btn-outline-danger ms-2"
+                                                                className="btn btn-sm border-0 edge btn-outline-danger ms-2"
                                                                 onClick={() => handleDeleteComment(c.commentId, post.postId)}
                                                             >
                                                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-trash" viewBox="0 0 16 16">
@@ -599,7 +596,7 @@ export const AchievementsFeed: React.FC<Props> = ({
                                 <div className="modal-header">
                                     <h5 className="modal-title">Liked by</h5>
                                     <button
-                                        className="btn-close"
+                                        className="btn-close edge"
                                         onClick={() => {
                                             setLikesModalPostId(null);
                                             setCommentLikesModalId(null);
